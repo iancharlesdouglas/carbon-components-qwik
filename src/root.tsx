@@ -1,3 +1,4 @@
+import { CarbonApp } from './components/carbon-app/carbon-app';
 import { Counter } from './components/counter/counter';
 import { Link } from './components/link/link';
 import { Logo } from './components/logo/logo';
@@ -10,9 +11,11 @@ export default () => {
         <title>Qwik Blank App</title>
       </head>
       <body>
-        <Link href="https://github.com"><div>GitHub</div></Link>
-        <Logo />
-        <Counter />
+        <CarbonApp>
+          <Link href="https://github.com" target='blank' data-x="test" onClick$={() => alert('clicked')}>GitHub</Link>
+          <Logo />
+          <Counter />
+        </CarbonApp>
       </body>
     </>
   );

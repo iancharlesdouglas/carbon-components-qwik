@@ -1,4 +1,4 @@
-import { Slot, component$ } from "@builder.io/qwik";
+import { Component, PropFunction, Slot, component$ } from "@builder.io/qwik";
 import { usePrefix } from "../../internal/usePrefix";
 
 type LinkProps = {
@@ -7,12 +7,13 @@ type LinkProps = {
   disabled?: boolean;
   inline?: boolean;
   visited?: boolean;
-  renderIcon?: unknown;
+  renderIcon?: Component<string>;
   size?: 'sm' | 'md' | 'lg';
   target?: string;
+  onClick$?: PropFunction<() => void>;
 };
 
-export const Link = component$((props: LinkProps) => {
+export const Link = component$((props: LinkProps, ...rest) => {
   const prefix = usePrefix();
 
   const classes = [`${prefix}--link`];
@@ -24,7 +25,14 @@ export const Link = component$((props: LinkProps) => {
   const classNames = classes.join(' ');
   const rel = props.target === '_blank' ? 'noopener' : undefined;
 
-  return <a {...props} class={classNames} rel={rel}>
-    <Slot></Slot>
-  </a>
+  if (!props.renderIcon && !props.inline) {
+    return <a {...props} class={classNames} rel={rel} {...rest}>
+      <Slot />
+      {/* <div><props.renderIcon/></div> */}
+    </a>    
+  } else {
+    return <a {...props} class={classNames} rel={rel} onClick$={props.onClick$}{...rest}>
+    <Slot />
+  </a>;
+  }
 });
