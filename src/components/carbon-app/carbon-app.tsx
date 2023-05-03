@@ -6,10 +6,14 @@ type CarbonContext = {
   prefix: string;
 };
 
+type CarbonAppProps = {
+  prefix?: string;
+};
+
 /**
  * Root container for Carbon application
  */
-export const CarbonApp = component$(() => {
-  useContextProvider<CarbonContext>(prefixContext, {prefix:'cds'});
+export const CarbonApp = component$((props: CarbonAppProps) => {
+  useContextProvider<CarbonContext>(prefixContext, {prefix: props.prefix ?? 'cds'});
   return <Slot />;
 })

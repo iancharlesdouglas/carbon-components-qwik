@@ -36,4 +36,33 @@ describe('Link', () => {
 
     expect(aElement.classList.contains('cds--link--disabled'));
   });
+
+  it('sets inline CSS class if inline', async () => {
+    const {screen, render} = await createDOM();
+
+    await render(<CarbonApp><Link href="x.com" inline>Custom text</Link></CarbonApp>);
+
+    const aElement = screen.querySelector('a') as HTMLAnchorElement;
+    expect(aElement.classList.contains('cds--link--inline'));
+  })
+
+  it('sets visited CSS class if visited (with custom CarbonApp prefix)', async () => {
+    const {screen, render} = await createDOM();
+    const prefix = 'pre';
+
+    await render(<CarbonApp prefix={prefix}><Link href="x.com" visited>Custom text</Link></CarbonApp>)
+
+    const aElement = screen.querySelector('a') as HTMLAnchorElement;
+    expect(aElement.classList.contains(`${prefix}--link--visited`));
+  });
+
+  it('adds rel="noopener" if target="_blank"', async () => {
+    const {screen, render} = await createDOM();
+
+    await render(<CarbonApp><Link href="x.com" target="_blank">Custom text</Link></CarbonApp>)
+
+    const aElement = screen.querySelector('a') as HTMLAnchorElement;
+    expect(aElement.hasAttribute('rel'));
+    expect(aElement.getAttribute('rel')).toEqual('noopener');
+  });
 });
