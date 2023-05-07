@@ -19,6 +19,9 @@ devDependencies:
   '@typescript-eslint/parser':
     specifier: 5.59.1
     version: 5.59.1(eslint@8.39.0)(typescript@5.0.4)
+  carbon-icons-qwik:
+    specifier: ^11.19.0
+    version: 11.19.0
   eslint:
     specifier: 8.39.0
     version: 8.39.0
@@ -944,6 +947,11 @@ packages:
   /camelcase@6.3.0:
     resolution: {integrity: sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==}
     engines: {node: '>=10'}
+    dev: true
+
+  /carbon-icons-qwik@11.19.0:
+    resolution: {integrity: sha512-rn9jqytVEH0EZ1QBkrn7ZGe98W71BrZNV/NCEFAUCl21//UG7s4NcPMTuNbaXYwNDN1X4SbI185mSACyyjvBKA==}
+    engines: {node: '>=15.0.0'}
     dev: true
 
   /chai@4.3.7:
