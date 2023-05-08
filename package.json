@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "@builder.io/qwik": "1.0.0",
+    "@carbon/styles": "^1.28.0",
     "@types/eslint": "8.37.0",
     "@types/jsdom": "^21.1.1",
     "@types/node": "^18.16.1",

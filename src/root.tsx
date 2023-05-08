@@ -3,6 +3,7 @@ import { Counter } from './components/counter/counter';
 import { Link } from './components/link/link';
 import { Logo } from './components/logo/logo';
 import  { Add, Copy, DOC, Edit, Eyedropper } from 'carbon-icons-qwik';
+import './root.scss';
 
 export default () => {
   return (
@@ -10,10 +11,11 @@ export default () => {
       <head>
         <meta charSet="utf-8" />
         <title>Qwik Blank App</title>
+        
       </head>
       <body>
         <CarbonApp>
-          <Link href="https://github.com" target='blank' data-x="test" id="link_id" onClick$={() => alert('clicked')} renderIcon={true}>GitHub
+          <Link href="https://github.com" target='blank' data-x="test" id="link_id" size="lg" visited onClick$={() => alert('clicked')} renderIcon={true}>GitHub
             <Edit q:slot="icon" size={20}></Edit>
           </Link>
           <Logo />
