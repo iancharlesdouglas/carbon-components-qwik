@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'vitest';
 import { Link } from './link';
 import { createDOM } from '@builder.io/qwik/testing';
-import { CarbonApp } from '../carbon-app/carbon-app';
+import { CarbonRoot } from '../carbon-root/carbon-root';
 import { Edit } from 'carbon-icons-qwik';
 
 describe('Link', () => {
@@ -10,7 +10,7 @@ describe('Link', () => {
     const url = 'github.com';
     const content = 'GitHub';
 
-    await render(<CarbonApp><Link href={url}>{content}</Link></CarbonApp>);
+    await render(<CarbonRoot><Link href={url}>{content}</Link></CarbonRoot>);
     
     const aElement = screen.querySelector('a') as HTMLAnchorElement;
     expect(aElement.getAttribute('href')).toEqual(url);
@@ -22,7 +22,7 @@ describe('Link', () => {
     const {screen, render} = await createDOM();
     const customClass = 'custom-format';
 
-    await render(<CarbonApp><Link href="x.com" class={customClass}>Custom text</Link></CarbonApp>);
+    await render(<CarbonRoot><Link href="x.com" class={customClass}>Custom text</Link></CarbonRoot>);
 
     const aElement = screen.querySelector('a') as HTMLAnchorElement;
     expect(aElement.classList.contains(customClass));
@@ -31,7 +31,7 @@ describe('Link', () => {
   it('sets disabled CSS class if disabled', async () => {
     const {screen, render} = await createDOM();
 
-    await render(<CarbonApp><Link href="x.com" disabled>X.com</Link></CarbonApp>);
+    await render(<CarbonRoot><Link href="x.com" disabled>X.com</Link></CarbonRoot>);
 
     const aElement = screen.querySelector('a') as HTMLAnchorElement;
 
@@ -41,7 +41,7 @@ describe('Link', () => {
   it('sets inline CSS class if inline', async () => {
     const {screen, render} = await createDOM();
 
-    await render(<CarbonApp><Link inline>Link text</Link></CarbonApp>);
+    await render(<CarbonRoot><Link inline>Link text</Link></CarbonRoot>);
 
     const aElement = screen.querySelector('a') as HTMLAnchorElement;
     expect(aElement.classList.contains('cds--link--inline'));
@@ -51,7 +51,7 @@ describe('Link', () => {
     const {screen, render} = await createDOM();
     const prefix = 'pre';
 
-    await render(<CarbonApp prefix={prefix}><Link visited>Link text</Link></CarbonApp>);
+    await render(<CarbonRoot prefix={prefix}><Link visited>Link text</Link></CarbonRoot>);
 
     const aElement = screen.querySelector('a') as HTMLAnchorElement;
     expect(aElement.classList.contains(`${prefix}--link--visited`));
@@ -61,7 +61,7 @@ describe('Link', () => {
     const {screen, render} = await createDOM();
     const size = 'lg';
 
-    await render(<CarbonApp><Link size={size}>Link text</Link></CarbonApp>);
+    await render(<CarbonRoot><Link size={size}>Link text</Link></CarbonRoot>);
 
     const aElement = screen.querySelector('a') as HTMLAnchorElement;
     expect(aElement.classList.contains(`$cds--link--${size}`));
@@ -70,7 +70,7 @@ describe('Link', () => {
   it('sets the default size to \'md\'', async () => {
     const {screen, render} = await createDOM();
     const defaultSize = 'md';
-    await render(<CarbonApp><Link>Link text</Link></CarbonApp>);
+    await render(<CarbonRoot><Link>Link text</Link></CarbonRoot>);
 
     const aElement = screen.querySelector('a') as HTMLAnchorElement;
     expect(aElement.classList.contains(`$cds--link--${defaultSize}`));
@@ -79,7 +79,7 @@ describe('Link', () => {
   it('adds rel="noopener" if target="_blank"', async () => {
     const {screen, render} = await createDOM();
 
-    await render(<CarbonApp><Link href="x.com" target="_blank">Link text</Link></CarbonApp>);
+    await render(<CarbonRoot><Link href="x.com" target="_blank">Link text</Link></CarbonRoot>);
 
     const aElement = screen.querySelector('a') as HTMLAnchorElement;
     expect(aElement.hasAttribute('rel'));
@@ -89,7 +89,7 @@ describe('Link', () => {
   it('disables anchor when disabled', async () => {
     const {screen, render} = await createDOM();
 
-    await render(<CarbonApp><Link href="x.com" disabled>Custom text</Link></CarbonApp>);
+    await render(<CarbonRoot><Link href="x.com" disabled>Custom text</Link></CarbonRoot>);
 
     const aElement = screen.querySelector('a') as HTMLAnchorElement;
     expect(aElement.click).toThrowError();
@@ -98,7 +98,7 @@ describe('Link', () => {
   it('renders an "id" attribute onto the anchor element', async () => {
     const {screen, render} = await createDOM();
 
-    await render(<CarbonApp><Link id="1">Link text</Link></CarbonApp>);
+    await render(<CarbonRoot><Link id="1">Link text</Link></CarbonRoot>);
 
     const aElement = screen.querySelector('a') as HTMLAnchorElement;
     expect(aElement.getAttribute('id')).toEqual('1');
@@ -108,7 +108,7 @@ describe('Link', () => {
     const {screen, render} = await createDOM();
     const expectedIconId = 'edit_icon';
 
-    await render(<CarbonApp><Link renderIcon>Link Text<Edit id={expectedIconId} /></Link></CarbonApp>);
+    await render(<CarbonRoot><Link renderIcon>Link Text<Edit id={expectedIconId} /></Link></CarbonRoot>);
 
     const iconElement = screen.querySelector(`a > svg#${expectedIconId}`) as SVGSVGElement;
     expect(iconElement.getAttribute('id')).toEqual(expectedIconId);

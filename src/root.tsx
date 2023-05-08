@@ -1,4 +1,4 @@
-import { CarbonApp } from './components/carbon-app/carbon-app';
+import { CarbonRoot } from './components/carbon-root/carbon-root';
 import { Counter } from './components/counter/counter';
 import { Link } from './components/link/link';
 import { Logo } from './components/logo/logo';
@@ -14,7 +14,7 @@ export default () => {
         
       </head>
       <body>
-        <CarbonApp>
+        <CarbonRoot>
           <Link href="https://github.com" target='blank' data-x="test" id="link_id" size="lg" visited onClick$={() => alert('clicked')} renderIcon={true}>GitHub
             <Edit q:slot="icon" size={20}></Edit>
           </Link>
@@ -25,7 +25,7 @@ export default () => {
           <DOC/>
           <Edit />
           <Eyedropper />
-        </CarbonApp>
+        </CarbonRoot>
       </body>
     </>
   );
