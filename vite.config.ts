@@ -11,6 +11,11 @@ export default defineConfig(() => {
         fileName: (format) => `index.qwik.${format === 'es' ? 'mjs' : 'cjs'}`,
       },
     },
+    test: {
+      coverage: {
+        provider: 'istanbul'
+      }
+    },
     plugins: [qwikVite()],
   };
 });

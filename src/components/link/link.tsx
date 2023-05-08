@@ -1,26 +1,37 @@
-import { Component, PropFunction, HTMLAttributes, Slot, component$ } from "@builder.io/qwik";
+import { PropFunction, HTMLAttributes, Slot, component$ } from "@builder.io/qwik";
 import { usePrefix } from "../../internal/usePrefix";
 
+/**
+ * Anchor HTML element props
+ */
 export type AnchorProps = HTMLAttributes<HTMLAnchorElement> & {
   href?: string;
   disabled?: boolean;
-  // target?: string;
-  // role?: string;
   'aria-disabled'?: boolean;
   onClick$?: PropFunction<() => void>;
 };
 
+/**
+ * Link props
+ * @property class - Class name
+ * @property disabled - Disabled (aria-disabled is set per value)
+ * @property inline - Whether generated HTML element is displayed inline (if so, any icon is not rendered)
+ * @property visited - Whether visited
+ * @property renderIcon - True if an icon is to be rendered in the slot named "icon"
+ * @property size - Size ('sm', 'md' or 'lg' - default is 'md')
+ * @property target - If "_blank" then rel is "noopener"
+ * @property onClick$ - onClick handler
+ */
 export type LinkProps = AnchorProps & {
   class?: string;
   disabled?: boolean;
   inline?: boolean;
   visited?: boolean;
-  renderIcon?: Component<string>;
+  renderIcon?: boolean;
   size?: 'sm' | 'md' | 'lg';
   target?: string;
   onClick$?: PropFunction<() => void>;
 }
-
 
 /**
  * Link (anchor element in HTML)
@@ -30,19 +41,19 @@ export const Link = component$((props: LinkProps) => {
 
   const classes = [`${prefix}--link`];
   if (props.class) classes.push(props.class);
-  const {href, disabled, target, inline, visited, size, onClick$} = props;
+  const {disabled, target, inline, visited, size, renderIcon} = props;
   if (disabled) classes.push(`${prefix}--link--disabled`);
   if (inline) classes.push(`${prefix}--link--inline`);
   if (visited) classes.push(`${prefix}--link--visited`);
   if (size) classes.push(`${prefix}--link--${size}`)
   const classNames = classes.join(' ');
   const rel = target === '_blank' ? 'noopener' : undefined;
-  const anchorProps: AnchorProps = {href, disabled, target, onClick$, 'aria-disabled': !!disabled};
+  const anchorProps: AnchorProps = {...props, 'aria-disabled': !!disabled};
 
-  if (!props.renderIcon && !inline) {
+  if (renderIcon && !inline) {
     return <a class={classNames} rel={rel} {...anchorProps}>
       <Slot />
-      {/* <div><props.renderIcon/></div> */}
+      <Slot name="icon" />
     </a>    
   } else {
     return <a class={classNames} rel={rel} {...anchorProps}>
