@@ -28,10 +28,10 @@ export type ButtonElementProps = HTMLAttributes<HTMLButtonElement> & ButtonOrAnc
   'aria-describedby'?: string;
   'aria-pressed'?: string;
   onBlur$?: PropFunction<() => void>;
-  onClick$: PropFunction<() => void>;
-  onFocus$: PropFunction<() => void>;
-  onMouseEnter$: PropFunction<(ev: MouseEvent) => void>;
-  onMouseLeave$: PropFunction<(ev: MouseEvent) => void>;
+  onClick$?: PropFunction<() => void>;
+  onFocus$?: PropFunction<() => void>;
+  onMouseEnter$?: PropFunction<(ev: MouseEvent) => void>;
+  onMouseLeave$?: PropFunction<(ev: MouseEvent) => void>;
 };
 
 /**
@@ -75,7 +75,7 @@ export type ButtonProps = ButtonElementProps & {
 export const Button = component$((props: ButtonProps) => {
   const prefix = usePrefix();
 
-  const {size = 'md', isExpressive, kind = 'primary', disabled, hasIconOnly, isSelected, type, tabIndex, dangerDescription, href} = props;
+  const {size = 'md', isExpressive, kind = 'primary', disabled, hasIconOnly, isSelected, dangerDescription, href} = props;
 
   const classes = [`${prefix}--btn`];
   if (props.class) classes.push(props.class);
@@ -89,6 +89,7 @@ export const Button = component$((props: ButtonProps) => {
   if (isExpressive) classes.push(`${prefix}--btn--expressive`);
   if (hasIconOnly) classes.push(`${prefix}--btn--icon-only`);
   if (hasIconOnly && isSelected && kind === 'ghost') classes.push(`${prefix}--btn--selected`);
+  const classNames = classes.join(' ');
 
   const dangerButtonKinds = ['danger', 'danger--tertiary', 'danger--ghost'];
 
@@ -96,19 +97,21 @@ export const Button = component$((props: ButtonProps) => {
   
   const commonProps = props as ButtonOrAnchorElementProps;
 
-  const buttonElementProps = props as ButtonElementProps;
-  buttonElementProps['aria-describedby'] = dangerButtonKinds.includes(kind) ? assistiveId : undefined;
-  buttonElementProps['aria-pressed'] = hasIconOnly && kind === 'ghost' ? (isSelected ? 'true' : 'false') : undefined;
+  const buttonElementProps = {...props as ButtonElementProps, 
+    'aria-describedby': dangerButtonKinds.includes(kind) ? assistiveId : undefined,
+    'aria-pressed': hasIconOnly && kind === 'ghost',
+    class: classNames
+  };
 
   const assistiveText = dangerButtonKinds.includes(kind) 
     ? <span id={assistiveId} class={`${prefix}--visually-hidden`}>{dangerDescription}</span>
     : undefined;
 
   if (href && !disabled) {
-    return <a href={href} {...commonProps}></a>;
+    return <a href={href} {...commonProps}><Slot /></a>;
   } else if (hasIconOnly) {
-    return <button {...buttonElementProps}>{assistiveText}<Slot name="icon"/></button>
+    return <button {...buttonElementProps}>{assistiveText}<Slot name="icon" /></button>
   } else {
-    return <button {...buttonElementProps}>{assistiveText}<Slot /></button>;
+    return <button {...buttonElementProps}>{assistiveText}<Slot /><div class={`${prefix}--btn__icon`}><Slot name="icon" /></div></button>;
   }
 });
