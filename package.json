@@ -40,7 +40,7 @@
     "build-storybook": "storybook build"
   },
   "devDependencies": {
-    "@builder.io/qwik": "1.0.0",
+    "@builder.io/qwik": "1.1.0",
     "@carbon/styles": "^1.28.0",
     "@storybook/addon-actions": "^7.0.9",
     "@storybook/addon-docs": "^7.0.9",
@@ -59,6 +59,7 @@
     "eslint": "8.39.0",
     "eslint-plugin-qwik": "latest",
     "eslint-plugin-storybook": "^0.6.12",
+    "immutable": "^4.3.0",
     "np": "7.6.1",
     "prettier": "2.8.8",
     "react": "^18.2.0",

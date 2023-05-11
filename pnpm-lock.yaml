@@ -2,8 +2,8 @@ lockfileVersion: '6.0'
 
 devDependencies:
   '@builder.io/qwik':
-    specifier: 1.0.0
-    version: 1.0.0(undici@5.22.0)
+    specifier: 1.1.0
+    version: 1.1.0(undici@5.22.0)
   '@carbon/styles':
     specifier: ^1.28.0
     version: 1.28.0(sass@1.62.1)
@@ -54,10 +54,13 @@ devDependencies:
     version: 8.39.0
   eslint-plugin-qwik:
     specifier: latest
-    version: 1.0.0(eslint@8.39.0)
+    version: 1.1.1(eslint@8.39.0)
   eslint-plugin-storybook:
     specifier: ^0.6.12
     version: 0.6.12(eslint@8.39.0)(typescript@5.0.4)
+  immutable:
+    specifier: ^4.3.0
+    version: 4.3.0
   np:
     specifier: 7.6.1
     version: 7.6.1
@@ -75,7 +78,7 @@ devDependencies:
     version: 7.0.9
   storybook-framework-qwik:
     specifier: ^0.2.0
-    version: 0.2.0(@builder.io/qwik@1.0.0)(typescript@5.0.4)(vite@4.3.3)
+    version: 0.2.0(@builder.io/qwik@1.1.0)(typescript@5.0.4)(vite@4.3.3)
   typescript:
     specifier: 5.0.4
     version: 5.0.4
@@ -1383,8 +1386,8 @@ packages:
     dev: true
     optional: true
 
-  /@builder.io/qwik@1.0.0(undici@5.22.0):
-    resolution: {integrity: sha512-U1eTIKTBUiW2dbPMCaTzS7K1bMCI9ovtfsvdduwnVThGXRSrX+v2X4U/UmHHPzfOjC55X5wYLc17cw5EwFBVVA==}
+  /@builder.io/qwik@1.1.0(undici@5.22.0):
+    resolution: {integrity: sha512-A8PlZi8iQcBLYHmpgRClhLKNM35RVn4wL0Ek6ETRKhH+Oh6iRgN0YcHCQO2APmlc1ajAE4tRfFRH2lroi3nREQ==}
     engines: {node: '>=16.8.0 <18.0.0 || >=18.11'}
     hasBin: true
     peerDependencies:
@@ -4738,8 +4741,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /eslint-plugin-qwik@1.0.0(eslint@8.39.0):
-    resolution: {integrity: sha512-IdnMPpVMEkL/QqBEypitdEpKCZWqeu+DSfJi39FGxnCvzsKTAKGv38Ro/+AEfHgYaAV0CH3sxLzxrr05tlG3+g==}
+  /eslint-plugin-qwik@1.1.1(eslint@8.39.0):
+    resolution: {integrity: sha512-/8UTrugT0fym9L7gmEzWt30WJCK0bKJFAwaVr/oD4CDfl0s68CDaRWvafTsNHqDSQDVrOtCVW+U51U4zMALKmw==}
     engines: {node: '>=16'}
     peerDependencies:
       eslint: '>= 8'
@@ -8854,13 +8857,13 @@ packages:
     resolution: {integrity: sha512-siT1RiqlfQnGqgT/YzXVUNsom9S0H1OX+dpdGN1xkyYATo4I6sep5NmsRD/40s3IIOvlCq6akxkqG82urIZW1w==}
     dev: true
 
-  /storybook-framework-qwik@0.2.0(@builder.io/qwik@1.0.0)(typescript@5.0.4)(vite@4.3.3):
+  /storybook-framework-qwik@0.2.0(@builder.io/qwik@1.1.0)(typescript@5.0.4)(vite@4.3.3):
     resolution: {integrity: sha512-qu8aRd4PZSCPmCyQSVFBzXxrF0G54JWBao3GRy5MjD0CxO7NvxNTevXOwVb/aF5pzawXb3nkz4RiG5X1MlolRQ==}
     engines: {node: ^14.18 || >=16}
     peerDependencies:
       '@builder.io/qwik': '>=0.15.2'
     dependencies:
-      '@builder.io/qwik': 1.0.0(undici@5.22.0)
+      '@builder.io/qwik': 1.1.0(undici@5.22.0)
       '@storybook/builder-vite': 7.0.9(typescript@5.0.4)(vite@4.3.3)
       '@storybook/docs-tools': 7.0.9
       '@storybook/types': 7.0.9

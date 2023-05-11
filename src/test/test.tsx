@@ -10,7 +10,7 @@ const Test = component$(() => {
     <Link href="https://github.com" target='blank' data-x="test" id="link_id" size="lg" visited renderIcon onClick$={() => alert('clicked')}>GitHub
       <Edit q:slot="icon" size={20}></Edit>
     </Link>
-    <Button size="md" title="Button" onClick$={() => alert('clicked')}>Test
+    <Button size="md" title="Button" onClick$={() => alert('clicked')} hasIconOnly={true}>Test
       <Add q:slot="icon" size={16} />
     </Button>
   </CarbonRoot>);

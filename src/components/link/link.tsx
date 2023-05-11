@@ -1,5 +1,7 @@
 import { PropFunction, HTMLAttributes, Slot, component$ } from "@builder.io/qwik";
 import { usePrefix } from "../../internal/usePrefix";
+import { remove } from 'immutable';
+import { removeProps } from "../../internal/remove-props";
 
 /**
  * Anchor HTML element props
@@ -48,7 +50,7 @@ export const Link = component$((props: LinkProps) => {
   if (size) classes.push(`${prefix}--link--${size}`)
   const classNames = classes.join(' ');
   const rel = target === '_blank' ? 'noopener' : undefined;
-  const anchorProps: AnchorProps = {...props, 'aria-disabled': !!disabled};
+  const anchorProps: AnchorProps = removeProps({...props, 'aria-disabled': !!disabled}, 'size', 'renderIcon', 'inline');
 
   if (renderIcon && !inline) {
     return <a class={classNames} rel={rel} {...anchorProps}>

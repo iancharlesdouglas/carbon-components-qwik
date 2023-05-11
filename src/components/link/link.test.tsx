@@ -113,4 +113,15 @@ describe('Link', () => {
     const iconElement = screen.querySelector(`a > svg#${expectedIconId}`) as SVGSVGElement;
     expect(iconElement.getAttribute('id')).toEqual(expectedIconId);
   });
+
+  it('removes inapplicable props from the rendered anchor element', async () => {
+    const {screen, render} = await createDOM();
+    
+    await render(<CarbonRoot><Link renderIcon size="sm" inline>Click here</Link></CarbonRoot>);
+
+    const aElement = screen.querySelector('a') as HTMLAnchorElement;
+    expect(aElement.hasAttribute('renderIcon')).toBeFalsy();
+    expect(aElement.hasAttribute('size')).toBeFalsy();
+    expect(aElement.hasAttribute('inline')).toBeFalsy();
+  });
 });

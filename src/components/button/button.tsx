@@ -1,6 +1,7 @@
 import { Component, HTMLAttributes, PropFunction, Slot, component$, useId } from "@builder.io/qwik";
 import { IconProps } from "carbon-icons-qwik";
 import { usePrefix } from "../../internal/usePrefix";
+import { TooltipButton } from "./tooltip-button";
 
 /**
  * Props common to both button and anchor elements
