@@ -21,6 +21,17 @@ export type AnchorElementProps = {
 }
 
 /**
+ * Button sizes
+ */
+export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+
+/**
+ * Button kinds
+ */
+export type ButtonKind = 'primary' | 'secondary' | 'tertiary' | 'danger' | 'danger--primary' | 'danger--secondary' | 'danger--tertiary' |
+'ghost';
+
+/**
  * Button HTML element props (passed to an element)
  */
 export type ButtonElementProps = HTMLAttributes<HTMLButtonElement> & ButtonOrAnchorElementProps & {
@@ -42,7 +53,7 @@ export type ButtonElementProps = HTMLAttributes<HTMLButtonElement> & ButtonOrAnc
  * @property hasIconOnly - Whether the button is an icon-only button
  * @property href - Specify href if you want the button to be rendered as an anchor element
  * @property iconDescription - Label of icon (if renderIcon is true and an icon is provided in the "icon" slot)
- * @property isExpressive - Whether the button is expressive or not
+ * @property isExpressive - Whether the button is expressive (emphasized) or not
  * @property isSelected - Whether the button is selected
  * @property kind - Kind of button (primary - default, secondary, tertiary, danger, danger-primary, danger-secondary, danger-tertiary or ghost)
  * @property renderIcon - Whether to render an icon in the "icon" slot
@@ -60,11 +71,10 @@ export type ButtonProps = ButtonElementProps & {
   iconDescription?: string;
   isExpressive?: boolean;
   isSelected?: boolean;
-  kind?: 'primary' | 'secondary' | 'tertiary' | 'danger' | 'danger--primary' | 'danger--secondary' | 'danger--tertiary' |
-    'ghost',
+  kind?: ButtonKind,
   renderIcon?: Component<IconProps>;
   role?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl', 
+  size?: ButtonSize, 
   tabIndex?: number;
   tooltipAlignment?: 'start' | 'center' | 'end',
   tooltipPosition?: 'top' | 'right' | 'bottom' | 'left',
