@@ -86,7 +86,7 @@ describe('Button', () => {
   it('sets the appropriate CSS class/es and attributes if hasIconOnly (that has been selected) has been stipulated', async () => {
     const {screen, render} = await createDOM();
 
-    await render(<CarbonRoot><Button hasIconOnly isSelected kind="ghost"><Edit q:slot="icon" /></Button></CarbonRoot>);
+    await render(<CarbonRoot><Button hasIconOnly renderIcon={Edit} isSelected kind="ghost"></Button></CarbonRoot>);
 
     const btnElement = screen.querySelector('button') as HTMLButtonElement;
     expect(btnElement.classList.contains('cds--btn--icon-only'));
@@ -101,7 +101,7 @@ describe('Button', () => {
     await render(<CarbonRoot><Button href={expectedHref}>Link</Button></CarbonRoot>);
 
     const btnElement = screen.querySelector('button') as HTMLButtonElement;
-    expect(btnElement).toBeNull();
+    expect(btnElement).toBeFalsy();
     const aElement = screen.querySelector('a') as HTMLAnchorElement;
     expect(aElement.getAttribute('href')).toEqual(expectedHref);
   });

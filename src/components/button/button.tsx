@@ -1,7 +1,7 @@
 import { Component, HTMLAttributes, PropFunction, Slot, component$, useId } from "@builder.io/qwik";
 import { IconProps } from "carbon-icons-qwik";
 import { usePrefix } from "../../internal/usePrefix";
-import { TooltipButton } from "./tooltip-button";
+import { IconRenderProps } from "../../internal/icon-render-props";
 
 /**
  * Props common to both button and anchor elements
@@ -56,7 +56,7 @@ export type ButtonElementProps = HTMLAttributes<HTMLButtonElement> & ButtonOrAnc
  * @property isExpressive - Whether the button is expressive (emphasized) or not
  * @property isSelected - Whether the button is selected
  * @property kind - Kind of button (primary - default, secondary, tertiary, danger, danger-primary, danger-secondary, danger-tertiary or ghost)
- * @property renderIcon - Whether to render an icon in the "icon" slot
+ * @property renderIcon - Icon component type (e.g. Edit) if an icon is to be rendered after the content slot
  * @property role - Role
  * @property size - Size (sm, md, lg, xl, 2xl)
  * @property tabIndex - Tab index
@@ -86,7 +86,7 @@ export type ButtonProps = ButtonElementProps & {
 export const Button = component$((props: ButtonProps) => {
   const prefix = usePrefix();
 
-  const {size = 'md', isExpressive, kind = 'primary', disabled, hasIconOnly, isSelected, dangerDescription, href} = props;
+  const {size = 'md', isExpressive, kind = 'primary', disabled, hasIconOnly, renderIcon, isSelected, dangerDescription, href} = props;
 
   const classes = [`${prefix}--btn`];
   if (props.class) classes.push(props.class);
@@ -121,8 +121,14 @@ export const Button = component$((props: ButtonProps) => {
   if (href && !disabled) {
     return <a href={href} {...commonProps}><Slot /></a>;
   } else if (hasIconOnly) {
-    return <button {...buttonElementProps}>{assistiveText}<Slot name="icon" /></button>
+    const icon = renderIcon as Component<IconProps>;
+    const iconProps: IconRenderProps = {icon};
+    return <button {...buttonElementProps}>{assistiveText}<iconProps.icon size={16} /></button>
+  } else if (renderIcon) {
+    const icon = renderIcon as Component<IconProps>;
+    const iconProps: IconRenderProps = {icon};
+    return <button {...buttonElementProps}>{assistiveText}<Slot /><div class={`${prefix}--btn__icon`}><iconProps.icon size={16} /></div></button>;
   } else {
-    return <button {...buttonElementProps}>{assistiveText}<Slot /><div class={`${prefix}--btn__icon`}><Slot name="icon" /></div></button>;
+    return <button {...buttonElementProps}>{assistiveText}<Slot /><div class={`${prefix}--btn__icon`}></div></button>;
   }
 });

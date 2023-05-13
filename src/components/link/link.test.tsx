@@ -108,7 +108,7 @@ describe('Link', () => {
     const {screen, render} = await createDOM();
     const expectedIconId = 'edit_icon';
 
-    await render(<CarbonRoot><Link renderIcon>Link Text<Edit id={expectedIconId} /></Link></CarbonRoot>);
+    await render(<CarbonRoot><Link renderIcon={Edit}>Link Text<Edit id={expectedIconId} /></Link></CarbonRoot>);
 
     const iconElement = screen.querySelector(`a > svg#${expectedIconId}`) as SVGSVGElement;
     expect(iconElement.getAttribute('id')).toEqual(expectedIconId);
@@ -117,7 +117,7 @@ describe('Link', () => {
   it('removes inapplicable props from the rendered anchor element', async () => {
     const {screen, render} = await createDOM();
     
-    await render(<CarbonRoot><Link renderIcon size="sm" inline>Click here</Link></CarbonRoot>);
+    await render(<CarbonRoot><Link renderIcon={Edit} size="sm" inline>Click here</Link></CarbonRoot>);
 
     const aElement = screen.querySelector('a') as HTMLAnchorElement;
     expect(aElement.hasAttribute('renderIcon')).toBeFalsy();

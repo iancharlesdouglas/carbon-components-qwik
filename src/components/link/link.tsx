@@ -1,7 +1,8 @@
-import { PropFunction, HTMLAttributes, Slot, component$ } from "@builder.io/qwik";
+import { PropFunction, HTMLAttributes, Slot, component$, Component } from "@builder.io/qwik";
 import { usePrefix } from "../../internal/usePrefix";
-import { remove } from 'immutable';
 import { removeProps } from "../../internal/remove-props";
+import { IconProps } from "carbon-icons-qwik";
+import { IconRenderProps } from "../../internal/icon-render-props";
 
 /**
  * Anchor HTML element props
@@ -19,7 +20,7 @@ export type AnchorProps = HTMLAttributes<HTMLAnchorElement> & {
  * @property disabled - Disabled (aria-disabled is set per value)
  * @property inline - Whether generated HTML element is displayed inline (if so, any icon is not rendered)
  * @property visited - Whether visited
- * @property renderIcon - True if an icon is to be rendered in the slot named "icon"
+ * @property renderIcon - Icon component type (e.g. Edit) if an icon is to be rendered after the anchor content slot
  * @property size - Size ('sm', 'md' or 'lg' - default is 'md')
  * @property target - If "_blank" then rel is "noopener"
  * @property onClick$ - onClick handler
@@ -29,7 +30,7 @@ export type LinkProps = AnchorProps & {
   disabled?: boolean;
   inline?: boolean;
   visited?: boolean;
-  renderIcon?: boolean;
+  renderIcon?: Component<IconProps>;
   size?: 'sm' | 'md' | 'lg';
   target?: string;
   onClick$?: PropFunction<() => void>;
@@ -53,10 +54,12 @@ export const Link = component$((props: LinkProps) => {
   const anchorProps: AnchorProps = removeProps({...props, 'aria-disabled': !!disabled}, 'size', 'renderIcon', 'inline');
 
   if (renderIcon && !inline) {
+    const icon = renderIcon as Component<IconProps>;
+    const iconLinkProps: IconRenderProps = {icon};
     return <a class={classNames} rel={rel} {...anchorProps}>
-      <Slot />
-      <Slot name="icon" />
-    </a>    
+      <Slot/>
+      <iconLinkProps.icon size={20} />
+    </a>;
   } else {
     return <a class={classNames} rel={rel} {...anchorProps}>
     <Slot />
