@@ -94,6 +94,15 @@ describe('Button', () => {
     expect(btnElement.getAttribute('aria-pressed')).toEqual('true');
   });
 
+  it('renders an icon in addition to the text if stipulated', async () => {
+    const {screen, render} = await createDOM();
+
+    await render(<CarbonRoot><Button renderIcon={Edit}></Button></CarbonRoot>);
+
+    const svgElement = screen.querySelector('button svg') as SVGSVGElement;
+    expect(svgElement).toBeTruthy();
+  });
+
   it('renders an anchor if the href attribute has been set', async () => {
     const {screen, render} = await createDOM();
     const expectedHref = 'https://x.com';
@@ -104,5 +113,18 @@ describe('Button', () => {
     expect(btnElement).toBeFalsy();
     const aElement = screen.querySelector('a') as HTMLAnchorElement;
     expect(aElement.getAttribute('href')).toEqual(expectedHref);
+  });
+
+  it('removes non-standard attributes from the rendered element', async () => {
+    const {screen, render} = await createDOM();
+    const nonStdAttrs = ['size', 'dangerDescription', 'hasIconOnly', 'href', 'iconDescription', 'isExpressive', 'isSelected', 'kind', 'renderIcon', 
+    'tooltipAlignment', 'tooltipPosition'];
+
+    await render(<CarbonRoot><Button size="sm" dangerDescription='Danger' hasIconOnly iconDescription='Icon description' isExpressive 
+      isSelected kind='danger' renderIcon={Edit} tooltipAlignment='start' tooltipPosition='top'>Button</Button></CarbonRoot>);
+
+    const btnElement = screen.querySelector('button') as HTMLButtonElement;
+
+    nonStdAttrs.forEach(attr => expect(!btnElement.hasAttribute(attr)));
   });
 });

@@ -1,7 +1,8 @@
 import { Component, HTMLAttributes, PropFunction, Slot, component$, useId } from "@builder.io/qwik";
 import { IconProps } from "carbon-icons-qwik";
-import { usePrefix } from "../../internal/usePrefix";
+import { usePrefix } from "../../internal/use-prefix";
 import { IconRenderProps } from "../../internal/icon-render-props";
+import _ from 'lodash';
 
 /**
  * Props common to both button and anchor elements
@@ -108,11 +109,12 @@ export const Button = component$((props: ButtonProps) => {
   
   const commonProps = props as ButtonOrAnchorElementProps;
 
-  const buttonElementProps = {...props as ButtonElementProps, 
+  const buttonElementProps = _.omit({...props as ButtonElementProps, 
     'aria-describedby': dangerButtonKinds.includes(kind) ? assistiveId : undefined,
     'aria-pressed': hasIconOnly && kind === 'ghost',
     class: classNames
-  };
+  }, 'size', 'dangerDescription', 'hasIconOnly', 'href', 'iconDescription', 'isExpressive', 'isSelected', 'kind', 'renderIcon', 
+    'tooltipAlignment', 'tooltipPosition');
 
   const assistiveText = dangerButtonKinds.includes(kind) 
     ? <span id={assistiveId} class={`${prefix}--visually-hidden`}>{dangerDescription}</span>

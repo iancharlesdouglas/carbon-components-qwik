@@ -34,6 +34,9 @@ devDependencies:
   '@types/jsdom':
     specifier: ^21.1.1
     version: 21.1.1
+  '@types/lodash':
+    specifier: ^4.14.194
+    version: 4.14.194
   '@types/node':
     specifier: ^18.16.1
     version: 18.16.1
@@ -49,18 +52,24 @@ devDependencies:
   carbon-icons-qwik:
     specifier: ^11.19.1
     version: 11.19.1
+  classnames:
+    specifier: ^2.3.2
+    version: 2.3.2
   eslint:
     specifier: 8.39.0
     version: 8.39.0
   eslint-plugin-qwik:
     specifier: latest
-    version: 1.1.1(eslint@8.39.0)
+    version: 1.1.2(eslint@8.39.0)
   eslint-plugin-storybook:
     specifier: ^0.6.12
     version: 0.6.12(eslint@8.39.0)(typescript@5.0.4)
   immutable:
     specifier: ^4.3.0
     version: 4.3.0
+  lodash:
+    specifier: ^4.17.21
+    version: 4.17.21
   np:
     specifier: 7.6.1
     version: 7.6.1
@@ -4002,6 +4011,10 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /classnames@2.3.2:
+    resolution: {integrity: sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw==}
+    dev: true
+
   /clean-stack@2.2.0:
     resolution: {integrity: sha512-4diC9HaTE+KRAMWhDhrGOECgWZxoevMc5TlkObMqNSsVU62PYzXZ/SMTjzyGAFF1YusgxGcSWTEXBhp0CPwQ1A==}
     engines: {node: '>=6'}
@@ -4741,8 +4754,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /eslint-plugin-qwik@1.1.1(eslint@8.39.0):
-    resolution: {integrity: sha512-/8UTrugT0fym9L7gmEzWt30WJCK0bKJFAwaVr/oD4CDfl0s68CDaRWvafTsNHqDSQDVrOtCVW+U51U4zMALKmw==}
+  /eslint-plugin-qwik@1.1.2(eslint@8.39.0):
+    resolution: {integrity: sha512-zeMi7uVE50tnfmKUr/g7fznDKZohdHX45CApQP+Uu8tffTe7iHYJQJG0EBrbqF32dTQtrFV/f8KFsgoZV4P9lg==}
     engines: {node: '>=16'}
     peerDependencies:
       eslint: '>= 8'

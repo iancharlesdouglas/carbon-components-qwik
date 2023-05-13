@@ -17,5 +17,6 @@ export default defineConfig(() => {
       }
     },
     plugins: [qwikVite()],
+    publicDir: './public'
   };
 });
