@@ -1,4 +1,4 @@
-import { Slot, component$, createContextId, useContextProvider } from "@builder.io/qwik";
+import { Slot, component$, createContextId, useContextProvider } from '@builder.io/qwik';
 
 export const prefixContext = createContextId<CarbonContext>('prefix');
 
@@ -21,6 +21,6 @@ type CarbonRootProps = {
  * Root container for Carbon application
  */
 export const CarbonRoot = component$((props: CarbonRootProps) => {
-  useContextProvider<CarbonContext>(prefixContext, {prefix: props.prefix ?? 'cds'});
+  useContextProvider<CarbonContext>(prefixContext, { prefix: props.prefix ?? 'cds' });
   return <Slot />;
-})
+});

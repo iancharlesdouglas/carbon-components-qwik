@@ -1,13 +1,13 @@
-import { Component, HTMLAttributes, PropFunction, Slot, component$, useId } from "@builder.io/qwik";
-import { IconProps } from "carbon-icons-qwik";
-import { usePrefix } from "../../internal/use-prefix";
-import { IconRenderProps } from "../../internal/icon-render-props";
+import { Component, HTMLAttributes, PropFunction, Slot, component$, useId } from '@builder.io/qwik';
+import { IconProps } from 'carbon-icons-qwik';
+import { usePrefix } from '../../internal/use-prefix';
+import { IconRenderProps } from '../../internal/icon-render-props';
 import _ from 'lodash';
 
 /**
  * Props common to both button and anchor elements
- * @property tabIndex - Tab index
- * @property class - Class name
+ * @property {number} tabIndex - Tab index
+ * @property {string} class - Class name
  */
 export type ButtonOrAnchorElementProps = {
   tabIndex?: number;
@@ -19,7 +19,7 @@ export type ButtonOrAnchorElementProps = {
  */
 export type AnchorElementProps = {
   href?: string;
-}
+};
 
 /**
  * Button sizes
@@ -29,41 +29,41 @@ export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 /**
  * Button kinds
  */
-export type ButtonKind = 'primary' | 'secondary' | 'tertiary' | 'danger' | 'danger--primary' | 'danger--secondary' | 'danger--tertiary' |
-'ghost';
+export type ButtonKind = 'primary' | 'secondary' | 'tertiary' | 'danger' | 'danger--primary' | 'danger--secondary' | 'danger--tertiary' | 'ghost';
 
 /**
  * Button HTML element props (passed to an element)
  */
-export type ButtonElementProps = HTMLAttributes<HTMLButtonElement> & ButtonOrAnchorElementProps & {
-  disabled?: boolean;
-  type?: 'button' | 'reset' | 'submit';
-  'aria-describedby'?: string;
-  'aria-pressed'?: string;
-  onBlur$?: PropFunction<() => void>;
-  onClick$?: PropFunction<() => void>;
-  onFocus$?: PropFunction<() => void>;
-  onMouseEnter$?: PropFunction<(ev: MouseEvent) => void>;
-  onMouseLeave$?: PropFunction<(ev: MouseEvent) => void>;
-};
+export type ButtonElementProps = HTMLAttributes<HTMLButtonElement> &
+  ButtonOrAnchorElementProps & {
+    disabled?: boolean;
+    type?: 'button' | 'reset' | 'submit';
+    'aria-describedby'?: string;
+    'aria-pressed'?: string;
+    onBlur$?: PropFunction<() => void>;
+    onClick$?: PropFunction<() => void>;
+    onFocus$?: PropFunction<() => void>;
+    onMouseEnter$?: PropFunction<(ev: MouseEvent) => void>;
+    onMouseLeave$?: PropFunction<(ev: MouseEvent) => void>;
+  };
 
 /**
  * Button props
- * @property dangerDescription - Message read by screen readers for the danger button variant
- * @property disabled - Disabled (aria-disabled is set per value)
- * @property hasIconOnly - Whether the button is an icon-only button
- * @property href - Specify href if you want the button to be rendered as an anchor element
- * @property iconDescription - Label of icon (if renderIcon is true and an icon is provided in the "icon" slot)
- * @property isExpressive - Whether the button is expressive (emphasized) or not
- * @property isSelected - Whether the button is selected
- * @property kind - Kind of button (primary - default, secondary, tertiary, danger, danger-primary, danger-secondary, danger-tertiary or ghost)
- * @property renderIcon - Icon component type (e.g. Edit) if an icon is to be rendered after the content slot
- * @property role - Role
- * @property size - Size (sm, md, lg, xl, 2xl)
- * @property tabIndex - Tab index
- * @property tooltipAlignment - Tooltip alignment (start, center or end)
- * @property tooltipPosition - Tooltip position (top, right, bottom or left)
- * @property type - Button type (button - default, reset or submit)
+ * @property {string} dangerDescription - Message read by screen readers for the danger button variant
+ * @property {boolean} disabled - Disabled (aria-disabled is set per value)
+ * @property {boolean} hasIconOnly - Whether the button is an icon-only button
+ * @property {string} href - Specify href if you want the button to be rendered as an anchor element
+ * @property {string} iconDescription - Label of icon (if renderIcon is true and an icon is provided in the "icon" slot)
+ * @property {boolean} isExpressive - Whether the button is expressive (emphasized) or not
+ * @property {boolean} isSelected - Whether the button is selected
+ * @property {ButtonKind} kind - Kind of button (primary - default, secondary, tertiary, danger, danger-primary, danger-secondary, danger-tertiary or ghost)
+ * @property {Component<IconProps>} renderIcon - Icon component type (e.g. Edit) if an icon is to be rendered after the content slot
+ * @property {string} role - Role
+ * @property {ButtonSize} size - Size (sm, md, lg, xl, 2xl)
+ * @property {number} tabIndex - Tab index
+ * @property {string} tooltipAlignment - Tooltip alignment (start, center or end)
+ * @property {string} tooltipPosition - Tooltip position (top, right, bottom or left)
+ * @property {string} type - Button type (button - default, reset or submit)
  */
 export type ButtonProps = ButtonElementProps & {
   dangerDescription?: string;
@@ -72,13 +72,13 @@ export type ButtonProps = ButtonElementProps & {
   iconDescription?: string;
   isExpressive?: boolean;
   isSelected?: boolean;
-  kind?: ButtonKind,
+  kind?: ButtonKind;
   renderIcon?: Component<IconProps>;
   role?: string;
-  size?: ButtonSize, 
+  size?: ButtonSize;
   tabIndex?: number;
-  tooltipAlignment?: 'start' | 'center' | 'end',
-  tooltipPosition?: 'top' | 'right' | 'bottom' | 'left',
+  tooltipAlignment?: 'start' | 'center' | 'end';
+  tooltipPosition?: 'top' | 'right' | 'bottom' | 'left';
 };
 
 /**
@@ -87,7 +87,7 @@ export type ButtonProps = ButtonElementProps & {
 export const Button = component$((props: ButtonProps) => {
   const prefix = usePrefix();
 
-  const {size = 'md', isExpressive, kind = 'primary', disabled, hasIconOnly, renderIcon, isSelected, dangerDescription, href} = props;
+  const { size = 'md', isExpressive, kind = 'primary', disabled, hasIconOnly, renderIcon, isSelected, dangerDescription, href } = props;
 
   const classes = [`${prefix}--btn`];
   if (props.class) classes.push(props.class);
@@ -106,31 +106,69 @@ export const Button = component$((props: ButtonProps) => {
   const dangerButtonKinds = ['danger', 'danger--tertiary', 'danger--ghost'];
 
   const assistiveId = useId();
-  
+
   const commonProps = props as ButtonOrAnchorElementProps;
 
-  const buttonElementProps = _.omit({...props as ButtonElementProps, 
-    'aria-describedby': dangerButtonKinds.includes(kind) ? assistiveId : undefined,
-    'aria-pressed': hasIconOnly && kind === 'ghost',
-    class: classNames
-  }, 'size', 'dangerDescription', 'hasIconOnly', 'href', 'iconDescription', 'isExpressive', 'isSelected', 'kind', 'renderIcon', 
-    'tooltipAlignment', 'tooltipPosition');
+  const buttonElementProps = _.omit(
+    {
+      ...props,
+      'aria-describedby': dangerButtonKinds.includes(kind) ? assistiveId : undefined,
+      'aria-pressed': hasIconOnly && kind === 'ghost',
+      class: classNames,
+    },
+    'size',
+    'dangerDescription',
+    'hasIconOnly',
+    'href',
+    'iconDescription',
+    'isExpressive',
+    'isSelected',
+    'kind',
+    'renderIcon',
+    'tooltipAlignment',
+    'tooltipPosition'
+  );
 
-  const assistiveText = dangerButtonKinds.includes(kind) 
-    ? <span id={assistiveId} class={`${prefix}--visually-hidden`}>{dangerDescription}</span>
-    : undefined;
+  const assistiveText = dangerButtonKinds.includes(kind) ? (
+    <span id={assistiveId} class={`${prefix}--visually-hidden`}>
+      {dangerDescription}
+    </span>
+  ) : undefined;
 
   if (href && !disabled) {
-    return <a href={href} {...commonProps}><Slot /></a>;
+    return (
+      <a href={href} {...commonProps}>
+        <Slot />
+      </a>
+    );
   } else if (hasIconOnly) {
-    const icon = renderIcon as Component<IconProps>;
-    const iconProps: IconRenderProps = {icon};
-    return <button {...buttonElementProps}>{assistiveText}<iconProps.icon size={16} /></button>
+    const icon: Component<IconProps> = renderIcon as Component<IconProps>;
+    const iconProps: IconRenderProps = { icon };
+    return (
+      <button {...buttonElementProps}>
+        {assistiveText}
+        <iconProps.icon size={16} />
+      </button>
+    );
   } else if (renderIcon) {
     const icon = renderIcon as Component<IconProps>;
-    const iconProps: IconRenderProps = {icon};
-    return <button {...buttonElementProps}>{assistiveText}<Slot /><div class={`${prefix}--btn__icon`}><iconProps.icon size={16} /></div></button>;
+    const iconProps: IconRenderProps = { icon };
+    return (
+      <button {...buttonElementProps}>
+        {assistiveText}
+        <Slot />
+        <div class={`${prefix}--btn__icon`}>
+          <iconProps.icon size={16} />
+        </div>
+      </button>
+    );
   } else {
-    return <button {...buttonElementProps}>{assistiveText}<Slot /><div class={`${prefix}--btn__icon`}></div></button>;
+    return (
+      <button {...buttonElementProps}>
+        {assistiveText}
+        <Slot />
+        <div class={`${prefix}--btn__icon`}></div>
+      </button>
+    );
   }
 });

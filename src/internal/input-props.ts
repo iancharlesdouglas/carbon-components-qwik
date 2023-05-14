@@ -16,7 +16,7 @@ export type InputProps = {
   invalidText?: string;
   warn?: boolean;
   warnText?: string;
-}
+};
 
 /**
  * Normalized input props
@@ -34,4 +34,4 @@ export type NormalizedInputProps = {
   warn: boolean;
   warnId: string;
   helperId: string;
-}
+};
