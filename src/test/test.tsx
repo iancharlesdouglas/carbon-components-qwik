@@ -21,18 +21,18 @@ const Test = component$(() => {
         value={textValue}
         data-x="x"
         type="text"
-        renderSize="sm"
+        renderSize="md"
         labelText="Label"
-        hideLabel
+        hideLabel={false}
         helperText="Helper text"
-        inline
-        invalid
+        inline={false}
+        invalid={false}
         invalidText="Invalid text"
-        readOnly
+        readOnly={false}
         warn
         warnText="Warning text"
         enableCounter
-        maxCount={10}
+        maxCount={20}
         onChange$={$((event: QwikChangeEvent<HTMLInputElement>) => alert(`Length: ${event.target.value.length}`))}
       />
     </CarbonRoot>

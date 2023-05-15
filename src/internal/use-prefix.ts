@@ -1,5 +1,5 @@
 import { useContext } from '@builder.io/qwik';
-import { prefixContext } from '../components/carbon-root/carbon-root';
+import { prefixContext } from '../contexts/carbon-context';
 
 /**
  * Prefix for styled elements

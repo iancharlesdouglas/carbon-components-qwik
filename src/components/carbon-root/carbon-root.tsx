@@ -1,19 +1,9 @@
-import { Slot, component$, createContextId, useContextProvider } from '@builder.io/qwik';
+import { Slot, component$, useContextProvider } from '@builder.io/qwik';
+import { CarbonContext, prefixContext } from '../../contexts/carbon-context';
+import { FormContext, formContext } from '../../contexts/form-context';
 
 /**
- * Context ID for prefix
- */
-export const prefixContext = createContextId<CarbonContext>('prefix');
-
-/**
- * Carbon context
- */
-type CarbonContext = {
-  prefix: string;
-};
-
-/**
- * Properties for CarbonRoot
+ * Properties for CarbonRoot component
  * @property {string} prefix - Prefix - defaults to 'cds'
  */
 type CarbonRootProps = {
@@ -21,9 +11,10 @@ type CarbonRootProps = {
 };
 
 /**
- * Root container for Carbon application
+ * Root component for Carbon application
  */
 export const CarbonRoot = component$((props: CarbonRootProps) => {
   useContextProvider<CarbonContext>(prefixContext, { prefix: props.prefix ?? 'cds' });
+  useContextProvider<FormContext>(formContext, { isFluid: false });
   return <Slot />;
 });

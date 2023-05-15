@@ -1,8 +1,10 @@
-import { PropFunction, QwikChangeEvent, QwikMouseEvent, component$, useSignal, $, QwikIntrinsicElements } from '@builder.io/qwik';
+import { PropFunction, QwikChangeEvent, QwikMouseEvent, component$, useSignal, $, QwikIntrinsicElements, useContext, Component } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/use-prefix';
 import { useNormalizedInputProps } from '../../internal/use-normalized-input-props';
 import classNames from 'classnames';
 import _ from 'lodash';
+import { formContext } from '../../contexts/form-context';
+import { IconProps, WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
 
 /**
  * Text input component size
@@ -16,7 +18,7 @@ export type TextInputProps = QwikIntrinsicElements['input'] & {
   class?: string;
   disabled?: boolean;
   helperText?: string;
-  hideLabsel?: boolean;
+  hideLabel?: boolean;
   inline?: boolean;
   invalid?: boolean;
   invalidText?: string;
@@ -108,6 +110,22 @@ export const TextInput = component$((props: TextInputProps) => {
     maxLength,
   };
 
+  const invalidProps = {
+    invalid: normalizedProps.invalid,
+    invalidId: normalizedProps.invalidId,
+    'data-invalid': normalizedProps.invalid,
+    'aria-invalid': normalizedProps.invalid,
+    'aria-describedby': normalizedProps.invalidId,
+  };
+
+  const warnProps = {
+    warn: normalizedProps.warn,
+    warnId: normalizedProps.warnId,
+    'aria-describedby': normalizedProps.warnId,
+  };
+
+  const invalidOrWarnProps = normalizedProps.invalid ? invalidProps : warnProps;
+
   const inputWrapperClasses = classNames(`${prefix}--form-item`, `${prefix}--text-input-wrapper`, {
     [`${prefix}--text-input-wrapper--readonly`]: readOnly,
     [`${prefix}--text-input-wrapper--inline`]: inline,
@@ -144,7 +162,7 @@ export const TextInput = component$((props: TextInputProps) => {
     [`${prefix}--text-input__label-counter`]: true,
   });
 
-  const Counter = component$(() => (enableCounter && maxCount ? <div class={counterClasses}>{`${textCount}/${maxCount}`}</div> : null));
+  const Counter = component$(() => (enableCounter && maxCount ? <div class={counterClasses}>{`${textCount.value}/${maxCount}`}</div> : null));
 
   const LabelWrapper = component$(() => (
     <div class={`${prefix}--text-input__label-wrapper`}>
@@ -155,9 +173,31 @@ export const TextInput = component$((props: TextInputProps) => {
     </div>
   ));
 
-  // helper text component
-  // validation message component
-  // isFluid from FormContext
+  const HelperText = component$(() =>
+    helperText ? (
+      <div id={normalizedProps.helperId} class={helperTextClasses}>
+        {helperText}
+      </div>
+    ) : null
+  );
+
+  const ValidationMessage = component$(() => (
+    <div class={`${prefix}--form-requirement`} id={normalizedProps.invalid ? normalizedProps.invalidId : normalizedProps.warnId}>
+      {normalizedProps.invalid ? invalidText : warnText}
+    </div>
+  ));
+
+  const { isFluid } = useContext(formContext);
+
+  let hint: { Icon: Component<IconProps> } = { Icon: component$(() => <></>) };
+  let renderIcon = false;
+  if (normalizedProps.invalid) {
+    hint = { Icon: WarningFilled };
+    renderIcon = true;
+  } else if (normalizedProps.warn) {
+    hint = { Icon: WarningAltFilled };
+    renderIcon = true;
+  }
 
   const sanitisedProps = _.omit(
     props,
@@ -174,13 +214,30 @@ export const TextInput = component$((props: TextInputProps) => {
     'maxCount'
   );
 
-  // return <div class={inputWrapperClasses}>
-  //   {!inline ? (
-  //     <LabelWrapper />
-  //   ) : (
-  //     <div class={`${prefix}--text-input__label-helper-wrapper`}
-  //   )}
-  // </div>;
+  const sanitisedInvalidOrWarnProps = _.omit(invalidOrWarnProps, 'invalid', 'warn', 'invalidId', 'warnId');
 
-  return <input {...sanitisedProps} class={classes} {...sharedTextInputProps} />;
+  return (
+    <div class={inputWrapperClasses}>
+      {!inline ? (
+        <LabelWrapper />
+      ) : (
+        <div class={`${prefix}--text-input__label-helper-wrapper`}>
+          <LabelWrapper />
+          {!isFluid && (normalizedProps.invalid || normalizedProps.warn) && <ValidationMessage />}
+          {!isFluid && !normalizedProps.invalid && !normalizedProps.warn && <HelperText />}
+        </div>
+      )}
+      <div class={fieldOuterWrapperClasses}>
+        <div class={fieldWrapperClasses} data-invalid={normalizedProps.invalid || null}>
+          {renderIcon && <hint.Icon class={iconClasses} />}
+          <input {...sanitisedProps} class={classes} {...sharedTextInputProps} {...sanitisedInvalidOrWarnProps} />
+          {isFluid && <hr class={`${prefix}--text-input__divider`} />}
+          {isFluid && !inline && (normalizedProps.invalid || normalizedProps.warn) && <ValidationMessage />}
+          {isFluid && !inline && !normalizedProps.invalid && !normalizedProps.warn && <HelperText />}
+        </div>
+        {!isFluid && !inline && (normalizedProps.invalid || normalizedProps.warn) && <ValidationMessage />}
+        {!isFluid && !inline && !normalizedProps.invalid && !normalizedProps.warn && <HelperText />}
+      </div>
+    </div>
+  );
 });
