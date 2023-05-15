@@ -3,6 +3,7 @@ import { IconProps } from 'carbon-icons-qwik';
 import { usePrefix } from '../../internal/use-prefix';
 import { IconRenderProps } from '../../internal/icon-render-props';
 import _ from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Props common to both button and anchor elements
@@ -82,26 +83,27 @@ export type ButtonProps = ButtonElementProps & {
 };
 
 /**
- * Button element
+ * Button component
  */
 export const Button = component$((props: ButtonProps) => {
   const prefix = usePrefix();
 
-  const { size = 'md', isExpressive, kind = 'primary', disabled, hasIconOnly, renderIcon, isSelected, dangerDescription, href } = props;
+  const { class: className, size = 'md', isExpressive, kind = 'primary', disabled, hasIconOnly, renderIcon, isSelected, dangerDescription, href } = props;
 
-  const classes = [`${prefix}--btn`];
-  if (props.class) classes.push(props.class);
-  if (size === 'sm' && !isExpressive) classes.push(`${prefix}--btn--sm`);
-  if (size === 'md' && !isExpressive) classes.push(`${prefix}--btn--md`);
-  if (size === 'lg' && !isExpressive) classes.push(`${prefix}--btn--lg`);
-  if (size === 'xl') classes.push(`${prefix}--btn--xl`);
-  if (size === '2xl') classes.push(`${prefix}--btn--2xl`);
-  classes.push(`${prefix}--btn--${kind}`);
-  if (disabled) classes.push(`${prefix}--btn--disabled`);
-  if (isExpressive) classes.push(`${prefix}--btn--expressive`);
-  if (hasIconOnly) classes.push(`${prefix}--btn--icon-only`);
-  if (hasIconOnly && isSelected && kind === 'ghost') classes.push(`${prefix}--btn--selected`);
-  const classNames = classes.join(' ');
+  const classes = classNames(
+    `${prefix}--btn`,
+    className,
+    { [`${prefix}--btn--sm`]: size === 'sm' && !isExpressive },
+    { [`${prefix}--btn--md`]: size === 'md' && !isExpressive },
+    { [`${prefix}--btn--lg`]: size === 'lg' && !isExpressive },
+    { [`${prefix}--btn--xl`]: size === 'xl' },
+    { [`${prefix}--btn--2xl`]: size === '2xl' },
+    `${prefix}--btn--${kind}`,
+    { [`${prefix}--btn--disabled`]: !!disabled },
+    { [`${prefix}--btn--expressive`]: !!isExpressive },
+    { [`${prefix}--btn--icon-only`]: !!hasIconOnly },
+    { [`${prefix}--btn--selected`]: hasIconOnly && isSelected && kind === 'ghost' }
+  );
 
   const dangerButtonKinds = ['danger', 'danger--tertiary', 'danger--ghost'];
 
@@ -114,7 +116,7 @@ export const Button = component$((props: ButtonProps) => {
       ...props,
       'aria-describedby': dangerButtonKinds.includes(kind) ? assistiveId : undefined,
       'aria-pressed': hasIconOnly && kind === 'ghost',
-      class: classNames,
+      class: classes,
     },
     'size',
     'dangerDescription',

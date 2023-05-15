@@ -3,6 +3,7 @@ import { usePrefix } from '../../internal/use-prefix';
 import { IconProps } from 'carbon-icons-qwik';
 import { IconRenderProps } from '../../internal/icon-render-props';
 import _ from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Anchor HTML element props
@@ -37,19 +38,21 @@ export type LinkProps = AnchorProps & {
 };
 
 /**
- * Link (anchor element in HTML)
+ * Link component (anchor element in HTML)
  */
 export const Link = component$((props: LinkProps) => {
   const prefix = usePrefix();
 
-  const classes = [`${prefix}--link`];
-  if (props.class) classes.push(props.class);
-  const { disabled, target, inline, visited, size, renderIcon } = props;
-  if (disabled) classes.push(`${prefix}--link--disabled`);
-  if (inline) classes.push(`${prefix}--link--inline`);
-  if (visited) classes.push(`${prefix}--link--visited`);
-  if (size) classes.push(`${prefix}--link--${size}`);
-  const classNames = classes.join(' ');
+  const { class: customClass, disabled, target, inline, visited, size, renderIcon } = props;
+
+  const classes = classNames(
+    `${prefix}--link`,
+    customClass,
+    { [`${prefix}--link--disabled`]: disabled },
+    { [`${prefix}--link--inline`]: inline },
+    { [`${prefix}--link--visited`]: visited },
+    { [`${prefix}--link--${size}`]: size }
+  );
   const rel = target === '_blank' ? 'noopener' : undefined;
   const anchorProps: AnchorProps = _.omit({ ...props, 'aria-disabled': !!disabled }, 'size', 'renderIcon', 'inline');
 
@@ -57,14 +60,14 @@ export const Link = component$((props: LinkProps) => {
     const icon = renderIcon as Component<IconProps>;
     const iconLinkProps: IconRenderProps = { icon };
     return (
-      <a class={classNames} rel={rel} {...anchorProps}>
+      <a class={classes} rel={rel} {...anchorProps}>
         <Slot />
         <iconLinkProps.icon size={20} />
       </a>
     );
   } else {
     return (
-      <a class={classNames} rel={rel} {...anchorProps}>
+      <a class={classes} rel={rel} {...anchorProps}>
         <Slot />
       </a>
     );

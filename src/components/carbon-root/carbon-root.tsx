@@ -1,5 +1,8 @@
 import { Slot, component$, createContextId, useContextProvider } from '@builder.io/qwik';
 
+/**
+ * Context ID for prefix
+ */
 export const prefixContext = createContextId<CarbonContext>('prefix');
 
 /**
@@ -11,7 +14,7 @@ type CarbonContext = {
 
 /**
  * Properties for CarbonRoot
- * @property prefix - Prefix - defaults to 'cds'
+ * @property {string} prefix - Prefix - defaults to 'cds'
  */
 type CarbonRootProps = {
   prefix?: string;
