@@ -168,8 +168,8 @@ export const TextInput = component$((props: TextInputProps) => {
     <div class={`${prefix}--text-input__label-wrapper`}>
       <label for={id} class={labelClasses}>
         {labelText}
-        <Counter />
       </label>
+      <Counter />
     </div>
   ));
 
@@ -229,7 +229,7 @@ export const TextInput = component$((props: TextInputProps) => {
       )}
       <div class={fieldOuterWrapperClasses}>
         <div class={fieldWrapperClasses} data-invalid={normalizedProps.invalid || null}>
-          {renderIcon && <hint.Icon class={iconClasses} />}
+          {renderIcon && <hint.Icon class={iconClasses} size={16} />}
           <input {...sanitisedProps} class={classes} {...sharedTextInputProps} {...sanitisedInvalidOrWarnProps} />
           {isFluid && <hr class={`${prefix}--text-input__divider`} />}
           {isFluid && !inline && (normalizedProps.invalid || normalizedProps.warn) && <ValidationMessage />}

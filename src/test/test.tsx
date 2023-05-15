@@ -1,7 +1,7 @@
-import { Component, component$, useSignal, $, QwikChangeEvent } from '@builder.io/qwik';
+import { component$, $, QwikChangeEvent } from '@builder.io/qwik';
 import { CarbonRoot } from '../components/carbon-root/carbon-root';
-import { Link, LinkProps } from '../components/link/link';
-import { Add, Copy, Edit, IconProps } from 'carbon-icons-qwik';
+import { Link } from '../components/link/link';
+import { Add, Edit } from 'carbon-icons-qwik';
 import { Button } from '../components/button/button';
 import { TextInput } from '../components/text-input/text-input';
 
@@ -21,15 +21,15 @@ const Test = component$(() => {
         value={textValue}
         data-x="x"
         type="text"
-        renderSize="md"
+        renderSize="sm"
         labelText="Label"
         hideLabel={false}
         helperText="Helper text"
         inline={false}
-        invalid={false}
+        invalid
         invalidText="Invalid text"
         readOnly={false}
-        warn
+        warn={false}
         warnText="Warning text"
         enableCounter
         maxCount={20}
