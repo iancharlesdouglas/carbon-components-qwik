@@ -1,4 +1,4 @@
-import { PropFunction, QwikChangeEvent, QwikMouseEvent, component$, useSignal, $, QwikIntrinsicElements, useContext, Component } from '@builder.io/qwik';
+import { $, PropFunction, QwikChangeEvent, QwikMouseEvent, component$, useSignal, QwikIntrinsicElements, useContext, Component } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/use-prefix';
 import { useNormalizedInputProps } from '../../internal/use-normalized-input-props';
 import classNames from 'classnames';
@@ -50,8 +50,6 @@ export const TextInput = component$((props: TextInputProps) => {
     invalid = false,
     invalidText,
     labelText,
-    onChange$,
-    onClick$,
     placeholder,
     readOnly,
     renderSize = 'md',
@@ -90,14 +88,12 @@ export const TextInput = component$((props: TextInputProps) => {
     onChange$: $((event: QwikChangeEvent<HTMLInputElement>, element: HTMLInputElement) => {
       if (!normalizedProps.disabled) {
         textCount.value = event.target.value?.length;
-        if (onChange$) {
-          onChange$(event, element);
-        }
+        props.onChange$ && props.onChange$(event, element);
       }
     }),
     onClick$: $((event: QwikMouseEvent<HTMLInputElement, MouseEvent>, element: HTMLInputElement) => {
-      if (!normalizedProps.disabled && onClick$) {
-        onClick$(event, element);
+      if (!normalizedProps.disabled && props.onClick$) {
+        props.onClick$!(event, element);
       }
     }),
     placeholder,
@@ -162,14 +158,12 @@ export const TextInput = component$((props: TextInputProps) => {
     [`${prefix}--text-input__label-counter`]: true,
   });
 
-  const Counter = component$(() => (enableCounter && maxCount ? <div class={counterClasses}>{`${textCount.value}/${maxCount}`}</div> : null));
-
   const LabelWrapper = component$(() => (
     <div class={`${prefix}--text-input__label-wrapper`}>
       <label for={id} class={labelClasses}>
         {labelText}
       </label>
-      <Counter />
+      {enableCounter && maxCount ? <div class={counterClasses}>{`${textCount.value}/${maxCount}`}</div> : null}
     </div>
   ));
 
@@ -199,7 +193,7 @@ export const TextInput = component$((props: TextInputProps) => {
     renderIcon = true;
   }
 
-  const sanitisedProps = _.omit(
+  const sanitizedProps = _.omit(
     props,
     'renderSize',
     'labelText',
@@ -214,7 +208,7 @@ export const TextInput = component$((props: TextInputProps) => {
     'maxCount'
   );
 
-  const sanitisedInvalidOrWarnProps = _.omit(invalidOrWarnProps, 'invalid', 'warn', 'invalidId', 'warnId');
+  const sanitizedInvalidOrWarnProps = _.omit(invalidOrWarnProps, 'invalid', 'warn', 'invalidId', 'warnId');
 
   return (
     <div class={inputWrapperClasses}>
@@ -230,7 +224,7 @@ export const TextInput = component$((props: TextInputProps) => {
       <div class={fieldOuterWrapperClasses}>
         <div class={fieldWrapperClasses} data-invalid={normalizedProps.invalid || null}>
           {renderIcon && <hint.Icon class={iconClasses} size={16} />}
-          <input {...sanitisedProps} class={classes} {...sharedTextInputProps} {...sanitisedInvalidOrWarnProps} />
+          <input {...sanitizedProps} class={classes} {...sharedTextInputProps} {...sanitizedInvalidOrWarnProps} />
           {isFluid && <hr class={`${prefix}--text-input__divider`} />}
           {isFluid && !inline && (normalizedProps.invalid || normalizedProps.warn) && <ValidationMessage />}
         </div>

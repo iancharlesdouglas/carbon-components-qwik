@@ -4,7 +4,7 @@ import { Link } from '../components/link/link';
 import { Add, Edit } from 'carbon-icons-qwik';
 import { Button } from '../components/button/button';
 import { TextInput } from '../components/text-input/text-input';
-import { FluidForm } from '../components/fluid-form/fluid-form';
+import { Form } from '../components/form/form';
 
 const Test = component$(() => {
   const textValue = 'Test value';
@@ -18,7 +18,7 @@ const Test = component$(() => {
         <Add q:slot="icon" size={16} />
       </Button>
       <Button href="https://github.com">Link button</Button>
-      <FluidForm>
+      <Form>
         <TextInput
           value={textValue}
           data-x="x"
@@ -28,16 +28,17 @@ const Test = component$(() => {
           hideLabel={false}
           helperText="Helper text"
           inline={false}
-          invalid={false}
+          invalid
           invalidText="Invalid text"
           readOnly={false}
-          warn={false}
+          warn
           warnText="Warning text"
+          class="blah"
           enableCounter={false}
           maxCount={20}
           onChange$={$((event: QwikChangeEvent<HTMLInputElement>) => alert(`Length: ${event.target.value.length}`))}
         />
-      </FluidForm>
+      </Form>
     </CarbonRoot>
   );
 });

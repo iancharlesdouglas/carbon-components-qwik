@@ -2,6 +2,7 @@ import { createDOM } from '@builder.io/qwik/testing';
 import { describe, expect, it } from 'vitest';
 import { CarbonRoot } from '../carbon-root/carbon-root';
 import { TextInput } from './text-input';
+import { Form } from '../form/form';
 
 describe('TextInput', () => {
   it('renders default CSS class, custom CSS class, invalid and warning classes and size class as stipulated', async () => {
@@ -10,11 +11,13 @@ describe('TextInput', () => {
 
     await render(
       <CarbonRoot>
-        <TextInput class={customClass} invalid warn />
+        <Form>
+          <TextInput class={customClass} invalid warn />
+        </Form>
       </CarbonRoot>
     );
 
-    const inputElement = screen.querySelector('input') as HTMLInputElement;
+    const inputElement = screen.querySelectorAll('input')[0] as HTMLInputElement;
     const expectedClasses = ['cds--text-input', 'cds--text-input--md', 'cds--text-input--invalid', 'cds--text-input--warning'];
     expectedClasses.forEach((className) => expect(inputElement.classList.contains(className)));
   });
@@ -37,25 +40,29 @@ describe('TextInput', () => {
 
     await render(
       <CarbonRoot>
-        <TextInput
-          type="text"
-          renderSize="sm"
-          labelText="Label"
-          hideLabel
-          helperText="Helper text"
-          inline
-          invalid
-          invalidText="Invalid text"
-          readOnly
-          warn
-          warnText="Warning text"
-          enableCounter
-          maxCount={10}
-        />
+        <Form>
+          <TextInput
+            type="text"
+            renderSize="sm"
+            labelText="Label"
+            hideLabel
+            helperText="Helper text"
+            inline
+            invalid
+            invalidText="Invalid text"
+            readOnly
+            warn
+            warnText="Warning text"
+            enableCounter
+            maxCount={10}
+          />
+        </Form>
       </CarbonRoot>
     );
 
     const inputElement = screen.querySelector('input') as HTMLInputElement;
     nonStdProps.forEach((propName) => expect(!inputElement.hasAttribute(propName)));
   });
+
+  it('renders invalid or warning state such that they are mutually exclusive', async () => {});
 });

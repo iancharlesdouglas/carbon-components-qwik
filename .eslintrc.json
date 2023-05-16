@@ -54,7 +54,7 @@
         "identifiers": true,
         "templates": true,
         "lang": "en_US",
-        "skipWords": ["assistive", "cds", "describedby", "href", "msg", "noopener", "qwik", "tooltip", "2xl"],
+        "skipWords": ["assistive", "cds", "describedby", "href", "msg", "noopener", "qwik", "readonly", "svg", "tooltip", "2xl"],
         "skipIfMatch": ["http://[^s]*", "^[-\\w]+/[-\\w\\.]+$"],
         "skipWordIfMatch": ["^foobar.*$"],
         "minLength": 3

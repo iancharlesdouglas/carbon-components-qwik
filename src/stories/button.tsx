@@ -1,6 +1,6 @@
-import type { PropFunction, QwikMouseEvent } from "@builder.io/qwik";
-import { component$, useStylesScoped$ } from "@builder.io/qwik";
-import buttonStyles from "./button.css?inline";
+import type { PropFunction, QwikMouseEvent } from '@builder.io/qwik';
+import { component$, useStylesScoped$ } from '@builder.io/qwik';
+import buttonStyles from './button.css?inline';
 
 export interface ButtonProps {
   /**
@@ -14,7 +14,7 @@ export interface ButtonProps {
   /**
    * How large should the button be?
    */
-  size?: "small" | "medium" | "large";
+  size?: 'small' | 'medium' | 'large';
   /**
    * Button contents
    */
@@ -25,38 +25,25 @@ export interface ButtonProps {
   onClick$?: PropFunction<onClickEvent> | undefined;
 }
 
-export const getClassForSize = (size: "small" | "medium" | "large") => {
+export const getClassForSize = (size: 'small' | 'medium' | 'large') => {
   switch (size) {
-    case "small":
-      return "storybook-button--small";
-    case "medium":
-      return "storybook-button--medium";
-    case "large":
-      return "storybook-button--large";
+    case 'small':
+      return 'storybook-button--small';
+    case 'medium':
+      return 'storybook-button--medium';
+    case 'large':
+      return 'storybook-button--large';
   }
 };
 
-export type onClickEvent = (
-  event: QwikMouseEvent<HTMLButtonElement, MouseEvent>,
-  element: Element
-) => void;
+export type onClickEvent = (event: QwikMouseEvent<HTMLButtonElement, MouseEvent>, element: Element) => void;
 
-export const Button = component$<ButtonProps>(
-  ({ primary = false, size = "medium", backgroundColor, label, onClick$ }) => {
-    useStylesScoped$(buttonStyles);
-    const classes = [
-      "storybook-button",
-      primary ? "storybook-button--primary" : "storybook-button--secondary",
-      getClassForSize(size),
-    ];
-    return (
-      <button
-        class={classes}
-        style={backgroundColor ? { backgroundColor } : {}}
-        onClick$={onClick$}
-      >
-        {label}
-      </button>
-    );
-  }
-);
+export const Button = component$<ButtonProps>(({ primary = false, size = 'medium', backgroundColor, label, onClick$ }) => {
+  useStylesScoped$(buttonStyles);
+  const classes = ['storybook-button', primary ? 'storybook-button--primary' : 'storybook-button--secondary', getClassForSize(size)];
+  return (
+    <button class={classes} style={backgroundColor ? { backgroundColor } : {}} onClick$={onClick$}>
+      {label}
+    </button>
+  );
+});
