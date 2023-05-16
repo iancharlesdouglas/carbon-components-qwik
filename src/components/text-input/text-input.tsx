@@ -233,7 +233,6 @@ export const TextInput = component$((props: TextInputProps) => {
           <input {...sanitisedProps} class={classes} {...sharedTextInputProps} {...sanitisedInvalidOrWarnProps} />
           {isFluid && <hr class={`${prefix}--text-input__divider`} />}
           {isFluid && !inline && (normalizedProps.invalid || normalizedProps.warn) && <ValidationMessage />}
-          {isFluid && !inline && !normalizedProps.invalid && !normalizedProps.warn && <HelperText />}
         </div>
         {!isFluid && !inline && (normalizedProps.invalid || normalizedProps.warn) && <ValidationMessage />}
         {!isFluid && !inline && !normalizedProps.invalid && !normalizedProps.warn && <HelperText />}
