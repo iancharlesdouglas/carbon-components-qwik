@@ -5,6 +5,7 @@ import { Add, Edit } from 'carbon-icons-qwik';
 import { Button } from '../components/button/button';
 import { TextInput } from '../components/text-input/text-input';
 import { Form } from '../components/form/form';
+import { Theme } from '../components/theme/theme';
 
 const Test = component$(() => {
   const textValue = 'Test value';

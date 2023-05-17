@@ -13,6 +13,23 @@ export type TextInputSize = 'sm' | 'md' | 'lg';
 
 /**
  * Text input component props
+ * @property {string} class - Custom CSS class name
+ * @property {boolean} disabled - Whether component is disabled
+ * @property {string} helperText - Helper text to display beneath component
+ * @property {boolean} hideLabel - Whether to hide the label
+ * @property {boolean} inline - Whether to render the component with an inline label
+ * @property {boolean} invalid - Whether the component is in an invalid state
+ * @property {string} invalidText - Invalid message text to display beneath component
+ * @property {string} labelText = Label text
+ * @property {boolean} readOnly - Whether the component should be rendered as read-only (as opposed to disabled)
+ * @property {TextInputSize} renderSize - Render size of the component
+ * @property {string} type - Input type
+ * @property {boolean} warn - Whether the component is in warning state
+ * @property {string} warnText - Warning message text to display beneath component
+ * @property {boolean} enableCounter - Whether to render a character length counter horizontally opposite the label
+ * @property {number} maxCount - Max. length to render along with the counter if enableCounter is true
+ * @property {string} value - Text input box value
+ * @property {string} defaultValue - Default value
  */
 export type TextInputProps = QwikIntrinsicElements['input'] & {
   class?: string;

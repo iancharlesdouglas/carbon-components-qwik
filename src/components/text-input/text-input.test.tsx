@@ -102,6 +102,21 @@ describe('TextInput', () => {
     expect(warnIconSvg).toBeTruthy();
   });
 
+  it('renders the label as hidden if hideLabel is set to true', async () => {
+    const { screen, render } = await createDOM();
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <TextInput hideLabel labelText="Test label" />
+        </Form>
+      </CarbonRoot>
+    );
+
+    const labelElement = screen.querySelector('label') as HTMLLabelElement;
+    expect(labelElement.classList.contains('cds--visually-hidden')).toBeTruthy();
+  });
+
   // it('fires onChange$ callback when keys are typed', async () => {
   //   const { screen, render, userEvent } = await createDOM();
 
