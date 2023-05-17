@@ -28,10 +28,10 @@ const Test = component$(() => {
           hideLabel={false}
           helperText="Helper text"
           inline={false}
-          invalid
+          invalid={false}
           invalidText="Invalid text"
           readOnly={false}
-          warn
+          warn={true}
           warnText="Warning text"
           class="blah"
           enableCounter={false}
