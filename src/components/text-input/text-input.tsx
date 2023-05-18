@@ -1,9 +1,9 @@
 import { $, PropFunction, QwikChangeEvent, QwikMouseEvent, component$, useSignal, QwikIntrinsicElements, useContext, Component } from '@builder.io/qwik';
-import { usePrefix } from '../../internal/use-prefix';
-import { useNormalizedInputProps } from '../../internal/use-normalized-input-props';
+import { usePrefix } from '../../internal/hooks/use-prefix';
+import { useNormalizedInputProps } from '../../internal/hooks/use-normalized-input-props';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { formContext } from '../../contexts/form-context';
+import { formContext } from '../../internal/contexts/form-context';
 import { IconProps, WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
 
 /**

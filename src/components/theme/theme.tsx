@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { usePrefix } from '../../internal/use-prefix';
+import { usePrefix } from '../../internal/hooks/use-prefix';
 import { QwikIntrinsicElements, Slot, component$ } from '@builder.io/qwik';
 
 /**

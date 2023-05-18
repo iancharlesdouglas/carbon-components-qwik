@@ -5,7 +5,7 @@ import { Add, Edit } from 'carbon-icons-qwik';
 import { Button } from '../components/button/button';
 import { TextInput } from '../components/text-input/text-input';
 import { Form } from '../components/form/form';
-import { Theme } from '../components/theme/theme';
+import { Grid } from '../components/grid/grid';
 
 const Test = component$(() => {
   const textValue = 'Test value';
@@ -40,6 +40,7 @@ const Test = component$(() => {
           onChange$={$((event: QwikChangeEvent<HTMLInputElement>) => alert(`Length: ${event.target.value.length}`))}
         />
       </Form>
+      <Grid base="div"></Grid>
     </CarbonRoot>
   );
 });

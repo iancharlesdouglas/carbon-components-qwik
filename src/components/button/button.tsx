@@ -1,7 +1,7 @@
 import { Component, HTMLAttributes, PropFunction, Slot, component$, useId } from '@builder.io/qwik';
 import { IconProps } from 'carbon-icons-qwik';
-import { usePrefix } from '../../internal/use-prefix';
-import { IconRenderProps } from '../../internal/icon-render-props';
+import { usePrefix } from '../../internal/hooks/use-prefix';
+import { IconRenderProps } from '../../shared-props/icon-render-props';
 import _ from 'lodash';
 import classNames from 'classnames';
 

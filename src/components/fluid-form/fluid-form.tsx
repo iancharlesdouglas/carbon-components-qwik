@@ -1,7 +1,7 @@
 import { Slot, component$, useContextProvider } from '@builder.io/qwik';
-import { usePrefix } from '../../internal/use-prefix';
+import { usePrefix } from '../../internal/hooks/use-prefix';
 import classNames from 'classnames';
-import { FormContext, formContext } from '../../contexts/form-context';
+import { FormContext, formContext } from '../../internal/contexts/form-context';
 import { Form, FormProps } from '../form/form';
 import _ from 'lodash';
 

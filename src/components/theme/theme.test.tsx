@@ -22,6 +22,7 @@ describe('Theme', () => {
     const divElement = screen.querySelector('div') as HTMLDivElement;
     expect(divElement.classList.contains(customClass)).toBeTruthy();
     expect(divElement.classList.contains(`cds--${selectedTheme}`)).toBeTruthy();
+    expect(divElement.classList.contains('cds--layer-one')).toBeTruthy();
     const childContentDiv = screen.querySelector(`div#${childContentId}`) as HTMLDivElement;
     expect(childContentDiv.textContent).toEqual(childContent);
   });

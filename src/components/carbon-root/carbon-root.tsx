@@ -1,5 +1,5 @@
 import { Slot, component$, useContextProvider } from '@builder.io/qwik';
-import { CarbonContext, prefixContext } from '../../contexts/carbon-context';
+import { CarbonContext, prefixContext } from '../../internal/contexts/carbon-context';
 
 /**
  * Properties for CarbonRoot component

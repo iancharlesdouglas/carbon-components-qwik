@@ -9,7 +9,6 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:qwik/recommended",
-    "plugin:storybook/recommended",
     "plugin:jsdoc/recommended"
   ],
   "parser": "@typescript-eslint/parser",
@@ -54,7 +53,7 @@
         "identifiers": true,
         "templates": true,
         "lang": "en_US",
-        "skipWords": ["assistive", "cds", "describedby", "href", "msg", "noopener", "qwik", "readonly", "svg", "tooltip", "2xl"],
+        "skipWords": ["assistive", "cds", "describedby", "flexbox", "href", "jsx", "msg", "noopener", "qwik", "readonly", "svg", "tooltip", "2xl"],
         "skipIfMatch": ["http://[^s]*", "^[-\\w]+/[-\\w\\.]+$"],
         "skipWordIfMatch": ["^foobar.*$"],
         "minLength": 3

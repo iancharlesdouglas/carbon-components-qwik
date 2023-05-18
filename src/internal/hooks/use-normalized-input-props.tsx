@@ -1,4 +1,4 @@
-import { InputProps, NormalizedInputProps } from './input-props';
+import { InputProps, NormalizedInputProps } from '../shared-props/input-props';
 
 /**
  * Normalizes input property values, so that disabled, invalid and warn are only set if readOnly is false, and warn only if valid

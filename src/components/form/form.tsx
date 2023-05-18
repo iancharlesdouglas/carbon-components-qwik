@@ -1,8 +1,8 @@
 import { QwikIntrinsicElements, Slot, component$, useContextProvider } from '@builder.io/qwik';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { usePrefix } from '../../internal/use-prefix';
-import { FormContext, formContext } from '../../contexts/form-context';
+import { usePrefix } from '../../internal/hooks/use-prefix';
+import { FormContext, formContext } from '../../internal/contexts/form-context';
 
 /**
  * Form props
