@@ -27,7 +27,7 @@ type GridMode = 'wide' | 'narrow' | 'condensed';
 export const Grid = component$((props: GridProps) => {
   const { narrow = false, condensed = false, fullWidth = false, class: customClass } = props;
   const prefix = usePrefix();
-  const { subGrid } = useContext(gridContext);
+  const { subGrid } = useContext(gridContext, { subGrid: false });
   let mode: GridMode = 'wide';
   if (narrow) {
     mode = 'narrow';
@@ -53,7 +53,7 @@ export const Grid = component$((props: GridProps) => {
     { [`${prefix}--css-grid--full-width`]: fullWidth }
   );
 
-  const sanitizedProps = _.omit(props, 'condensed', 'fullWidth', 'narrow');
+  const sanitizedProps = _.omit(props, 'condensed', 'fullWidth', 'narrow', 'class');
 
   return (
     <GridScope subGrid={true}>
@@ -76,12 +76,12 @@ const SubGrid = component$((props: SubGridProps) => {
   const classes = classNames(
     customClass,
     `${prefix}--subgrid`,
-    { [`${prefix}--subgrid--condensed`]: mode === 'narrow' },
-    { [`${prefix}--subgrid--narrow`]: mode === 'condensed' },
+    { [`${prefix}--subgrid--condensed`]: mode === 'condensed' },
+    { [`${prefix}--subgrid--narrow`]: mode === 'narrow' },
     { [`${prefix}--subgrid--wide`]: mode === 'wide' }
   );
 
-  const sanitizedProps = _.omit(props, 'mode');
+  const sanitizedProps = _.omit(props, 'mode', 'class');
 
   return (
     <div class={classes} {...sanitizedProps}>

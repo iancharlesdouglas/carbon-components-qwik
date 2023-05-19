@@ -24,29 +24,63 @@ describe('Grid', () => {
     expect(divElement.classList.contains(customClass));
   });
 
-  it('renders CSS classes for narrow and condensed independently, favoring narrow', async () => {
+  it('renders a sub-grid with expected CSS classes including any custom class', async () => {
     const { screen, render } = await createDOM();
+    const content = 'Some sub-grid text';
+    const customClass = 'a-subgrid-class';
+    const subGridId = 'subgrid';
 
     await render(
       <CarbonRoot>
-        <Grid narrow condensed></Grid>
+        <Grid>
+          <Grid class={customClass} id={subGridId}>
+            {content}
+          </Grid>
+        </Grid>
       </CarbonRoot>
     );
 
-    const divElement = screen.querySelector('div') as HTMLDivElement;
-    expect(divElement.classList.contains('cds--css-grid--narrow'));
-    expect(!divElement.classList.contains('cds--css-grid--condensed'));
+    const divElement = screen.querySelector(`div#${subGridId}`) as HTMLDivElement;
+    expect(divElement.textContent).toEqual(content);
+    expect(divElement.classList.contains('cds--subgrid'));
+    expect(divElement.classList.contains('cds--subgrid--wide'));
+    expect(divElement.classList.contains(customClass));
+  });
+
+  it('renders CSS classes for narrow and condensed independently, favoring narrow, including for the sub-grid', async () => {
+    const { screen, render } = await createDOM();
+    const mainGridId = 'main-grid';
+    const subGridId = 'sub-grid';
+
+    await render(
+      <CarbonRoot>
+        <Grid narrow condensed id={mainGridId}>
+          <Grid id={subGridId}></Grid>
+        </Grid>
+      </CarbonRoot>
+    );
+
+    const mainDivElement = screen.querySelector(`div#${mainGridId}`) as HTMLDivElement;
+    expect(mainDivElement.classList.contains('cds--css-grid--narrow'));
+    expect(!mainDivElement.classList.contains('cds--css-grid--condensed'));
+    const subDivElement = screen.querySelector(`div#${subGridId}`) as HTMLDivElement;
+    expect(subDivElement.classList.contains('cds--subgrid--narrow'));
+    expect(!subDivElement.classList.contains('cds--subgrid--condensed'));
 
     const { screen: screen2, render: render2 } = await createDOM();
 
     await render2(
       <CarbonRoot>
-        <Grid condensed></Grid>
+        <Grid id={mainGridId} condensed>
+          <Grid id={subGridId}></Grid>
+        </Grid>
       </CarbonRoot>
     );
 
-    const divElement2 = screen2.querySelector('div') as HTMLDivElement;
-    expect(divElement2.classList.contains('cds--css-grid--condensed'));
+    const mainDivElement2 = screen2.querySelector(`div#${mainGridId}`) as HTMLDivElement;
+    expect(mainDivElement2.classList.contains('cds--css-grid--condensed'));
+    const subDivElement2 = screen2.querySelector(`div#${subGridId}`) as HTMLDivElement;
+    expect(subDivElement2.classList.contains('cds--subgrid--condensed'));
   });
 
   it('renders general div attributes that may be specified', async () => {

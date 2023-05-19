@@ -40,7 +40,12 @@ const Test = component$(() => {
           onChange$={$((event: QwikChangeEvent<HTMLInputElement>) => alert(`Length: ${event.target.value.length}`))}
         />
       </Form>
-      <Grid base="div"></Grid>
+      <Grid class="test-class" id="main-grid" narrow>
+        <div>Some content in the grid</div>
+        <Grid class="subgrid-class" id="sub-grid">
+          Some content in the sub-grid
+        </Grid>
+      </Grid>
     </CarbonRoot>
   );
 });
