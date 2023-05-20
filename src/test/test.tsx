@@ -6,6 +6,7 @@ import { Button } from '../components/button/button';
 import { TextInput } from '../components/text-input/text-input';
 import { Form } from '../components/form/form';
 import { Grid } from '../components/grid/grid';
+import { Column } from '../components/grid/column';
 
 const Test = component$(() => {
   const textValue = 'Test value';
@@ -43,7 +44,7 @@ const Test = component$(() => {
       <Grid class="test-class" id="main-grid" narrow>
         <div>Some content in the grid</div>
         <Grid class="subgrid-class" id="sub-grid">
-          Some content in the sub-grid
+          <Column sm>Col 1</Column>
         </Grid>
       </Grid>
     </CarbonRoot>

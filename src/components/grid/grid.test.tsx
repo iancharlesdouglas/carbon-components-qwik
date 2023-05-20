@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { createDOM } from '@builder.io/qwik/testing';
 import { CarbonRoot } from '../carbon-root/carbon-root';
 import { Grid } from './grid';
+import { Row } from './row';
 
 describe('Grid', () => {
   it('renders expected CSS classes including any custom class', async () => {
@@ -95,5 +96,28 @@ describe('Grid', () => {
 
     const divElement = screen.querySelector('div') as HTMLDivElement;
     expect(divElement.getAttribute('id')).toEqual(id);
+  });
+
+  it('renders a row with the expected CSS classes', async () => {
+    const { screen, render } = await createDOM();
+    const id = 'test-id';
+    const rowClass = 'row-class';
+    const rowText = 'Row text';
+
+    await render(
+      <CarbonRoot>
+        <Grid>
+          <Row class={rowClass} condensed narrow id={id}>
+            {rowText}
+          </Row>
+        </Grid>
+      </CarbonRoot>
+    );
+
+    const rowDiv = screen.querySelector(`div#${id}`) as HTMLDivElement;
+    expect(rowDiv.classList.contains('cds--row')).toBeTruthy();
+    expect(rowDiv.classList.contains('cds--row--condensed')).toBeTruthy();
+    expect(rowDiv.classList.contains('cds--row--narrow')).toBeTruthy();
+    expect(rowDiv.classList.contains(rowClass)).toBeTruthy();
   });
 });
