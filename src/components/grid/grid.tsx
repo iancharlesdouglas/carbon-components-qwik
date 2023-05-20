@@ -3,7 +3,7 @@ import { usePrefix } from '../../internal/hooks/use-prefix';
 import classNames from 'classnames';
 import { GridScope } from './grid-scope';
 import _ from 'lodash';
-import { gridContext } from '../../internal/contexts/grid-context';
+import { GridMode, gridContext } from '../../internal/contexts/grid-context';
 
 /**
  * Grid props
@@ -19,16 +19,14 @@ export type GridProps = QwikIntrinsicElements['div'] & {
   narrow?: boolean;
 };
 
-type GridMode = 'wide' | 'narrow' | 'condensed';
-
 /**
  * Grid component
  */
 export const Grid = component$((props: GridProps) => {
   const { narrow = false, condensed = false, fullWidth = false, class: customClass } = props;
   const prefix = usePrefix();
-  const { subGrid } = useContext(gridContext, { subGrid: false });
-  let mode: GridMode = 'wide';
+  const { subGrid, mode: contextMode } = useContext(gridContext, { subGrid: false, mode: 'wide' });
+  let mode: GridMode = subGrid ? (contextMode as GridMode) : 'wide';
   if (narrow) {
     mode = 'narrow';
   } else if (condensed) {
@@ -37,7 +35,7 @@ export const Grid = component$((props: GridProps) => {
 
   if (subGrid) {
     return (
-      <GridScope subGrid>
+      <GridScope subGrid mode={mode}>
         <SubGrid class={customClass} mode={mode} {...props}>
           <Slot />
         </SubGrid>
@@ -56,7 +54,7 @@ export const Grid = component$((props: GridProps) => {
   const sanitizedProps = _.omit(props, 'condensed', 'fullWidth', 'narrow', 'class');
 
   return (
-    <GridScope subGrid={true}>
+    <GridScope subGrid mode={mode}>
       <div class={classes} {...sanitizedProps}>
         <Slot />
       </div>
