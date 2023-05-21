@@ -53,7 +53,7 @@
         "identifiers": true,
         "templates": true,
         "lang": "en_US",
-        "skipWords": ["assistive", "breakpoint", "cds", "describedby", "flexbox", "href", "jsx", "msg", "noopener", "qwik", "readonly", "subgrid", "svg", "tooltip", "xlg", "2xl"],
+        "skipWords": ["assistive", "breakpoint", "cds", "describedby", "flexbox", "href", "jsx", "msg", "noopener", "perc", "qwik", "readonly", "subgrid", "svg", "tooltip", "xlg", "2xl"],
         "skipIfMatch": ["http://[^s]*", "^[-\\w]+/[-\\w\\.]+$"],
         "skipWordIfMatch": ["^foobar.*$"],
         "minLength": 3

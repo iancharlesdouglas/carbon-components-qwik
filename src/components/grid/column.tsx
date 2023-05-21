@@ -3,10 +3,26 @@ import { usePrefix } from '../../internal/hooks/use-prefix';
 import classNames from 'classnames';
 import _ from 'lodash';
 
-export type BreakpointSpan = number | string | { span: number; start: number; end: number };
+/**
+ * Column span
+ */
+export type ColumnSpan = number | string | { span: number; start: number; end: number };
 
+/**
+ * Breakpoint
+ */
 export type Breakpoint = number | boolean | string | { span?: number | string; offset?: number; start?: number; end?: number };
 
+/**
+ * Column props
+ * @property {string} class - Custom CSS class
+ * @property {Breakpoint} sm - Small res. breakpoint definition
+ * @property {Breakpoint} md - Medium res. breakpoint definition
+ * @property {Breakpoint} lg - Large res. breakpoint definition
+ * @property {Breakpoint} xlg - Extra-large res. breakpoint definition
+ * @property {Breakpoint} max - Max. res. breakpoint definition
+ * @property {ColumnSpan} span - Span definition
+ */
 export type ColumnProps = QwikIntrinsicElements['div'] & {
   class?: string;
   sm?: Breakpoint;
@@ -14,14 +30,17 @@ export type ColumnProps = QwikIntrinsicElements['div'] & {
   lg?: Breakpoint;
   xlg?: Breakpoint;
   max?: Breakpoint;
-  span?: BreakpointSpan;
+  span?: ColumnSpan;
 };
 
+/**
+ * Column
+ */
 export const Column = component$((props: ColumnProps) => {
   const prefix = usePrefix();
   const { span, class: customClass } = props;
-  const breakpointClass = getClassNameForBreakpoints(props, prefix);
-  const spanClass = getClassNameForSpan(span, prefix);
+  const breakpointClass = getClassesForBreakpoints(props, prefix);
+  const spanClass = getClassesForSpan(span, prefix);
   const classes = classNames(customClass, breakpointClass, spanClass, `${prefix}--css-grid-column`);
   const sanitizedProps = _.omit(props, 'class', 'sm', 'md', 'lg', 'xlg', 'max', 'span');
   return (
@@ -31,7 +50,7 @@ export const Column = component$((props: ColumnProps) => {
   );
 });
 
-const getClassNameForBreakpoints = (props: ColumnProps, prefix: string): string => {
+const getClassesForBreakpoints = (props: ColumnProps, prefix: string): string => {
   const { sm, md, lg, xlg, max } = props;
   const breakpointNames = ['sm', 'md', 'lg', 'xlg', 'max'];
   return [sm, md, lg, xlg, max]
@@ -71,7 +90,7 @@ const getClassNameForBreakpoints = (props: ColumnProps, prefix: string): string 
     .join(' ');
 };
 
-const getClassNameForSpan = (spanDef: BreakpointSpan | undefined, prefix: string): string => {
+const getClassesForSpan = (spanDef: ColumnSpan | undefined, prefix: string): string => {
   if (typeof spanDef === 'number' || typeof spanDef === 'string') {
     return `${prefix}--col-span-${spanDef}`;
   }

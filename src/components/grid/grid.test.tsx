@@ -3,6 +3,7 @@ import { createDOM } from '@builder.io/qwik/testing';
 import { CarbonRoot } from '../carbon-root/carbon-root';
 import { Grid } from './grid';
 import { Row } from './row';
+import { Column } from './column';
 
 describe('Grid', () => {
   it('renders expected CSS classes including any custom class', async () => {
@@ -119,5 +120,195 @@ describe('Grid', () => {
     expect(rowDiv.classList.contains('cds--row--condensed')).toBeTruthy();
     expect(rowDiv.classList.contains('cds--row--narrow')).toBeTruthy();
     expect(rowDiv.classList.contains(rowClass)).toBeTruthy();
+  });
+
+  it('renders columns with auto breakpoints', async () => {
+    const { screen, render } = await createDOM();
+    const columnId = 'column-id';
+
+    await render(
+      <CarbonRoot>
+        <Grid>
+          <Column sm md lg xlg max id={columnId}></Column>
+        </Grid>
+      </CarbonRoot>
+    );
+
+    const colDiv = screen.querySelector(`div#${columnId}`) as HTMLDivElement;
+    expect(colDiv.classList.contains('cds--css-grid-column')).toBeTruthy();
+    expect(colDiv.classList.contains('cds--sm:col-span-auto')).toBeTruthy();
+    expect(colDiv.classList.contains('cds--md:col-span-auto')).toBeTruthy();
+    expect(colDiv.classList.contains('cds--lg:col-span-auto')).toBeTruthy();
+    expect(colDiv.classList.contains('cds--xlg:col-span-auto')).toBeTruthy();
+    expect(colDiv.classList.contains('cds--max:col-span-auto')).toBeTruthy();
+  });
+
+  it('renders columns with percentage breakpoints', async () => {
+    const { screen, render } = await createDOM();
+    const columnId = 'column-id';
+    const pct = 25;
+    const perc = `${pct}%`;
+
+    await render(
+      <CarbonRoot>
+        <Grid>
+          <Column sm={perc} md={perc} lg={perc} xlg={perc} max={perc} id={columnId}></Column>
+        </Grid>
+      </CarbonRoot>
+    );
+
+    const colDiv = screen.querySelector(`div#${columnId}`) as HTMLDivElement;
+    expect(colDiv.classList.contains(`cds--sm:col-span-${pct}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--md:col-span-${pct}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--lg:col-span-${pct}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--xlg:col-span-${pct}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--max:col-span-${pct}`)).toBeTruthy();
+  });
+
+  it('renders columns with numeric breakpoints', async () => {
+    const { screen, render } = await createDOM();
+    const columnId = 'column-id';
+    const sm = 1;
+    const md = 2;
+    const lg = 4;
+    const xlg = 8;
+    const max = 16;
+
+    await render(
+      <CarbonRoot>
+        <Grid>
+          <Column sm={sm} md={md} lg={lg} xlg={xlg} max={max} id={columnId}></Column>
+        </Grid>
+      </CarbonRoot>
+    );
+
+    const colDiv = screen.querySelector(`div#${columnId}`) as HTMLDivElement;
+    expect(colDiv.classList.contains(`cds--sm:col-span-${sm}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--md:col-span-${md}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--lg:col-span-${lg}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--xlg:col-span-${xlg}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--max:col-span-${max}`)).toBeTruthy();
+  });
+
+  it('renders columns with span (numeric) and offset breakpoints', async () => {
+    const { screen, render } = await createDOM();
+    const columnId = 'column-id';
+    const span = 2;
+    const offset = 1;
+    const spanOffset = { span, offset };
+
+    await render(
+      <CarbonRoot>
+        <Grid>
+          <Column sm={spanOffset} md={spanOffset} lg={spanOffset} xlg={spanOffset} max={spanOffset} id={columnId}></Column>
+        </Grid>
+      </CarbonRoot>
+    );
+
+    const colDiv = screen.querySelector(`div#${columnId}`) as HTMLDivElement;
+    expect(colDiv.classList.contains(`cds--sm:col-span-${span}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--md:col-span-${span}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--lg:col-span-${span}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--xlg:col-span-${span}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--max:col-span-${span}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--sm:col-start-${offset + 1}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--md:col-start-${offset + 1}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--lg:col-start-${offset + 1}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--xlg:col-start-${offset + 1}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--max:col-start-${offset + 1}`)).toBeTruthy();
+  });
+
+  it('renders columns with span (percentage) breakpoints', async () => {
+    const { screen, render } = await createDOM();
+    const columnId = 'column-id';
+    const span = 25;
+    const spanDef = { span: `${span}%` };
+
+    await render(
+      <CarbonRoot>
+        <Grid>
+          <Column sm={spanDef} md={spanDef} lg={spanDef} xlg={spanDef} max={spanDef} id={columnId}></Column>
+        </Grid>
+      </CarbonRoot>
+    );
+
+    const colDiv = screen.querySelector(`div#${columnId}`) as HTMLDivElement;
+    expect(colDiv.classList.contains(`cds--sm:col-span-${span}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--md:col-span-${span}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--lg:col-span-${span}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--xlg:col-span-${span}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--max:col-span-${span}`)).toBeTruthy();
+  });
+
+  it('renders columns with span start and end breakpoints', async () => {
+    const { screen, render } = await createDOM();
+    const columnId = 'column-id';
+    const start = 2;
+    const end = 1;
+    const startEnd = { start, end };
+
+    await render(
+      <CarbonRoot>
+        <Grid>
+          <Column sm={startEnd} md={startEnd} lg={startEnd} xlg={startEnd} max={startEnd} id={columnId}></Column>
+        </Grid>
+      </CarbonRoot>
+    );
+
+    const colDiv = screen.querySelector(`div#${columnId}`) as HTMLDivElement;
+    expect(colDiv.classList.contains(`cds--sm:col-start-${start}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--md:col-start-${start}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--lg:col-start-${start}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--xlg:col-start-${start}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--max:col-start-${start}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--sm:col-end-${end}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--md:col-end-${end}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--lg:col-end-${end}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--xlg:col-end-${end}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--max:col-end-${end}`)).toBeTruthy();
+  });
+
+  it('renders columns with span (object) attributes', async () => {
+    const { screen, render } = await createDOM();
+    const columnId = 'column-id';
+    const start = 2;
+    const end = 1;
+    const span = 2;
+    const spanDef = { start, end, span };
+
+    await render(
+      <CarbonRoot>
+        <Grid>
+          <Column span={spanDef} id={columnId}></Column>
+        </Grid>
+      </CarbonRoot>
+    );
+
+    const colDiv = screen.querySelector(`div#${columnId}`) as HTMLDivElement;
+    expect(colDiv.classList.contains(`cds--col-start-${start}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--col-end-${end}`)).toBeTruthy();
+    expect(colDiv.classList.contains(`cds--col-span-${span}`)).toBeTruthy();
+  });
+
+  it('renders columns with span (numeric/string) attributes', async () => {
+    const { screen, render } = await createDOM();
+    const column1Id = 'column-1-id';
+    const column2Id = 'column-2-id';
+    const numericSpan = 2;
+    const stringSpan = '2';
+
+    await render(
+      <CarbonRoot>
+        <Grid>
+          <Column span={numericSpan} id={column1Id}></Column>
+          <Column span={stringSpan} id={column2Id}></Column>
+        </Grid>
+      </CarbonRoot>
+    );
+
+    const col1Div = screen.querySelector(`div#${column1Id}`) as HTMLDivElement;
+    expect(col1Div.classList.contains(`cds--col-span-${numericSpan}`)).toBeTruthy();
+    const col2Div = screen.querySelector(`div#${column2Id}`) as HTMLDivElement;
+    expect(col2Div.classList.contains(`cds--col-span-${stringSpan}`)).toBeTruthy();
   });
 });
