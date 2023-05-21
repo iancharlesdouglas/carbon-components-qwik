@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import { qwikVite } from '@builder.io/qwik/optimizer';
+import { configDefaults } from 'vitest/config';
 
 export default defineConfig(() => {
   return {
@@ -13,10 +14,11 @@ export default defineConfig(() => {
     },
     test: {
       coverage: {
-        provider: 'istanbul'
-      }
+        provider: 'istanbul',
+      },
+      exclude: [...configDefaults.exclude, 'node_modules/.pnpm/**/*.mjs'],
     },
     plugins: [qwikVite()],
-    publicDir: './public'
+    publicDir: './public',
   };
 });

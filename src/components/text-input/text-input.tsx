@@ -30,6 +30,8 @@ export type TextInputSize = 'sm' | 'md' | 'lg';
  * @property {number} maxCount - Max. length to render along with the counter if enableCounter is true
  * @property {string} value - Text input box value
  * @property {string} defaultValue - Default value
+ * @property {PropFunction} onChange$ - onChange event callback
+ * @property {PropFunction} onClick$ - onClick event callback
  */
 export type TextInputProps = QwikIntrinsicElements['input'] & {
   class?: string;

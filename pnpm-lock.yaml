@@ -73,6 +73,9 @@ devDependencies:
   undici:
     specifier: 5.22.0
     version: 5.22.0
+  uuid:
+    specifier: ^9.0.0
+    version: 9.0.0
   vite:
     specifier: 4.3.3
     version: 4.3.3(@types/node@18.16.1)(sass@1.62.1)
@@ -4482,6 +4485,11 @@ packages:
     engines: {node: '>=4'}
     dependencies:
       prepend-http: 2.0.0
+    dev: true
+
+  /uuid@9.0.0:
+    resolution: {integrity: sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==}
+    hasBin: true
     dev: true
 
   /vali-date@1.0.0:
