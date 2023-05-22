@@ -49,7 +49,7 @@ const Test = component$(() => {
         <Column sm={4} md={8} lg={16}>
           <Grid class="subgrid-class" id="sub-grid" fullWidth>
             <Column sm={1} md={1} lg xlg max>
-              <Checkbox labelText="Active" checked={false} onChange$={$((event) => console.log('changed'))} />
+              <Checkbox labelText="Active" checked={false} onChange$={$(() => console.log('changed'))} />
             </Column>
             <Column sm={1} md={1} lg={'25%'}></Column>
             <Column sm={1} md={1} lg={{ start: 1, end: 3 }}>

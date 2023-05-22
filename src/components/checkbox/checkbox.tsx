@@ -1,4 +1,4 @@
-import { PropFunction, QwikChangeEvent, QwikIntrinsicElements, component$, $ } from '@builder.io/qwik';
+import { PropFunction, QwikChangeEvent, QwikIntrinsicElements, component$ } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import classNames from 'classnames';
 import _ from 'lodash';

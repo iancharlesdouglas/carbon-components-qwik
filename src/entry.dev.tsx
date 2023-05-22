@@ -12,6 +12,11 @@
 import { render, type RenderOptions } from '@builder.io/qwik';
 import Root from './root';
 
+/**
+ * Dev. entry point
+ * @param opts Render options
+ * @returns Rendered doc.
+ */
 export default function (opts: RenderOptions) {
   return render(document, <Root />, opts);
 }

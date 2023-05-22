@@ -1,6 +1,10 @@
 import './root.scss';
 import Test from './test/test';
 
+/**
+ * Root function
+ * @returns Rendered doc.
+ */
 export default () => {
   return (
     <>

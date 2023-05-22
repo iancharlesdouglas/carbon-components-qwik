@@ -15,10 +15,11 @@ export type TextProps = QwikIntrinsicElements['span'] & {
  */
 export const Text = component$((props: TextProps) => {
   const { dir: overrideDir } = props;
-  const { dir: contextDir } = useContext(textDirectionContext, { dir: 'auto' });
+  const { dir: contextDir } = useContext(textDirectionContext);
+  const dirToUse = overrideDir ?? contextDir;
   const sanitizedProps = _.omit(props, 'dir');
   return (
-    <span dir={overrideDir ?? contextDir} {...sanitizedProps}>
+    <span dir={dirToUse} {...sanitizedProps}>
       <Slot />
     </span>
   );

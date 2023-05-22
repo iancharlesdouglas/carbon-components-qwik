@@ -15,5 +15,5 @@ export const textDirectionContext = createContextId<TextDirectionContext>('text-
  * @property {TextDirection} dir - Direction
  */
 export type TextDirectionContext = {
-  dir: TextDirection;
+  dir?: TextDirection;
 };

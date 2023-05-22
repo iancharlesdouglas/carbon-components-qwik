@@ -14,6 +14,11 @@ import { renderToStream, type RenderToStreamOptions } from '@builder.io/qwik/ser
 import { manifest } from '@qwik-client-manifest';
 import Root from './root';
 
+/**
+ * SSR entry point
+ * @param opts Options
+ * @returns Rendered stream
+ */
 export default function (opts: RenderToStreamOptions) {
   return renderToStream(<Root />, {
     manifest,
