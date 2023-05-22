@@ -14,10 +14,11 @@ type CarbonRootProps = {
 
 /**
  * Root component for Carbon application
+ * @description Sets default text direction ('auto') and CSS prefix ('cds')
  */
 export const CarbonRoot = component$((props: CarbonRootProps) => {
   const { dir: direction = 'auto' } = props;
-  useContextProvider<CarbonContext>(prefixContext, { prefix: props.prefix ?? 'cds' });
   useContextProvider<TextDirectionContext>(textDirectionContext, { dir: direction });
+  useContextProvider<CarbonContext>(prefixContext, { prefix: props.prefix ?? 'cds' });
   return <Slot />;
 });
