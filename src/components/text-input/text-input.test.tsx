@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { CarbonRoot } from '../carbon-root/carbon-root';
 import { TextInput } from './text-input';
 import { Form } from '../form/form';
+import { FluidForm } from '../fluid-form/fluid-form';
 
 describe('TextInput', () => {
   it('renders default CSS class, custom CSS class, invalid and warning classes and size class as stipulated', async () => {
@@ -70,9 +71,9 @@ describe('TextInput', () => {
 
     await render(
       <CarbonRoot>
-        <Form>
+        <FluidForm>
           <TextInput invalid invalidText={errorMessage}></TextInput>
-        </Form>
+        </FluidForm>
       </CarbonRoot>
     );
 
@@ -89,9 +90,9 @@ describe('TextInput', () => {
 
     await render(
       <CarbonRoot>
-        <Form>
+        <FluidForm>
           <TextInput warn warnText={warning}></TextInput>
-        </Form>
+        </FluidForm>
       </CarbonRoot>
     );
 

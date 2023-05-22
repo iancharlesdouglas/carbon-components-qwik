@@ -15,8 +15,11 @@ export default defineConfig(() => {
     test: {
       coverage: {
         provider: 'istanbul',
+        lines: 98,
+        functions: 96,
+        branches: 92,
+        statements: 98,
       },
-      exclude: [...configDefaults.exclude, 'node_modules/.pnpm/**/*.mjs'],
     },
     plugins: [qwikVite()],
     publicDir: './public',

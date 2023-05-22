@@ -85,7 +85,6 @@ const getClassesForBreakpoints = (props: ColumnProps, prefix: string): string =>
         }
         return spanClasses.join(' ');
       }
-      return '';
     })
     .join(' ');
 };

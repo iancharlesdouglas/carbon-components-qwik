@@ -26,4 +26,21 @@ describe('Theme', () => {
     const childContentDiv = screen.querySelector(`div#${childContentId}`) as HTMLDivElement;
     expect(childContentDiv.textContent).toEqual(childContent);
   });
+
+  it('renders the default theme (white) when no theme is stipulated', async () => {
+    const { screen, render } = await createDOM();
+    const customClass = 'custom-class';
+
+    await render(
+      <CarbonRoot>
+        <Theme class={customClass}>
+          <div>Content</div>
+        </Theme>
+      </CarbonRoot>
+    );
+
+    const divElement = screen.querySelector('div') as HTMLDivElement;
+    expect(divElement.classList.contains(customClass)).toBeTruthy();
+    expect(divElement.classList.contains(`cds--white`)).toBeTruthy();
+  });
 });

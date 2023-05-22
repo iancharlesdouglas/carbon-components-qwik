@@ -202,12 +202,12 @@ export const TextInput = component$((props: TextInputProps) => {
 
   const { isFluid } = useContext(formContext);
 
-  let hint: { Icon: Component<IconProps> } = { Icon: component$(() => <></>) };
+  let hint: { Icon: Component<IconProps> } | undefined = undefined;
   let renderIcon = false;
   if (normalizedProps.invalid) {
     hint = { Icon: WarningFilled };
     renderIcon = true;
-  } else if (normalizedProps.warn) {
+  } else {
     hint = { Icon: WarningAltFilled };
     renderIcon = true;
   }
@@ -242,7 +242,7 @@ export const TextInput = component$((props: TextInputProps) => {
       )}
       <div class={fieldOuterWrapperClasses}>
         <div class={fieldWrapperClasses} data-invalid={normalizedProps.invalid || null}>
-          {renderIcon && <hint.Icon class={iconClasses} size={16} />}
+          {renderIcon && (normalizedProps.invalid || normalizedProps.warn) && <hint.Icon class={iconClasses} size={16} />}
           <input {...sanitizedProps} class={classes} {...sharedTextInputProps} {...sanitizedInvalidOrWarnProps} />
           {isFluid && <hr class={`${prefix}--text-input__divider`} />}
           {isFluid && !inline && (normalizedProps.invalid || normalizedProps.warn) && <ValidationMessage />}

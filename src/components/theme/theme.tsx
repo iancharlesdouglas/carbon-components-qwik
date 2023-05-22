@@ -13,7 +13,7 @@ export type ThemeCode = 'white' | 'g10' | 'g90' | 'g100';
  * @property {string} class - Custom CSS class for the rendered div element
  */
 export type ThemeProps = QwikIntrinsicElements['div'] & {
-  theme: ThemeCode;
+  theme?: ThemeCode;
   class?: string;
 };
 

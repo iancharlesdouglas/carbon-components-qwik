@@ -102,6 +102,7 @@ describe('Grid', () => {
   it('renders a row with the expected CSS classes', async () => {
     const { screen, render } = await createDOM();
     const id = 'test-id';
+    const rowWithoutModifiersId = 'row-no-modif';
     const rowClass = 'row-class';
     const rowText = 'Row text';
 
@@ -111,6 +112,7 @@ describe('Grid', () => {
           <Row class={rowClass} condensed narrow id={id}>
             {rowText}
           </Row>
+          <Row id={rowWithoutModifiersId} />
         </Grid>
       </CarbonRoot>
     );
@@ -120,6 +122,9 @@ describe('Grid', () => {
     expect(rowDiv.classList.contains('cds--row--condensed')).toBeTruthy();
     expect(rowDiv.classList.contains('cds--row--narrow')).toBeTruthy();
     expect(rowDiv.classList.contains(rowClass)).toBeTruthy();
+    const rowDivWithoutModifs = screen.querySelector(`div#${rowWithoutModifiersId}`) as HTMLDivElement;
+    expect(rowDivWithoutModifs.classList.contains('cds--row--condensed')).toBeFalsy();
+    expect(rowDivWithoutModifs.classList.contains('cds--row--narrow')).toBeFalsy();
   });
 
   it('renders columns with auto breakpoints', async () => {
