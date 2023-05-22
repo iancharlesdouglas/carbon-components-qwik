@@ -1,0 +1,15 @@
+name: test-with-coverage-and-build
+run-name: Push by ${{github.actor}} - tests incl. coverage & build
+on: [push]
+jobs:
+  test-with-coverage-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: npm i -g pnpm
+      - run: pnpm i
+      - run: pnpm coverage
+      - run: pnpm build
