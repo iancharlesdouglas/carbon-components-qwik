@@ -1,4 +1,4 @@
-name: Publish Package to npm
+name: Publish package to npm
 run-name: Publish to NPM by ${{github.actor}}
 on:
   release:
