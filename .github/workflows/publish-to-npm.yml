@@ -16,6 +16,6 @@ jobs:
       - run: pnpm i
       - run: pnpm coverage
       - run: pnpm build
-      - run: pnpm publish
+      - run: pnpm release
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
