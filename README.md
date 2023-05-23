@@ -4,8 +4,9 @@
 
 > [Carbon Design System](https://github.com/carbon-design-system) components as Qwik components.  
 
-This library is an ongoing project to implement the React components of the Carbon Design System (v11) in Qwik.
 ---
+
+This library is an ongoing project to implement the React components of the Carbon Design System (v11) in Qwik.
 
 ## Project Structure
 The basic project structure is as follows:
@@ -42,7 +43,7 @@ To run them with coverage:
 ```
 pnpm coverage
 ```
-All pushes to the GitHub repo will trigger a coverage run and a build run (which includes linting).
+All pushes to the GitHub repo will trigger a coverage run and a build run (which includes a linting check).
 
 ### Linter and Code Quality Rules
 The linter is ESLint.  The spellcheck plugin is used (if you encounter a word not in the dictionary, just add it to the `skipWords` section of the `.eslintrc.json` file in the project root).  ESLint is configured to format code using Prettier.  TypeScript is configured in strict mode.  See [Contributing](CONTRIBUTING.md) for more details on setup.
