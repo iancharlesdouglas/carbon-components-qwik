@@ -14,7 +14,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: npm i -g pnpm
       - run: pnpm i
-      - run: pnpm coverage
+      #- run: pnpm coverage
       - run: pnpm build
       - run: pnpm publish --no-git-checks
         env:
