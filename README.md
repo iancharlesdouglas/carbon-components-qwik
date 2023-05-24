@@ -58,6 +58,9 @@ pnpm start
 ```
 This will launch a file called `test.tsx` (invoked from `root.tsx`) which is just a simple page containing components for preview purposes.
 
+### Icons
+The Carbon icons are Qwik components from the project [`carbon-icons-qwik`](https://github.com/iancharlesdouglas/carbon-icons-qwik).
+
 ## Production
 
 ```
