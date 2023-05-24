@@ -9,6 +9,7 @@
 |Form|0.0.1-1||
 |Grid|0.0.1-1|Incl. Row, Column.  Grid is CSS grid|
 |Link|0.0.1-1||
+|ListBox|0.0.1-2||
 |Text|0.0.1-1||
 |TextInput|0.0.1-1||
 |Theme|0.0.1-1||
@@ -56,7 +57,6 @@
 - InlineLoading
 - Layer
 - Layout
-- ListBox
 - Loading
 - Menu
 - Modal

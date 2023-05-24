@@ -53,7 +53,7 @@ export const ListBox = component$((props: ListBoxProps) => {
       class={classes}
       onKeyDown$={$((event: QwikKeyboardEvent<HTMLDivElement>) => {
         if (event.keyCode === 27) {
-          event?.stopPropagation();
+          event?.stopPropagation && event.stopPropagation();
         }
       })}
       preventdefault:click
