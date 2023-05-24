@@ -65,13 +65,13 @@ pnpm build
 ```
 
 ## Contributing
-See [Contributing](CONTRIBUTING.md)
+See [Contributing](CONTRIBUTING)
 
 ## Changelog
-See [CHANGELOG](CHANGELOG.md)
+See [CHANGELOG](CHANGELOG)
 
 ## Licence
-[Apache-2.0](LICENCE)
+[Apache-2.0](LICENSE)
 
 [npm]: https://img.shields.io/npm/v/carbon-components-qwik.svg?color=262626&style=for-the-badge
 [npm-url]: https://npmjs.com/package/carbon-components-qwik
