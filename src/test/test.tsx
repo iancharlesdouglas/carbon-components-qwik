@@ -8,6 +8,8 @@ import { Form } from '../components/form/form';
 import { Grid } from '../components/grid/grid';
 import { Column } from '../components/grid/column';
 import { Checkbox } from '../components/checkbox/checkbox';
+import { ListBoxMenuItem } from '../components/list-box/list-box-menu-item';
+import { ListBox } from '../components/list-box/list-box';
 
 /**
  * Local test harness for dev. purposes
@@ -44,6 +46,11 @@ const Test = component$(() => {
           maxCount={20}
           onChange$={$((event: QwikChangeEvent<HTMLInputElement>) => alert(`Length: ${event.target.value.length}`))}
         />
+        <ListBox style="width: 200px;overflow: hidden">
+          <ListBoxMenuItem style="width: 200px" title="Title">
+            List box menu item
+          </ListBoxMenuItem>
+        </ListBox>
       </Form>
       <Grid class="test-class" id="main-grid" fullWidth>
         <Column sm={4} md={8} lg={16}>

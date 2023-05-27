@@ -1,4 +1,4 @@
-import { QwikIntrinsicElements, QwikKeyboardEvent, component$, useContext, $ } from '@builder.io/qwik';
+import { QwikIntrinsicElements, QwikKeyboardEvent, component$, useContext, $, Slot } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { formContext } from '../../internal/contexts/form-context';
 import classNames from 'classnames';
@@ -48,20 +48,23 @@ export const ListBox = component$((props: ListBoxProps) => {
   );
   const sanitizedProps = _.omit(props, 'class', 'disabled', 'invalid', 'invalidText', 'isOpen', 'size', 'type', 'warn', 'warnText');
   return (
-    <div
-      {...sanitizedProps}
-      class={classes}
-      onKeyDown$={$((event: QwikKeyboardEvent<HTMLDivElement>) => {
-        if (event.keyCode === 27) {
-          event?.stopPropagation && event.stopPropagation();
-        }
-      })}
-      preventdefault:click
-      data-invalid={invalid}
-    >
+    <>
+      <div
+        {...sanitizedProps}
+        class={classes}
+        onKeyDown$={$((event: QwikKeyboardEvent<HTMLDivElement>) => {
+          if (event.keyCode === 27) {
+            event?.stopPropagation && event.stopPropagation();
+          }
+        })}
+        preventdefault:click
+        data-invalid={invalid}
+      >
+        <Slot />
+      </div>
       {isFluid && <hr class={`${prefix}--list-box__divider`} />}
       {invalid && <div class={`${prefix}--form-requirement`}>{invalidText}</div>}
       {showWarning && <div class={`${prefix}--form-requirement`}>{warnText}</div>}
-    </div>
+    </>
   );
 });

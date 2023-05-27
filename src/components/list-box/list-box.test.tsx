@@ -3,6 +3,7 @@ import { createDOM } from '@builder.io/qwik/testing';
 import { CarbonRoot } from '../carbon-root/carbon-root';
 import { ListBox } from './list-box';
 import { Form } from '../form/form';
+import { ListBoxMenuItem } from './list-box-menu-item';
 
 describe('ListBox', () => {
   it('renders expected CSS class and custom class', async () => {
@@ -111,5 +112,29 @@ describe('ListBox', () => {
     const divElement = screen.querySelector(`div#${listBoxId}`) as HTMLDivElement;
     await userEvent(divElement, 'keydown', { keyCode: 27 });
     await userEvent(divElement, 'keydown', { keyCode: 13 });
+  });
+
+  it('list box menu item renders title only when truncated', async () => {
+    const { screen, render } = await createDOM();
+    const listBoxId = 'list-box-id';
+    const longListBoxMenuItemId = 'long-list-box-menu-item-id';
+    const shortListBoxMenuItemId = 'short-list-box-menu-item-id';
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <ListBox id={listBoxId} style="width: 100px; overflow: hidden">
+            <ListBoxMenuItem id={longListBoxMenuItemId} style="width: 200px" title="Title" />
+            <ListBoxMenuItem id={shortListBoxMenuItemId} />
+          </ListBox>
+        </Form>
+      </CarbonRoot>
+    );
+
+    const longMenuItemDiv = screen.querySelector(`div#${longListBoxMenuItemId}`) as HTMLDivElement;
+    const rect = longMenuItemDiv.offsetWidth;
+    expect(longMenuItemDiv.hasAttribute('title')).toBeTruthy();
+    const shortMenuItemDiv = screen.querySelector(`div#${shortListBoxMenuItemId}`) as HTMLDivElement;
+    expect(shortMenuItemDiv.hasAttribute('title')).toBeFalsy();
   });
 });
