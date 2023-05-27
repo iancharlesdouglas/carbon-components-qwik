@@ -46,7 +46,7 @@ const Test = component$(() => {
           maxCount={20}
           onChange$={$((event: QwikChangeEvent<HTMLInputElement>) => alert(`Length: ${event.target.value.length}`))}
         />
-        <ListBox style="width: 200px;overflow: hidden">
+        <ListBox style="width: 100px;overflow: hidden">
           <ListBoxMenuItem style="width: 200px" title="Title">
             List box menu item
           </ListBoxMenuItem>
