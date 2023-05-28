@@ -40,7 +40,7 @@ export type DropdownProps = QwikIntrinsicElements['select'] & {
   label?: string;
   onChange$?: PropFunction;
   renderSelectedItem$?: Component<any>;
-  renderSize?: 'sm' | 'md' | 'lg';
+  scale?: 'sm' | 'md' | 'lg';
   selectedItem?: object | string | number;
   titleText?: string;
   translateWithId?: () => string;
@@ -60,7 +60,7 @@ export const Dropdown = component$((props: DropdownProps) => {
     invalid = false,
     warn = false,
     disabled = false,
-    renderSize: size = 'md',
+    scale: size = 'md',
     direction = 'bottom' /*, itemToString = defaultItemToString */,
   } = props;
   const inline = type === 'inline';
@@ -96,7 +96,7 @@ export const Dropdown = component$((props: DropdownProps) => {
     'label',
     'onChange$',
     'renderSelectedItem$',
-    'renderSize',
+    'scale',
     'selectedItem',
     'titleText',
     'translateWithId',

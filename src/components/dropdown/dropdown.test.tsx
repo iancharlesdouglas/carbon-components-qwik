@@ -61,7 +61,7 @@ describe('Dropdown', () => {
             invalid
             invalidText="Invalid!"
             label="Name"
-            renderSize="md"
+            scale="md"
             titleText="Name input"
             type="default"
             warn
@@ -86,7 +86,7 @@ describe('Dropdown', () => {
       'label',
       'onChange$',
       'renderSelectedItem$',
-      // 'renderSize',
+      'scale',
       'selectedItem',
       'titleText',
       'translateWithId',
