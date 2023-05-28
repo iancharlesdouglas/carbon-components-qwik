@@ -3,7 +3,6 @@ import { createDOM } from '@builder.io/qwik/testing';
 import { CarbonRoot } from '../carbon-root/carbon-root';
 import { ListBox } from './list-box';
 import { Form } from '../form/form';
-import { ListBoxMenuItem } from './list-box-menu-item';
 
 describe('ListBox', () => {
   it('renders expected CSS class and custom class', async () => {

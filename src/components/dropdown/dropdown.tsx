@@ -1,7 +1,7 @@
-import { Component, PropFunction, QwikIntrinsicElements, component$, useContext, useSignal } from '@builder.io/qwik';
-import { usePrefix } from '../../internal/hooks/use-prefix';
-import { formContext } from '../../internal/contexts/form-context';
-import classNames from 'classnames';
+import { Component, PropFunction, QwikIntrinsicElements, component$ /*, useContext, useSignal*/ } from '@builder.io/qwik';
+// import { usePrefix } from '../../internal/hooks/use-prefix';
+// import { formContext } from '../../internal/contexts/form-context';
+// import classNames from 'classnames';
 
 /**
  * Dropdown props
@@ -35,21 +35,23 @@ export type DropdownProps = QwikIntrinsicElements['select'] & {
 /**
  * Dropdown
  */
-export const Dropdown = component$((props: DropdownProps) => {
-  const prefix = usePrefix();
-  const { isFluid } = useContext(formContext);
+export const Dropdown = component$((/*props: DropdownProps*/) => {
+  // const prefix = usePrefix();
+  // const { isFluid } = useContext(formContext);
 
-  // TODO - selectprops?
+  // // TODO - select props?
 
-  const { type = 'default', invalid = false } = props;
-  const inline = type === 'inline';
-  const showWarning = !invalid && warn;
+  // const { type = 'default', invalid = false, warn = false } = props;
+  // const inline = type === 'inline';
+  // const showWarning = !invalid && warn;
 
-  const isFocused = useSignal(false);
+  // const isFocused = useSignal(false);
 
-  const classes = classNames(`${prefix}--dropdown`, {
-    [`${prefix}--dropdown--invalid`]: invalid,
-    [`${prefix}--dropdown--warning`]: showWarning,
-    [`${prefix}--dropdown--open`]: isOpen,
-  });
+  // const isOpen = false; // TODO - remove
+  // const classes = classNames(`${prefix}--dropdown`, {
+  //   [`${prefix}--dropdown--invalid`]: invalid,
+  //   [`${prefix}--dropdown--warning`]: showWarning,
+  //   [`${prefix}--dropdown--open`]: isOpen,
+  // });
+  return <></>;
 });
