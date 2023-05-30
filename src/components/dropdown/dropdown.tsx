@@ -1,6 +1,6 @@
-import { Component, PropFunction, /*QwikFocusEvent, */ QwikIntrinsicElements, component$ /*useContext, useSignal, $*/ } from '@builder.io/qwik';
+import { Component, PropFunction, /*QwikFocusEvent, */ QwikIntrinsicElements, component$, useContext, useSignal /*, $*/ } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
-// import { formContext } from '../../internal/contexts/form-context';
+import { formContext } from '../../internal/contexts/form-context';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { ListBox } from '../list-box/list-box';
@@ -64,7 +64,7 @@ export type DropdownProps = QwikIntrinsicElements['div'] & {
  */
 export const Dropdown = component$((props: DropdownProps) => {
   const prefix = usePrefix();
-  // const { isFluid } = useContext(formContext);
+  const { isFluid } = useContext(formContext);
   const {
     type = 'default',
     invalid = false,
@@ -76,7 +76,7 @@ export const Dropdown = component$((props: DropdownProps) => {
     direction = 'bottom',
     // itemToString = defaultItemToString,
     hideLabel = false,
-    // class: customClass,
+    class: customClass,
     titleText,
     ariaLabel,
     // label,
@@ -87,7 +87,7 @@ export const Dropdown = component$((props: DropdownProps) => {
   const inline = type === 'inline';
   const showWarning = !invalid && warn;
 
-  // const isFocused = useSignal(false);
+  const isFocused = useSignal(false);
 
   const isOpen = false;
 
@@ -108,14 +108,14 @@ export const Dropdown = component$((props: DropdownProps) => {
 
   // const helperTextClasses = classNames(`${prefix}--form__helper-text`, { [`${prefix}--form__helper-text--disabled`]: disabled });
 
-  // const wrapperClasses = classNames(`${prefix}--dropdown__wrapper`, `${prefix}--list-box__wrapper`, customClass, {
-  //   [`${prefix}--dropdown__wrapper--inline`]: inline,
-  //   [`${prefix}--list-box__wrapper--inline`]: inline,
-  //   [`${prefix}--dropdown__wrapper--inline--invalid`]: inline && invalid,
-  //   [`${prefix}--list-box__wrapper--inline--invalid`]: inline && invalid,
-  //   [`${prefix}--list-box__wrapper--fluid--invalid`]: isFluid && invalid,
-  //   [`${prefix}--list-box__wrapper--fluid--focus`]: isFluid && isFocused && !isOpen,
-  // });
+  const wrapperClasses = classNames(`${prefix}--dropdown__wrapper`, `${prefix}--list-box__wrapper`, customClass, {
+    [`${prefix}--dropdown__wrapper--inline`]: inline,
+    [`${prefix}--list-box__wrapper--inline`]: inline,
+    [`${prefix}--dropdown__wrapper--inline--invalid`]: inline && invalid,
+    [`${prefix}--list-box__wrapper--inline--invalid`]: inline && invalid,
+    [`${prefix}--list-box__wrapper--fluid--invalid`]: isFluid && invalid,
+    [`${prefix}--list-box__wrapper--fluid--focus`]: isFluid && isFocused && !isOpen,
+  });
 
   const sanitizedProps = _.omit(
     props,
@@ -128,6 +128,7 @@ export const Dropdown = component$((props: DropdownProps) => {
     'initialSelectedItem',
     'invalid',
     'invalidText',
+    'id',
     'itemToElement$',
     'itemToString',
     'items',
@@ -146,7 +147,7 @@ export const Dropdown = component$((props: DropdownProps) => {
   // const handleFocus = $((event: QwikFocusEvent<HTMLDivElement>) => (isFocused.value = event.type === 'focus'));
 
   return (
-    <div class={classes} {...sanitizedProps}>
+    <div class={wrapperClasses} {...sanitizedProps}>
       {/* TODO: set label attrs */}
       {titleText && <label class={titleClasses}>{titleText}</label>}
       <ListBox

@@ -8,23 +8,25 @@ describe('Dropdown', () => {
   it('renders expected CSS classes per attributes', async () => {
     const { screen, render } = await createDOM();
     const customClass = 'custom-class';
-    const dropdownId = 'dropdown-id';
 
     await render(
       <CarbonRoot>
         <Form>
-          <Dropdown id={dropdownId} class={customClass} invalid type="inline" disabled direction="top" />
+          <Dropdown class={customClass} invalid type="inline" disabled direction="top" />
         </Form>
       </CarbonRoot>
     );
 
-    const divElement = screen.querySelector(`div#${dropdownId}`) as HTMLDivElement;
-    expect(divElement.classList.contains('cds--dropdown')).toBeTruthy();
-    expect(divElement.classList.contains('cds--dropdown--invalid')).toBeTruthy();
-    expect(divElement.classList.contains('cds--dropdown--warning')).toBeFalsy();
-    expect(divElement.classList.contains('cds--dropdown--inline')).toBeTruthy();
-    expect(divElement.classList.contains('cds--dropdown--disabled')).toBeTruthy();
-    expect(divElement.classList.contains('cds--list-box--up')).toBeTruthy();
+    const listboxDiv = screen.querySelector('div.cds--dropdown__wrapper > div') as HTMLDivElement;
+    expect(listboxDiv.classList.contains('cds--dropdown')).toBeTruthy();
+    expect(listboxDiv.classList.contains('cds--dropdown--invalid')).toBeTruthy();
+    expect(listboxDiv.classList.contains('cds--dropdown--warning')).toBeFalsy();
+    expect(listboxDiv.classList.contains('cds--dropdown--inline')).toBeTruthy();
+    expect(listboxDiv.classList.contains('cds--dropdown--disabled')).toBeTruthy();
+    expect(listboxDiv.classList.contains('cds--list-box--up')).toBeTruthy();
+
+    const wrapperDiv = screen.querySelector('div.cds--dropdown__wrapper') as HTMLDivElement;
+    expect(wrapperDiv.classList.contains(customClass)).toBeTruthy();
   });
 
   it('renders warning CSS class if in warning state', async () => {
@@ -39,9 +41,10 @@ describe('Dropdown', () => {
       </CarbonRoot>
     );
 
-    const divElement = screen.querySelector(`div#${dropdownId}`) as HTMLDivElement;
-    expect(divElement.classList.contains('cds--dropdown--warning')).toBeTruthy();
-    expect(divElement.classList.contains('cds--dropdown--invalid')).toBeFalsy();
+    const listboxDiv = screen.querySelector(`div#${dropdownId}`) as HTMLDivElement;
+    console.log(listboxDiv.classList);
+    expect(listboxDiv.classList.contains('cds--dropdown--warning')).toBeTruthy();
+    expect(listboxDiv.classList.contains('cds--dropdown--invalid')).toBeFalsy();
   });
 
   it('omits non-standard properties from the rendered div element', async () => {
@@ -71,7 +74,7 @@ describe('Dropdown', () => {
       </CarbonRoot>
     );
 
-    const divElement = screen.querySelector(`div#${dropdownId}`) as HTMLDivElement;
+    const listboxDiv = screen.querySelector(`div#${dropdownId}`) as HTMLDivElement;
     const illegalAttrs = [
       'ariaLabel',
       'direction',
@@ -95,7 +98,7 @@ describe('Dropdown', () => {
       'warn',
       'warnText',
     ];
-    illegalAttrs.forEach((attr) => expect(divElement.hasAttribute(attr), `Attribute: ${attr} unexpected`).toBeFalsy());
+    illegalAttrs.forEach((attr) => expect(listboxDiv.hasAttribute(attr), `Attribute: ${attr} unexpected`).toBeFalsy());
   });
 
   it('renders a label with appropriate CSS classes if titleText is stipulated', async () => {
@@ -113,7 +116,7 @@ describe('Dropdown', () => {
       </CarbonRoot>
     );
 
-    const labelledDropdownLabel = screen.querySelector(`div#${dropdownIdTitle} label`) as HTMLLabelElement;
+    const labelledDropdownLabel = screen.querySelector('div.cds--dropdown__wrapper label') as HTMLLabelElement;
     expect(labelledDropdownLabel).toBeTruthy();
     expect(labelledDropdownLabel.classList.contains('cds--label')).toBeTruthy();
     expect(labelledDropdownLabel.classList.contains('cds--label--disabled')).toBeTruthy();
@@ -125,7 +128,6 @@ describe('Dropdown', () => {
 
   it('renders a ListBox with appropriate attributes', async () => {
     const { screen, render } = await createDOM();
-    const customClass = 'custom-class';
     const dropdownId = 'dropdown-id';
     const ariaLabel = 'Aria label';
     const size = 'sm';
@@ -133,16 +135,19 @@ describe('Dropdown', () => {
     await render(
       <CarbonRoot>
         <Form>
-          <Dropdown id={dropdownId} class={customClass} ariaLabel={ariaLabel} size={size} invalid warn disabled />
+          <Dropdown id={dropdownId} ariaLabel={ariaLabel} size={size} invalid warn disabled />
         </Form>
       </CarbonRoot>
     );
 
-    const divElement = screen.querySelector('div.cds--dropdown div.cds--list-box') as HTMLDivElement;
-    expect(divElement.getAttribute('aria-label')).toEqual(ariaLabel);
-    expect(divElement.classList.contains(`cds--list-box--${size}`)).toBeTruthy();
-    expect(divElement.classList.contains('cds--list-box--invalid')).toBeTruthy();
-    expect(divElement.classList.contains('cds--list-box--warning')).toBeFalsy();
-    expect(divElement.getAttribute('id')).toEqual(dropdownId);
+    const listboxDiv = screen.querySelector('div.cds--dropdown.cds--list-box') as HTMLDivElement;
+    expect(listboxDiv.getAttribute('aria-label')).toEqual(ariaLabel);
+    expect(listboxDiv.classList.contains(`cds--list-box--${size}`)).toBeTruthy();
+    expect(listboxDiv.classList.contains('cds--list-box--invalid')).toBeTruthy();
+    expect(listboxDiv.classList.contains('cds--list-box--warning')).toBeFalsy();
+    expect(listboxDiv.getAttribute('id')).toEqual(dropdownId);
   });
+
+  // TODO - render of label incl. with custom function
+  it('renders selected item label', async () => {});
 });

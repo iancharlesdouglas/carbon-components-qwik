@@ -52,7 +52,7 @@ const Test = component$(() => {
             List box menu item
           </ListBoxMenuItem>
         </ListBox>
-        <Dropdown />
+        <Dropdown id="dropdown-id" warn titleText="Label" class="custom-class" />
       </Form>
       <Grid class="test-class" id="main-grid" fullWidth>
         <Column sm={4} md={8} lg={16}>
