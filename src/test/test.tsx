@@ -10,6 +10,7 @@ import { Column } from '../components/grid/column';
 import { Checkbox } from '../components/checkbox/checkbox';
 import { ListBoxMenuItem } from '../components/list-box/list-box-menu-item';
 import { ListBox } from '../components/list-box/list-box';
+import { Dropdown } from '../components/dropdown/dropdown';
 
 /**
  * Local test harness for dev. purposes
@@ -51,6 +52,7 @@ const Test = component$(() => {
             List box menu item
           </ListBoxMenuItem>
         </ListBox>
+        <Dropdown />
       </Form>
       <Grid class="test-class" id="main-grid" fullWidth>
         <Column sm={4} md={8} lg={16}>

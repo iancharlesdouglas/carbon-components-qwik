@@ -1,8 +1,10 @@
-import { Component, PropFunction, QwikIntrinsicElements, component$ /*, useContext, useSignal*/ } from '@builder.io/qwik';
+import { Component, PropFunction, /*QwikFocusEvent, */ QwikIntrinsicElements, component$ /*useContext, useSignal, $*/ } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 // import { formContext } from '../../internal/contexts/form-context';
 import classNames from 'classnames';
 import _ from 'lodash';
+import { ListBox } from '../list-box/list-box';
+import { WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
 
 /**
  * List item type
@@ -22,9 +24,17 @@ export type ItemToString = (item: Item) => string;
 // };
 
 /**
+ * Props for a custom component to render the selected item
+ */
+export type RenderSelectedItemProps = {
+  item: ItemToString;
+};
+
+/**
  * Dropdown props
  */
-export type DropdownProps = QwikIntrinsicElements['select'] & {
+export type DropdownProps = QwikIntrinsicElements['div'] & {
+  ariaLabel?: string;
   class?: string;
   direction?: 'top' | 'bottom';
   disabled?: boolean;
@@ -39,9 +49,9 @@ export type DropdownProps = QwikIntrinsicElements['select'] & {
   items?: Item[];
   label?: string;
   onChange$?: PropFunction;
-  renderSelectedItem$?: Component<any>;
-  scale?: 'sm' | 'md' | 'lg';
-  selectedItem?: object | string | number;
+  renderSelectedItem$?: Component<RenderSelectedItemProps>;
+  size?: 'sm' | 'md' | 'lg';
+  selectedItem?: Item;
   titleText?: string;
   translateWithId?: () => string;
   type?: 'default' | 'inline';
@@ -58,11 +68,22 @@ export const Dropdown = component$((props: DropdownProps) => {
   const {
     type = 'default',
     invalid = false,
+    invalidText,
     warn = false,
+    warnText,
     disabled = false,
-    scale: size = 'md',
-    direction = 'bottom' /*, itemToString = defaultItemToString */,
+    size = 'md',
+    direction = 'bottom',
+    // itemToString = defaultItemToString,
+    hideLabel = false,
+    // class: customClass,
+    titleText,
+    ariaLabel,
+    label,
+    id,
+    selectedItem,
   } = props;
+
   const inline = type === 'inline';
   const showWarning = !invalid && warn;
 
@@ -80,8 +101,25 @@ export const Dropdown = component$((props: DropdownProps) => {
     [`${prefix}--list-box--up`]: direction === 'top',
   });
 
+  const titleClasses = classNames(`${prefix}--label`, {
+    [`${prefix}--label--disabled`]: disabled,
+    [`${prefix}--visually-hidden`]: hideLabel,
+  });
+
+  // const helperTextClasses = classNames(`${prefix}--form__helper-text`, { [`${prefix}--form__helper-text--disabled`]: disabled });
+
+  // const wrapperClasses = classNames(`${prefix}--dropdown__wrapper`, `${prefix}--list-box__wrapper`, customClass, {
+  //   [`${prefix}--dropdown__wrapper--inline`]: inline,
+  //   [`${prefix}--list-box__wrapper--inline`]: inline,
+  //   [`${prefix}--dropdown__wrapper--inline--invalid`]: inline && invalid,
+  //   [`${prefix}--list-box__wrapper--inline--invalid`]: inline && invalid,
+  //   [`${prefix}--list-box__wrapper--fluid--invalid`]: isFluid && invalid,
+  //   [`${prefix}--list-box__wrapper--fluid--focus`]: isFluid && isFocused && !isOpen,
+  // });
+
   const sanitizedProps = _.omit(
     props,
+    'ariaLabel',
     'class',
     'direction',
     'disabled',
@@ -96,8 +134,8 @@ export const Dropdown = component$((props: DropdownProps) => {
     'label',
     'onChange$',
     'renderSelectedItem$',
-    'scale',
     'selectedItem',
+    'size',
     'titleText',
     'translateWithId',
     'type',
@@ -105,5 +143,40 @@ export const Dropdown = component$((props: DropdownProps) => {
     'warnText'
   );
 
-  return <div class={classes} {...sanitizedProps}></div>;
+  // const handleFocus = $((event: QwikFocusEvent<HTMLDivElement>) => (isFocused.value = event.type === 'focus'));
+
+  return (
+    <div class={classes} {...sanitizedProps}>
+      {/* TODO: set label attrs */}
+      {titleText && <label class={titleClasses}>{titleText}</label>}
+      <ListBox
+        // onFocus$={handleFocus}
+        // onBlur$={handleFocus}
+        aria-label={ariaLabel}
+        size={size}
+        class={classes}
+        invalid={invalid}
+        invalidText={invalidText}
+        warn={warn}
+        warnText={warnText}
+        isOpen={isOpen}
+        id={id}
+      >
+        {invalid && <WarningFilled class={`${prefix}--list-box__invalid-icon`} />}
+        {showWarning && <WarningAltFilled class={`${prefix}--list-box__invalid-icon ${prefix}--list-box__invalid-icon--warning`} />}
+        {/* TODO - button attrs */}
+        <button
+          type="button"
+          class={`${prefix}--list-box__field`}
+          disabled={disabled}
+          aria-disabled={disabled}
+          // title={selectedItem ? itemToString(selectedItem) : label}
+        >
+          {/* TODO - render selected item using custom component function? */}
+          {/* <span class={`${prefix}--list-box__label`}>{selectedItem ? itemToString(selectedItem) : label}</span> */}
+          {/* TODO - listbox menu icon */}
+        </button>
+      </ListBox>
+    </div>
+  );
 });
