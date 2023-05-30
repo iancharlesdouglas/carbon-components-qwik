@@ -79,9 +79,9 @@ export const Dropdown = component$((props: DropdownProps) => {
     // class: customClass,
     titleText,
     ariaLabel,
-    label,
+    // label,
     id,
-    selectedItem,
+    // selectedItem,
   } = props;
 
   const inline = type === 'inline';
