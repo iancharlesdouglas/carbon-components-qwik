@@ -16,18 +16,19 @@ export type Item = string | { label: string };
  */
 export type ItemToString = (item: Item) => string;
 
-// const defaultItemToString: ItemToString = (item: Item) => {
-//   if (typeof item === 'string') {
-//     return item;
-//   }
-//   return item ? item.label : '';
-// };
+const defaultItemToString: ItemToString = (item: Item) => {
+  if (typeof item === 'string') {
+    return item;
+  }
+  return item ? item.label : '';
+};
 
 /**
  * Props for a custom component to render the selected item
+ * @property {Item} item - Item to render
  */
 export type RenderSelectedItemProps = {
-  item: ItemToString;
+  item: Item;
 };
 
 /**
@@ -49,7 +50,7 @@ export type DropdownProps = QwikIntrinsicElements['div'] & {
   items?: Item[];
   label?: string;
   onChange$?: PropFunction;
-  renderSelectedItem$?: Component<RenderSelectedItemProps>;
+  renderSelectedItem?: Component<RenderSelectedItemProps>;
   size?: 'sm' | 'md' | 'lg';
   selectedItem?: Item;
   titleText?: string;
@@ -66,22 +67,24 @@ export const Dropdown = component$((props: DropdownProps) => {
   const prefix = usePrefix();
   const { isFluid } = useContext(formContext);
   const {
-    type = 'default',
+    ariaLabel,
+    class: customClass,
+    direction = 'bottom',
+    disabled = false,
+    helperText,
+    hideLabel = false,
+    id,
     invalid = false,
     invalidText,
+    itemToString = defaultItemToString,
+    label,
+    renderSelectedItem: RenderSelectedItem,
+    selectedItem,
+    size = 'md',
+    titleText,
+    type = 'default',
     warn = false,
     warnText,
-    disabled = false,
-    size = 'md',
-    direction = 'bottom',
-    // itemToString = defaultItemToString,
-    hideLabel = false,
-    class: customClass,
-    titleText,
-    ariaLabel,
-    // label,
-    id,
-    // selectedItem,
   } = props;
 
   const inline = type === 'inline';
@@ -106,7 +109,7 @@ export const Dropdown = component$((props: DropdownProps) => {
     [`${prefix}--visually-hidden`]: hideLabel,
   });
 
-  // const helperTextClasses = classNames(`${prefix}--form__helper-text`, { [`${prefix}--form__helper-text--disabled`]: disabled });
+  const helperTextClasses = classNames(`${prefix}--form__helper-text`, { [`${prefix}--form__helper-text--disabled`]: disabled });
 
   const wrapperClasses = classNames(`${prefix}--dropdown__wrapper`, `${prefix}--list-box__wrapper`, customClass, {
     [`${prefix}--dropdown__wrapper--inline`]: inline,
@@ -148,7 +151,7 @@ export const Dropdown = component$((props: DropdownProps) => {
 
   return (
     <div class={wrapperClasses} {...sanitizedProps}>
-      {/* TODO: set label attrs */}
+      {/* TODO: set label aria-* attrs */}
       {titleText && <label class={titleClasses}>{titleText}</label>}
       <ListBox
         // onFocus$={handleFocus}
@@ -171,13 +174,16 @@ export const Dropdown = component$((props: DropdownProps) => {
           class={`${prefix}--list-box__field`}
           disabled={disabled}
           aria-disabled={disabled}
-          // title={selectedItem ? itemToString(selectedItem) : label}
+          title={selectedItem ? itemToString(selectedItem) : label}
         >
-          {/* TODO - render selected item using custom component function? */}
-          {/* <span class={`${prefix}--list-box__label`}>{selectedItem ? itemToString(selectedItem) : label}</span> */}
+          <span class={`${prefix}--list-box__label`}>
+            {(selectedItem && (RenderSelectedItem ? <RenderSelectedItem item={selectedItem} /> : itemToString(selectedItem!))) || label}
+          </span>
           {/* TODO - listbox menu icon */}
         </button>
+        {/* TODO - listbox items */}
       </ListBox>
+      {!inline && !invalid && !warn && helperText && !isFluid && <div class={helperTextClasses}>{helperText}</div>}
     </div>
   );
 });

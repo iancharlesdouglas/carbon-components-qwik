@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { createDOM } from '@builder.io/qwik/testing';
 import { CarbonRoot } from '../carbon-root/carbon-root';
 import { Form } from '../form/form';
-import { Dropdown } from './dropdown';
+import { Dropdown, RenderSelectedItemProps } from './dropdown';
+import { component$ } from '@builder.io/qwik';
 
 describe('Dropdown', () => {
   it('renders expected CSS classes per attributes', async () => {
@@ -42,7 +43,6 @@ describe('Dropdown', () => {
     );
 
     const listboxDiv = screen.querySelector(`div#${dropdownId}`) as HTMLDivElement;
-    console.log(listboxDiv.classList);
     expect(listboxDiv.classList.contains('cds--dropdown--warning')).toBeTruthy();
     expect(listboxDiv.classList.contains('cds--dropdown--invalid')).toBeFalsy();
   });
@@ -148,6 +148,64 @@ describe('Dropdown', () => {
     expect(listboxDiv.getAttribute('id')).toEqual(dropdownId);
   });
 
-  // TODO - render of label incl. with custom function
-  it('renders selected item label', async () => {});
+  it('renders selected item label', async () => {
+    const { screen, render } = await createDOM();
+    const label = 'Selected item';
+    const selectedItem = { label };
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <Dropdown selectedItem={selectedItem} />
+        </Form>
+      </CarbonRoot>
+    );
+
+    const selectedItemSpan = screen.querySelector('div.cds--dropdown button span') as HTMLSpanElement;
+    expect(selectedItemSpan.textContent).toEqual(label);
+  });
+
+  it('renders selected item label using a custom component function', async () => {
+    const { screen, render } = await createDOM();
+    const label = 'Selected item';
+    const selectedItem = { label };
+    const selectedItemClass = 'selected-item';
+
+    const SelectedItemRenderComp = component$((props: RenderSelectedItemProps) => (
+      <span class={selectedItemClass}>{typeof props.item === 'string' ? props.item : props.item.label}</span>
+    ));
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <Dropdown selectedItem={selectedItem} renderSelectedItem={SelectedItemRenderComp} />
+        </Form>
+      </CarbonRoot>
+    );
+
+    const selectedItemSpan = screen.querySelector('div.cds--dropdown button span') as HTMLSpanElement;
+    expect(selectedItemSpan.textContent).toEqual(label);
+  });
+
+  it('renders helper text if supplied and the state allows it', async () => {
+    const { screen, render } = await createDOM();
+    const helperText = 'Optional';
+    const helperDropdownId = 'helper-dropdown';
+    const noHelperDropdownId = 'no-helper-dropdown';
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <Dropdown helperText={helperText} id={helperDropdownId} />
+          <Dropdown helperText={helperText} id={noHelperDropdownId} invalid />
+        </Form>
+      </CarbonRoot>
+    );
+
+    const helperTextDiv = screen.querySelector(`div.cds--dropdown#${helperDropdownId} ~ div.cds--form__helper-text`) as HTMLDivElement;
+    expect(helperTextDiv.textContent).toEqual(helperText);
+
+    const noHelperTextDiv = screen.querySelector(`div.cds--dropdown#${noHelperDropdownId} ~ div.cds--form__helper-text`) as HTMLDivElement;
+    expect(noHelperTextDiv).toBeUndefined();
+  });
 });

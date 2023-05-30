@@ -10,13 +10,16 @@ import { Column } from '../components/grid/column';
 import { Checkbox } from '../components/checkbox/checkbox';
 import { ListBoxMenuItem } from '../components/list-box/list-box-menu-item';
 import { ListBox } from '../components/list-box/list-box';
-import { Dropdown } from '../components/dropdown/dropdown';
+import { Dropdown, RenderSelectedItemProps } from '../components/dropdown/dropdown';
 
 /**
  * Local test harness for dev. purposes
  */
 const Test = component$(() => {
   const textValue = 'Test value';
+  const SelectedItemRenderComp = component$((props: RenderSelectedItemProps) => (
+    <span class="selected-item-class">Here: {typeof props.item === 'string' ? props.item : props.item.label}</span>
+  ));
   return (
     <CarbonRoot>
       <Link href="https://github.com" target="blank" data-x="test" id="link_id" size="lg" visited renderIcon={Edit} onClick$={() => alert('clicked')}>
@@ -52,7 +55,13 @@ const Test = component$(() => {
             List box menu item
           </ListBoxMenuItem>
         </ListBox>
-        <Dropdown id="dropdown-id" warn titleText="Label" class="custom-class" />
+        <Dropdown
+          titleText="Select"
+          label="Select an item"
+          selectedItem={{ label: 'Selection' }}
+          renderSelectedItem={SelectedItemRenderComp}
+          helperText="Optional"
+        />
       </Form>
       <Grid class="test-class" id="main-grid" fullWidth>
         <Column sm={4} md={8} lg={16}>
