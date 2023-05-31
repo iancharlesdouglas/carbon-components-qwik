@@ -34,7 +34,7 @@
     "release": "np main --no-git-checks",
     "start": "vite --open --mode ssr",
     "qwik": "qwik",
-    "test": "vitest",
+    "test": "vitest --testTimeout=10000",
     "coverage": "vitest run --coverage --testTimeout=10000"
   },
   "devDependencies": {

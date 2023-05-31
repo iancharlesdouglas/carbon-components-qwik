@@ -3,6 +3,7 @@ import { createDOM } from '@builder.io/qwik/testing';
 import { CarbonRoot } from '../carbon-root/carbon-root';
 import { ListBox } from './list-box';
 import { Form } from '../form/form';
+import { ListBoxMenuIcon } from './list-box-menu-icon';
 
 describe('ListBox', () => {
   it('renders expected CSS class and custom class', async () => {
@@ -111,6 +112,21 @@ describe('ListBox', () => {
     const divElement = screen.querySelector(`div#${listBoxId}`) as HTMLDivElement;
     await userEvent(divElement, 'keydown', { keyCode: 27 });
     await userEvent(divElement, 'keydown', { keyCode: 13 });
+  });
+
+  it('renders listbox menu icon appropriately', async () => {
+    const { screen, render } = await createDOM();
+
+    await render(
+      <CarbonRoot>
+        <ListBoxMenuIcon isOpen={true} />
+        <ListBoxMenuIcon isOpen={false} />
+      </CarbonRoot>
+    );
+
+    const menuIconDivs = Array.from(screen.querySelectorAll('div.cds--list-box__menu-icon'));
+    expect(menuIconDivs[0].classList.contains('cds--list-box__menu-icon--open')).toBeTruthy();
+    expect(menuIconDivs[1].classList.contains('cds--list-box__menu-icon--open')).toBeFalsy();
   });
 
   // it('list box menu item renders title only when truncated', async () => {
