@@ -55,13 +55,17 @@ const Test = component$(() => {
             List box menu item
           </ListBoxMenuItem>
         </ListBox>
-        <Dropdown
-          titleText="Select"
-          label="Select an item"
-          selectedItem={{ label: 'Selection' }}
-          renderSelectedItem={SelectedItemRenderComp}
-          helperText="Optional"
-        />
+        <Grid>
+          <Column lg={4}>
+            <Dropdown
+              titleText="Select"
+              label="Select an item"
+              selectedItem={{ label: 'Selection' }}
+              renderSelectedItem={SelectedItemRenderComp}
+              helperText="Optional"
+            />
+          </Column>
+        </Grid>
       </Form>
       <Grid class="test-class" id="main-grid" fullWidth>
         <Column sm={4} md={8} lg={16}>

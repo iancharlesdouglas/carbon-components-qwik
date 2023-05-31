@@ -18,7 +18,7 @@ export const ListBoxMenuIcon = component$(({ isOpen = false }: ListBoxMenuIconPr
   const description = `${isOpen ? 'Close' : 'Open'} menu`;
   return (
     <div class={classes}>
-      <ChevronDown aria-label={description} title={description} />
+      <ChevronDown aria-label={description} title={description} size={16} />
     </div>
   );
 });

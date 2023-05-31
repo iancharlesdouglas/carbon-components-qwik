@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import _ from 'lodash';
 import { ListBox } from '../list-box/list-box';
 import { WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
+import { ListBoxMenuIcon } from '../list-box/list-box-menu-icon';
 
 /**
  * List item type
@@ -179,7 +180,7 @@ export const Dropdown = component$((props: DropdownProps) => {
           <span class={`${prefix}--list-box__label`}>
             {(selectedItem && (RenderSelectedItem ? <RenderSelectedItem item={selectedItem} /> : itemToString(selectedItem!))) || label}
           </span>
-          {/* TODO - listbox menu icon */}
+          <ListBoxMenuIcon isOpen={isOpen} />
         </button>
         {/* TODO - listbox items */}
       </ListBox>
