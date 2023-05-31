@@ -12,7 +12,7 @@ export type ListBoxMenuIconProps = { isOpen: boolean };
 /**
  * ListBox menu icon
  */
-export const ListBoxMenuIcon = component$(({ isOpen = false }: ListBoxMenuIconProps) => {
+export const ListBoxMenuIcon = component$(({ isOpen }: ListBoxMenuIconProps) => {
   const prefix = usePrefix();
   const classes = classNames(`${prefix}--list-box__menu-icon`, { [`${prefix}--list-box__menu-icon--open`]: isOpen });
   const description = `${isOpen ? 'Close' : 'Open'} menu`;

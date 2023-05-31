@@ -3,10 +3,10 @@ import { usePrefix } from '../../internal/hooks/use-prefix';
 
 /**
  * ListBoxMenu props
- * @property {string} id - ID (required)
+ * @property {string} id - ID
  */
 export type ListBoxMenuProps = QwikIntrinsicElements['select'] & {
-  id: string;
+  id?: string;
 };
 
 /**

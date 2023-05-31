@@ -4,8 +4,10 @@ import { formContext } from '../../internal/contexts/form-context';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { ListBox } from '../list-box/list-box';
-import { WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
+import { ListBoxMenu } from '../list-box/list-box-menu';
+import { Checkmark, WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
 import { ListBoxMenuIcon } from '../list-box/list-box-menu-icon';
+import { ListBoxMenuItem } from '../list-box/list-box-menu-item';
 
 /**
  * List item type
@@ -77,6 +79,7 @@ export const Dropdown = component$((props: DropdownProps) => {
     id,
     invalid = false,
     invalidText,
+    items,
     itemToString = defaultItemToString,
     label,
     renderSelectedItem: RenderSelectedItem,
@@ -93,7 +96,9 @@ export const Dropdown = component$((props: DropdownProps) => {
 
   const isFocused = useSignal(false);
 
-  const isOpen = false;
+  const isOpen = true;
+  // TODO - compute highlightedIndex per useSelect
+  const highlightedIndex = -1;
 
   const classes = classNames(`${prefix}--dropdown`, {
     [`${prefix}--dropdown--invalid`]: invalid,
@@ -167,9 +172,9 @@ export const Dropdown = component$((props: DropdownProps) => {
         isOpen={isOpen}
         id={id}
       >
-        {invalid && <WarningFilled class={`${prefix}--list-box__invalid-icon`} />}
-        {showWarning && <WarningAltFilled class={`${prefix}--list-box__invalid-icon ${prefix}--list-box__invalid-icon--warning`} />}
-        {/* TODO - button attrs */}
+        {invalid && <WarningFilled class={`${prefix}--list-box__invalid-icon`} size={16} />}
+        {showWarning && <WarningAltFilled class={`${prefix}--list-box__invalid-icon ${prefix}--list-box__invalid-icon--warning`} size={16} />}
+        {/* TODO - button aria attrs */}
         <button
           type="button"
           class={`${prefix}--list-box__field`}
@@ -182,7 +187,29 @@ export const Dropdown = component$((props: DropdownProps) => {
           </span>
           <ListBoxMenuIcon isOpen={isOpen} />
         </button>
-        {/* TODO - listbox items */}
+        {/* TODO - listbox menu aria attrs */}
+        <ListBoxMenu>
+          {isOpen &&
+            items?.map((item: Item, index: number) => {
+              // TODO - title - itemToElement ? item.text...
+              const title = itemToString(item);
+              const itemSelected = selectedItem === item;
+              // TODO - item aria attrs
+              return (
+                // TODO - derive key per useSelect
+                <ListBoxMenuItem
+                  key={item.toString()}
+                  isActive={selectedItem === item}
+                  isHighlighted={highlightedIndex === index || selectedItem === item}
+                  title={title}
+                >
+                  {/* TODO - itemToElement if supplied... */}
+                  {itemToString(item)}
+                  {itemSelected && <Checkmark class={`${prefix}--list-box__menu-item__selected-icon`} size={16} />}
+                </ListBoxMenuItem>
+              );
+            })}
+        </ListBoxMenu>
       </ListBox>
       {!inline && !invalid && !warn && helperText && !isFluid && <div class={helperTextClasses}>{helperText}</div>}
     </div>

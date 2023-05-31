@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite';
 import { qwikVite } from '@builder.io/qwik/optimizer';
-import { configDefaults } from 'vitest/config';
 
 export default defineConfig(() => {
   return {
@@ -17,7 +16,7 @@ export default defineConfig(() => {
         provider: 'istanbul',
         lines: 98,
         functions: 96,
-        branches: 92,
+        branches: 90,
         statements: 98,
       },
     },

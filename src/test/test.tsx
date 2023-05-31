@@ -8,9 +8,7 @@ import { Form } from '../components/form/form';
 import { Grid } from '../components/grid/grid';
 import { Column } from '../components/grid/column';
 import { Checkbox } from '../components/checkbox/checkbox';
-import { ListBoxMenuItem } from '../components/list-box/list-box-menu-item';
-import { ListBox } from '../components/list-box/list-box';
-import { Dropdown, RenderSelectedItemProps } from '../components/dropdown/dropdown';
+import { Dropdown, Item, RenderSelectedItemProps } from '../components/dropdown/dropdown';
 
 /**
  * Local test harness for dev. purposes
@@ -20,6 +18,7 @@ const Test = component$(() => {
   const SelectedItemRenderComp = component$((props: RenderSelectedItemProps) => (
     <span class="selected-item-class">Here: {typeof props.item === 'string' ? props.item : props.item.label}</span>
   ));
+  const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry'].map((label) => ({ label }));
   return (
     <CarbonRoot>
       <Link href="https://github.com" target="blank" data-x="test" id="link_id" size="lg" visited renderIcon={Edit} onClick$={() => alert('clicked')}>
@@ -50,18 +49,14 @@ const Test = component$(() => {
           maxCount={20}
           onChange$={$((event: QwikChangeEvent<HTMLInputElement>) => alert(`Length: ${event.target.value.length}`))}
         />
-        <ListBox style="width: 100px;overflow: hidden">
-          <ListBoxMenuItem style="width: 200px" title="Title">
-            List box menu item
-          </ListBoxMenuItem>
-        </ListBox>
         <Grid>
           <Column lg={4}>
             <Dropdown
               titleText="Select"
               label="Select an item"
-              selectedItem={{ label: 'Selection' }}
+              selectedItem={items.find((item) => (item as { label: string }).label === 'Banana')}
               renderSelectedItem={SelectedItemRenderComp}
+              items={items}
               helperText="Optional"
             />
           </Column>

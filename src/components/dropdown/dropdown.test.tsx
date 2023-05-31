@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { createDOM } from '@builder.io/qwik/testing';
 import { CarbonRoot } from '../carbon-root/carbon-root';
 import { Form } from '../form/form';
-import { Dropdown, RenderSelectedItemProps } from './dropdown';
+import { Dropdown, Item, RenderSelectedItemProps } from './dropdown';
 import { component$ } from '@builder.io/qwik';
 
 describe('Dropdown', () => {
@@ -168,8 +168,11 @@ describe('Dropdown', () => {
   it('renders selected item label using a custom component function', async () => {
     const { screen, render } = await createDOM();
     const label = 'Selected item';
-    const selectedItem = { label };
+    const selectedObjectItem = { label };
+    const selectedStringItem = label;
     const selectedItemClass = 'selected-item';
+    const objectItemsDropdown = 'dropdown-object-items';
+    const stringItemsDropdown = 'dropdown-string-items';
 
     const SelectedItemRenderComp = component$((props: RenderSelectedItemProps) => (
       <span class={selectedItemClass}>{typeof props.item === 'string' ? props.item : props.item.label}</span>
@@ -178,13 +181,16 @@ describe('Dropdown', () => {
     await render(
       <CarbonRoot>
         <Form>
-          <Dropdown selectedItem={selectedItem} renderSelectedItem={SelectedItemRenderComp} />
+          <Dropdown id={objectItemsDropdown} selectedItem={selectedObjectItem} renderSelectedItem={SelectedItemRenderComp} />
+          <Dropdown id={stringItemsDropdown} selectedItem={selectedStringItem} renderSelectedItem={SelectedItemRenderComp} />
         </Form>
       </CarbonRoot>
     );
 
-    const selectedItemSpan = screen.querySelector('div.cds--dropdown button span') as HTMLSpanElement;
-    expect(selectedItemSpan.textContent).toEqual(label);
+    const selectedObjectItemSpan = screen.querySelector(`div.cds--dropdown#${objectItemsDropdown} button span`) as HTMLSpanElement;
+    expect(selectedObjectItemSpan.textContent).toEqual(label);
+    const selectedStringItemSpan = screen.querySelector(`div.cds--dropdown#${stringItemsDropdown} button span`) as HTMLSpanElement;
+    expect(selectedStringItemSpan.textContent).toEqual(label);
   });
 
   it('renders helper text if supplied and the state allows it', async () => {
@@ -207,5 +213,45 @@ describe('Dropdown', () => {
 
     const noHelperTextDiv = screen.querySelector(`div.cds--dropdown#${noHelperDropdownId} ~ div.cds--form__helper-text`) as HTMLDivElement;
     expect(noHelperTextDiv).toBeUndefined();
+  });
+
+  it('renders list box menu item objects as supplied', async () => {
+    const { screen, render } = await createDOM();
+    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'].map((label) => ({ label }));
+    const selectedItem = items.find((item) => (item as { label: string }).label === 'Banana');
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <Dropdown items={items} selectedItem={selectedItem} />
+        </Form>
+      </CarbonRoot>
+    );
+
+    const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
+    expect(listBoxDiv.childElementCount).toEqual(items.length);
+    const menuItems = Array.from(screen.querySelectorAll('div.cds--list-box__menu div.cds--list-box__menu-item'));
+    items.forEach((item, index) => expect(menuItems[index].textContent).toEqual((item as { label: string }).label));
+    expect(menuItems[1].classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
+  });
+
+  it('renders list box menu item strings as supplied', async () => {
+    const { screen, render } = await createDOM();
+    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
+    const selectedItem = items.find((item) => item === 'Banana');
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <Dropdown items={items} selectedItem={selectedItem} />
+        </Form>
+      </CarbonRoot>
+    );
+
+    const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
+    expect(listBoxDiv.childElementCount).toEqual(items.length);
+    const menuItems = Array.from(screen.querySelectorAll('div.cds--list-box__menu div.cds--list-box__menu-item'));
+    items.forEach((item, index) => expect(menuItems[index].textContent).toEqual(item));
+    expect(menuItems[1].classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
   });
 });

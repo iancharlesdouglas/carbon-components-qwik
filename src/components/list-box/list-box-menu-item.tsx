@@ -9,9 +9,9 @@ import _ from 'lodash';
  * @property {boolean} isHighlighted - Whether the menu item is highlighted
  * @property {string} title - Title to show in tooltip
  */
-export type ListBoxMenuItemProps = QwikIntrinsicElements['option'] & {
-  isActive?: boolean;
-  isHighlighted?: boolean;
+export type ListBoxMenuItemProps = QwikIntrinsicElements['div'] & {
+  isActive: boolean;
+  isHighlighted: boolean;
   title?: string;
 };
 
@@ -19,7 +19,7 @@ export type ListBoxMenuItemProps = QwikIntrinsicElements['option'] & {
  * ListBoxMenuItem
  */
 export const ListBoxMenuItem = component$((props: ListBoxMenuItemProps) => {
-  const { isActive = false, isHighlighted = false, title = '' } = props;
+  const { isActive, isHighlighted, title = '' } = props;
   const prefix = usePrefix();
   const isTruncated = useSignal(false);
   const divElementRef = useSignal<Element>();
