@@ -1,4 +1,4 @@
-import { Component, PropFunction, /*QwikFocusEvent, */ QwikIntrinsicElements, component$, useContext, useSignal /*, $*/ } from '@builder.io/qwik';
+import { Component, PropFunction, /*QwikFocusEvent, */ QwikIntrinsicElements, component$, useContext, useSignal, $ } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { formContext } from '../../internal/contexts/form-context';
 import classNames from 'classnames';
@@ -8,6 +8,7 @@ import { ListBoxMenu } from '../list-box/list-box-menu';
 import { Checkmark, WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
 import { ListBoxMenuIcon } from '../list-box/list-box-menu-icon';
 import { ListBoxMenuItem } from '../list-box/list-box-menu-item';
+import { v4 as uuid } from 'uuid';
 
 /**
  * List item type
@@ -76,7 +77,7 @@ export const Dropdown = component$((props: DropdownProps) => {
     disabled = false,
     helperText,
     hideLabel = false,
-    id,
+    id = uuid(),
     invalid = false,
     invalidText,
     items,
@@ -95,15 +96,15 @@ export const Dropdown = component$((props: DropdownProps) => {
   const showWarning = !invalid && warn;
 
   const isFocused = useSignal(false);
+  const isOpen = useSignal(false);
 
-  const isOpen = true;
   // TODO - compute highlightedIndex per useSelect
   const highlightedIndex = -1;
 
   const classes = classNames(`${prefix}--dropdown`, {
     [`${prefix}--dropdown--invalid`]: invalid,
     [`${prefix}--dropdown--warning`]: showWarning,
-    [`${prefix}--dropdown--open`]: isOpen,
+    [`${prefix}--dropdown--open`]: isOpen.value,
     [`${prefix}--dropdown--inline`]: inline,
     [`${prefix}--dropdown--disabled`]: disabled,
     [`${prefix}--dropdown--${size}`]: size,
@@ -123,7 +124,7 @@ export const Dropdown = component$((props: DropdownProps) => {
     [`${prefix}--dropdown__wrapper--inline--invalid`]: inline && invalid,
     [`${prefix}--list-box__wrapper--inline--invalid`]: inline && invalid,
     [`${prefix}--list-box__wrapper--fluid--invalid`]: isFluid && invalid,
-    [`${prefix}--list-box__wrapper--fluid--focus`]: isFluid && isFocused && !isOpen,
+    [`${prefix}--list-box__wrapper--fluid--focus`]: isFluid && isFocused && !isOpen.value,
   });
 
   const sanitizedProps = _.omit(
@@ -169,7 +170,7 @@ export const Dropdown = component$((props: DropdownProps) => {
         invalidText={invalidText}
         warn={warn}
         warnText={warnText}
-        isOpen={isOpen}
+        isOpen={isOpen.value}
         id={id}
       >
         {invalid && <WarningFilled class={`${prefix}--list-box__invalid-icon`} size={16} />}
@@ -181,15 +182,16 @@ export const Dropdown = component$((props: DropdownProps) => {
           disabled={disabled}
           aria-disabled={disabled}
           title={selectedItem ? itemToString(selectedItem) : label}
+          onClick$={$(() => (isOpen.value = !isOpen.value))}
         >
           <span class={`${prefix}--list-box__label`}>
             {(selectedItem && (RenderSelectedItem ? <RenderSelectedItem item={selectedItem} /> : itemToString(selectedItem!))) || label}
           </span>
-          <ListBoxMenuIcon isOpen={isOpen} />
+          <ListBoxMenuIcon isOpen={isOpen.value} />
         </button>
         {/* TODO - listbox menu aria attrs */}
-        <ListBoxMenu>
-          {isOpen &&
+        <ListBoxMenu id={`listbox-${id}`} role="listbox" tabIndex={-1}>
+          {isOpen.value &&
             items?.map((item: Item, index: number) => {
               // TODO - title - itemToElement ? item.text...
               const title = itemToString(item);

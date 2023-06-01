@@ -216,7 +216,7 @@ describe('Dropdown', () => {
   });
 
   it('renders list box menu item objects as supplied', async () => {
-    const { screen, render } = await createDOM();
+    const { screen, render, userEvent } = await createDOM();
     const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'].map((label) => ({ label }));
     const selectedItem = items.find((item) => (item as { label: string }).label === 'Banana');
 
@@ -228,6 +228,7 @@ describe('Dropdown', () => {
       </CarbonRoot>
     );
 
+    await userEvent('button', 'click');
     const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
     expect(listBoxDiv.childElementCount).toEqual(items.length);
     const menuItems = Array.from(screen.querySelectorAll('div.cds--list-box__menu div.cds--list-box__menu-item'));
@@ -236,7 +237,7 @@ describe('Dropdown', () => {
   });
 
   it('renders list box menu item strings as supplied', async () => {
-    const { screen, render } = await createDOM();
+    const { screen, render, userEvent } = await createDOM();
     const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
     const selectedItem = items.find((item) => item === 'Banana');
 
@@ -248,6 +249,7 @@ describe('Dropdown', () => {
       </CarbonRoot>
     );
 
+    await userEvent('button', 'click');
     const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
     expect(listBoxDiv.childElementCount).toEqual(items.length);
     const menuItems = Array.from(screen.querySelectorAll('div.cds--list-box__menu div.cds--list-box__menu-item'));
