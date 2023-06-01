@@ -1,4 +1,4 @@
-import { Component, PropFunction, /*QwikFocusEvent, */ QwikIntrinsicElements, component$, useContext, useSignal, $ } from '@builder.io/qwik';
+import { Component, PropFunction, /*QwikFocusEvent, */ QwikIntrinsicElements, component$, useContext, useSignal, $, Signal } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { formContext } from '../../internal/contexts/form-context';
 import classNames from 'classnames';
@@ -25,6 +25,26 @@ const defaultItemToString: ItemToString = (item: Item) => {
     return item;
   }
   return item ? item.label : '';
+};
+
+const ariaNormalize = (isOpen: Signal<boolean>, id?: string, titleText?: string) => {
+  const actualId = id ?? uuid();
+  const listBoxId = `listbox-${actualId}`;
+  const labelId = titleText ? `${actualId}--label` : undefined;
+  const hasPopup: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog' | undefined = 'listbox';
+  return {
+    id: actualId,
+    label: { id: labelId },
+    listBox: { id: listBoxId, role: 'listbox', tabIndex: -1, 'aria-labelled-by': labelId },
+    comboBox: {
+      role: 'combobox',
+      'aria-controls': listBoxId,
+      'aria-expanded': isOpen.value,
+      'aria-haspopup': hasPopup,
+      'aria-labelledby': labelId,
+      tabIndex: 0,
+    },
+  };
 };
 
 /**
@@ -70,6 +90,9 @@ export type DropdownProps = QwikIntrinsicElements['div'] & {
 export const Dropdown = component$((props: DropdownProps) => {
   const prefix = usePrefix();
   const { isFluid } = useContext(formContext);
+  const isFocused = useSignal(false);
+  const isOpen = useSignal(false);
+  const ariaInfo = ariaNormalize(isOpen, props.id, props.titleText);
   const {
     ariaLabel,
     class: customClass,
@@ -77,7 +100,7 @@ export const Dropdown = component$((props: DropdownProps) => {
     disabled = false,
     helperText,
     hideLabel = false,
-    id = uuid(),
+    id = ariaInfo.id,
     invalid = false,
     invalidText,
     items,
@@ -94,9 +117,6 @@ export const Dropdown = component$((props: DropdownProps) => {
 
   const inline = type === 'inline';
   const showWarning = !invalid && warn;
-
-  const isFocused = useSignal(false);
-  const isOpen = useSignal(false);
 
   // TODO - compute highlightedIndex per useSelect
   const highlightedIndex = -1;
@@ -155,11 +175,15 @@ export const Dropdown = component$((props: DropdownProps) => {
   );
 
   // const handleFocus = $((event: QwikFocusEvent<HTMLDivElement>) => (isFocused.value = event.type === 'focus'));
+  const labelId = titleText ? `${id}--label` : undefined;
 
   return (
     <div class={wrapperClasses} {...sanitizedProps}>
-      {/* TODO: set label aria-* attrs */}
-      {titleText && <label class={titleClasses}>{titleText}</label>}
+      {titleText && (
+        <label id={labelId} class={titleClasses}>
+          {titleText}
+        </label>
+      )}
       <ListBox
         // onFocus$={handleFocus}
         // onBlur$={handleFocus}
@@ -182,6 +206,7 @@ export const Dropdown = component$((props: DropdownProps) => {
           disabled={disabled}
           aria-disabled={disabled}
           title={selectedItem ? itemToString(selectedItem) : label}
+          {...ariaInfo.comboBox}
           onClick$={$(() => (isOpen.value = !isOpen.value))}
         >
           <span class={`${prefix}--list-box__label`}>
@@ -190,7 +215,8 @@ export const Dropdown = component$((props: DropdownProps) => {
           <ListBoxMenuIcon isOpen={isOpen.value} />
         </button>
         {/* TODO - listbox menu aria attrs */}
-        <ListBoxMenu id={`listbox-${id}`} role="listbox" tabIndex={-1}>
+        {/* id={`listbox-${id}`} role="listbox" tabIndex={-1} aria-labelledby={labelId}> */}
+        <ListBoxMenu {...ariaInfo.listBox}>
           {isOpen.value &&
             items?.map((item: Item, index: number) => {
               // TODO - title - itemToElement ? item.text...
