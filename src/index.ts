@@ -1,6 +1,7 @@
 export * from './components/button/button';
 export * from './components/carbon-root/carbon-root';
 export * from './components/checkbox/checkbox';
+export * from './components/dropdown/dropdown';
 export * from './components/fluid-form/fluid-form';
 export * from './components/form/form';
 export * from './components/grid/column';
