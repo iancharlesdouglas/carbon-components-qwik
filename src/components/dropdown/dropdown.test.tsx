@@ -156,7 +156,7 @@ describe('Dropdown', () => {
     await render(
       <CarbonRoot>
         <Form>
-          <Dropdown selectedItem={selectedItem} />
+          <Dropdown selectedItem={selectedItem} items={[selectedItem]} />
         </Form>
       </CarbonRoot>
     );
@@ -181,8 +181,8 @@ describe('Dropdown', () => {
     await render(
       <CarbonRoot>
         <Form>
-          <Dropdown id={objectItemsDropdown} selectedItem={selectedObjectItem} renderSelectedItem={SelectedItemRenderComp} />
-          <Dropdown id={stringItemsDropdown} selectedItem={selectedStringItem} renderSelectedItem={SelectedItemRenderComp} />
+          <Dropdown id={objectItemsDropdown} selectedItem={selectedObjectItem} renderSelectedItem={SelectedItemRenderComp} items={[selectedObjectItem]} />
+          <Dropdown id={stringItemsDropdown} selectedItem={selectedStringItem} renderSelectedItem={SelectedItemRenderComp} items={[selectedStringItem]} />
         </Form>
       </CarbonRoot>
     );
@@ -193,6 +193,39 @@ describe('Dropdown', () => {
     expect(selectedStringItemSpan.textContent).toEqual(label);
   });
 
+  it('renders initially selected item', async () => {
+    const { screen, render } = await createDOM();
+    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
+    const selectedItem = items.find((item) => item === 'Banana');
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <Dropdown initialSelectedItem={selectedItem} items={items} />
+        </Form>
+      </CarbonRoot>
+    );
+
+    const selectedItemSpan = screen.querySelector('div.cds--dropdown button span') as HTMLSpanElement;
+    expect(selectedItemSpan.textContent).toEqual(selectedItem);
+  });
+
+  it('renders first of a set of initially selected items', async () => {
+    const { screen, render } = await createDOM();
+    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
+    const selectedItems = items.filter((item) => item === 'Banana' || item === 'Cherry');
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <Dropdown initialSelectedItem={selectedItems} items={items} />
+        </Form>
+      </CarbonRoot>
+    );
+
+    const selectedItemSpan = screen.querySelector('div.cds--dropdown button span') as HTMLSpanElement;
+    expect(selectedItemSpan.textContent).toEqual(selectedItems.find((item) => item === 'Banana'));
+  });
   it('renders helper text if supplied and the state allows it', async () => {
     const { screen, render } = await createDOM();
     const helperText = 'Optional';

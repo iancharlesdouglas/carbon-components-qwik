@@ -70,15 +70,15 @@ devDependencies:
   react-dom:
     specifier: ^18.2.0
     version: 18.2.0(react@18.2.0)
+  short-unique-id:
+    specifier: ^4.4.4
+    version: 4.4.4
   typescript:
     specifier: 5.0.4
     version: 5.0.4
   undici:
     specifier: 5.22.0
     version: 5.22.0
-  uuid:
-    specifier: ^9.0.0
-    version: 9.0.0
   vite:
     specifier: 4.3.3
     version: 4.3.3(@types/node@18.16.1)(sass@1.62.1)
@@ -4032,6 +4032,11 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /short-unique-id@4.4.4:
+    resolution: {integrity: sha512-oLF1NCmtbiTWl2SqdXZQbo5KM1b7axdp0RgQLq8qCBBLoq+o3A5wmLrNM6bZIh54/a8BJ3l69kTXuxwZ+XCYuw==}
+    hasBin: true
+    dev: true
+
   /side-channel@1.0.4:
     resolution: {integrity: sha512-q5XPytqFEIKHkGdiMIrY10mvLRvnQh42/+GoBlFW3b2LXLE2xxJpZFdm94we0BaoV3RwJyGqg5wS7epxTv0Zvw==}
     dependencies:
@@ -4492,11 +4497,6 @@ packages:
     engines: {node: '>=4'}
     dependencies:
       prepend-http: 2.0.0
-    dev: true
-
-  /uuid@9.0.0:
-    resolution: {integrity: sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==}
-    hasBin: true
     dev: true
 
   /vali-date@1.0.0:

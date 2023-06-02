@@ -2,8 +2,8 @@ import { PropFunction, QwikChangeEvent, QwikIntrinsicElements, component$ } from
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { v4 as uuid } from 'uuid';
 import { Text } from '../text/text';
+import { uniqueId } from '../../internal/unique/unique-id';
 
 /**
  * Checkbox props
@@ -29,11 +29,11 @@ export type CheckboxProps = QwikIntrinsicElements['input'] & {
  * Checkbox
  */
 export const Checkbox = component$((props: CheckboxProps) => {
-  const prefix = usePrefix();
   const { class: customClass, hideLabel, id, title, labelText } = props;
+  const elementId = id ?? uniqueId();
+  const prefix = usePrefix();
   const wrapperClasses = classNames(`${prefix}--form-item`, `${prefix}--checkbox-wrapper`, customClass);
   const innerLabelClasses = classNames(`${prefix}--checkbox-label-text`, { [`${prefix}--visually-hidden`]: hideLabel });
-  const elementId = id ?? uuid();
   const sanitizedProps = _.omit(props, 'class', 'id', 'labelText', 'indeterminate', 'hideLabel', 'title');
   return (
     <div class={wrapperClasses}>

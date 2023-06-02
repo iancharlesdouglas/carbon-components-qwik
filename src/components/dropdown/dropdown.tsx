@@ -1,4 +1,4 @@
-import { Component, PropFunction, /*QwikFocusEvent, */ QwikIntrinsicElements, component$, useContext, useSignal, $, Signal } from '@builder.io/qwik';
+import { Component, PropFunction, /*QwikFocusEvent, */ QwikIntrinsicElements, component$, useContext, useSignal, $ } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { formContext } from '../../internal/contexts/form-context';
 import classNames from 'classnames';
@@ -8,7 +8,7 @@ import { ListBoxMenu } from '../list-box/list-box-menu';
 import { Checkmark, WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
 import { ListBoxMenuIcon } from '../list-box/list-box-menu-icon';
 import { ListBoxMenuItem } from '../list-box/list-box-menu-item';
-import { v4 as uuid } from 'uuid';
+import { uniqueId } from '../../internal/unique/unique-id';
 
 /**
  * List item type
@@ -27,11 +27,38 @@ const defaultItemToString: ItemToString = (item: Item) => {
   return item ? item.label : '';
 };
 
-const ariaNormalize = (isOpen: Signal<boolean>, id?: string, titleText?: string) => {
-  const actualId = id ?? uuid();
+const ariaNormalize = (
+  isOpen: boolean,
+  disabled: boolean,
+  id?: string,
+  titleText?: string,
+  items?: Item[],
+  initialSelectedItem?: Item | Item[],
+  selectedItem?: Item
+) => {
+  const actualId = id ?? uniqueId();
   const listBoxId = `listbox-${actualId}`;
   const labelId = titleText ? `${actualId}--label` : undefined;
   const hasPopup: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog' | undefined = 'listbox';
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const itemIds = items ? items.map((_) => uniqueId()) : undefined;
+  let selectedIndex: number | undefined;
+  let selectedId: string | undefined;
+  let selectedOption: Item | undefined;
+  if (items && selectedItem) {
+    selectedIndex = items.findIndex((item) => item === selectedItem);
+    selectedOption = selectedItem;
+  } else if (items && initialSelectedItem) {
+    const initialItems = Array.isArray(initialSelectedItem) ? initialSelectedItem : [initialSelectedItem];
+    console.log('initial items', initialItems);
+    selectedIndex = items.findIndex((item) => item === initialItems[0]);
+    selectedOption = initialItems[0];
+    console.log('initial index', selectedIndex);
+  }
+  if (selectedIndex !== undefined) {
+    selectedId = selectedIndex > -1 ? itemIds?.[selectedIndex] : undefined;
+    console.log('item ids', itemIds);
+  }
   return {
     id: actualId,
     label: { id: labelId },
@@ -39,11 +66,16 @@ const ariaNormalize = (isOpen: Signal<boolean>, id?: string, titleText?: string)
     comboBox: {
       role: 'combobox',
       'aria-controls': listBoxId,
-      'aria-expanded': isOpen.value,
+      'aria-expanded': isOpen,
       'aria-haspopup': hasPopup,
       'aria-labelledby': labelId,
+      'aria-disabled': disabled,
+      'aria-activedescendant': selectedId,
+      disabled,
       tabIndex: 0,
     },
+    items: itemIds?.map((itemId) => ({ id: itemId, role: 'option', 'aria-selected': itemId === selectedId })),
+    selectedOption,
   };
 };
 
@@ -66,7 +98,7 @@ export type DropdownProps = QwikIntrinsicElements['div'] & {
   helperText?: string;
   hideLabel?: boolean;
   id?: string;
-  initialSelectedItem?: object | object[] | string | string[] | number | number[];
+  initialSelectedItem?: Item | Item[];
   invalid?: boolean;
   invalidText?: string;
   itemToElement$?: Component<any>;
@@ -92,24 +124,21 @@ export const Dropdown = component$((props: DropdownProps) => {
   const { isFluid } = useContext(formContext);
   const isFocused = useSignal(false);
   const isOpen = useSignal(false);
-  const ariaInfo = ariaNormalize(isOpen, props.id, props.titleText);
+  const { disabled = false, id: stipulatedId, titleText, items, initialSelectedItem, selectedItem } = props;
+  const ariaInfo = ariaNormalize(isOpen.value, disabled, stipulatedId, titleText, items, initialSelectedItem, selectedItem);
   const {
     ariaLabel,
     class: customClass,
     direction = 'bottom',
-    disabled = false,
     helperText,
     hideLabel = false,
     id = ariaInfo.id,
     invalid = false,
     invalidText,
-    items,
     itemToString = defaultItemToString,
     label,
     renderSelectedItem: RenderSelectedItem,
-    selectedItem,
     size = 'md',
-    titleText,
     type = 'default',
     warn = false,
     warnText,
@@ -176,6 +205,7 @@ export const Dropdown = component$((props: DropdownProps) => {
 
   // const handleFocus = $((event: QwikFocusEvent<HTMLDivElement>) => (isFocused.value = event.type === 'focus'));
   const labelId = titleText ? `${id}--label` : undefined;
+  const { selectedOption } = ariaInfo;
 
   return (
     <div class={wrapperClasses} {...sanitizedProps}>
@@ -203,14 +233,12 @@ export const Dropdown = component$((props: DropdownProps) => {
         <button
           type="button"
           class={`${prefix}--list-box__field`}
-          disabled={disabled}
-          aria-disabled={disabled}
-          title={selectedItem ? itemToString(selectedItem) : label}
+          title={selectedOption ? itemToString(selectedOption) : label}
           {...ariaInfo.comboBox}
           onClick$={$(() => (isOpen.value = !isOpen.value))}
         >
           <span class={`${prefix}--list-box__label`}>
-            {(selectedItem && (RenderSelectedItem ? <RenderSelectedItem item={selectedItem} /> : itemToString(selectedItem!))) || label}
+            {(selectedOption && (RenderSelectedItem ? <RenderSelectedItem item={selectedOption} /> : itemToString(selectedOption!))) || label}
           </span>
           <ListBoxMenuIcon isOpen={isOpen.value} />
         </button>
@@ -221,15 +249,14 @@ export const Dropdown = component$((props: DropdownProps) => {
             items?.map((item: Item, index: number) => {
               // TODO - title - itemToElement ? item.text...
               const title = itemToString(item);
-              const itemSelected = selectedItem === item;
-              // TODO - item aria attrs
+              const itemSelected = selectedOption === item;
               return (
-                // TODO - derive key per useSelect
                 <ListBoxMenuItem
-                  key={item.toString()}
-                  isActive={selectedItem === item}
-                  isHighlighted={highlightedIndex === index || selectedItem === item}
+                  key={ariaInfo?.items?.[index].id ?? item.toString()}
+                  isActive={selectedOption === item}
+                  isHighlighted={highlightedIndex === index || selectedOption === item}
                   title={title}
+                  {...ariaInfo?.items?.[index]}
                 >
                   {/* TODO - itemToElement if supplied... */}
                   {itemToString(item)}
