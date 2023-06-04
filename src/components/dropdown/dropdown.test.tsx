@@ -3,7 +3,7 @@ import { createDOM } from '@builder.io/qwik/testing';
 import { CarbonRoot } from '../carbon-root/carbon-root';
 import { Form } from '../form/form';
 import { Dropdown, Item, RenderSelectedItemProps } from './dropdown';
-import { component$ } from '@builder.io/qwik';
+import { component$, $ } from '@builder.io/qwik';
 
 describe('Dropdown', () => {
   it('renders expected CSS classes per attributes', async () => {
@@ -289,4 +289,32 @@ describe('Dropdown', () => {
     items.forEach((item, index) => expect(menuItems[index].textContent).toEqual(item));
     expect(menuItems[1].classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
   });
+
+  // it('invokes onChange callback when an item is selected with the mouse', async () => {
+  //   const { screen, render, userEvent } = await createDOM();
+  //   const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
+  //   const initialItem = items.find((item) => item === 'Banana');
+  //   const selection = { item: initialItem };
+
+  //   await render(
+  //     <CarbonRoot>
+  //       <Form>
+  //         <Dropdown
+  //           items={items}
+  //           selectedItem={initialItem}
+  //           onChange$={$((item: Item) => {
+  //             console.log('item selected', item);
+  //             selection.item = item;
+  //           })}
+  //         />
+  //       </Form>
+  //     </CarbonRoot>
+  //   );
+
+  //   await userEvent('button', 'click');
+  //   const options = screen.querySelectorAll('div.cds--list-box__menu-item__option');
+  //   // console.log('options', options);
+  //   await userEvent(options[0], 'click');
+  //   expect(selection.item).toEqual(items[0]);
+  // });
 });

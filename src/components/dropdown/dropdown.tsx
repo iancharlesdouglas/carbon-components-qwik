@@ -141,6 +141,7 @@ export const Dropdown = component$((props: DropdownProps) => {
     invalidText,
     itemToString = defaultItemToString,
     label,
+    onChange$,
     renderSelectedItem: RenderSelectedItem,
     size = 'md',
     type = 'default',
@@ -257,6 +258,9 @@ export const Dropdown = component$((props: DropdownProps) => {
                   onClick$={$(() => {
                     selectedOption.value = item;
                     isOpen.value = false;
+                    if (onChange$) {
+                      onChange$(item);
+                    }
                   })}
                 >
                   {/* TODO - itemToElement if supplied... */}
