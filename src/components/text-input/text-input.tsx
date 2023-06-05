@@ -51,8 +51,16 @@ export type TextInputProps = QwikIntrinsicElements['input'] & {
   maxCount?: number;
   value?: string;
   defaultValue?: string;
-  onChange$?: PropFunction<(event: QwikChangeEvent<HTMLInputElement>, element: HTMLInputElement) => void>;
+  onChange$?: PropFunction<(event: TextInputChangeEvent, element: HTMLInputElement) => void>;
   onClick$?: PropFunction<(event: QwikMouseEvent<HTMLInputElement, MouseEvent>, element: HTMLInputElement) => void>;
+};
+
+/**
+ * Text input component change event
+ * @property {string} value Value
+ */
+export type TextInputChangeEvent = {
+  value: string;
 };
 
 /**
@@ -107,7 +115,14 @@ export const TextInput = component$((props: TextInputProps) => {
     onChange$: $((event: QwikChangeEvent<HTMLInputElement>, element: HTMLInputElement) => {
       if (!normalizedProps.disabled) {
         textCount.value = event.target.value?.length;
-        props.onChange$ && props.onChange$(event, element);
+        props.onChange$ && props.onChange$({ value: event.target.value }, element);
+      }
+    }),
+    onInput$: $((event: Event, element: HTMLInputElement) => {
+      if (!normalizedProps.disabled) {
+        const value = (event.target as HTMLInputElement).value;
+        textCount.value = value?.length;
+        props.onChange$ && props.onChange$({ value }, element);
       }
     }),
     onClick$: $((event: QwikMouseEvent<HTMLInputElement, MouseEvent>, element: HTMLInputElement) => {

@@ -3,7 +3,7 @@ import { CarbonRoot } from '../components/carbon-root/carbon-root';
 import { Link } from '../components/link/link';
 import { Add, Edit } from 'carbon-icons-qwik';
 import { Button } from '../components/button/button';
-import { TextInput } from '../components/text-input/text-input';
+import { TextInput, TextInputChangeEvent } from '../components/text-input/text-input';
 import { Form } from '../components/form/form';
 import { Grid } from '../components/grid/grid';
 import { Column } from '../components/grid/column';
@@ -47,7 +47,7 @@ const Test = component$(() => {
           class="blah"
           enableCounter={false}
           maxCount={20}
-          onChange$={$((event: QwikChangeEvent<HTMLInputElement>) => alert(`Length: ${event.target.value.length}`))}
+          onChange$={$((event: TextInputChangeEvent) => alert(`Length: ${event.value.length}`))}
         />
         <Grid>
           <Column lg={4}>

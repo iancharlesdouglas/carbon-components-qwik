@@ -1,7 +1,8 @@
 import { createDOM } from '@builder.io/qwik/testing';
-import { describe, expect, it } from 'vitest';
+import { $, QwikChangeEvent, component$, useSignal } from '@builder.io/qwik';
+import { describe, expect, it, vi } from 'vitest';
 import { CarbonRoot } from '../carbon-root/carbon-root';
-import { TextInput } from './text-input';
+import { TextInput, TextInputChangeEvent } from './text-input';
 import { Form } from '../form/form';
 import { FluidForm } from '../fluid-form/fluid-form';
 
@@ -118,35 +119,38 @@ describe('TextInput', () => {
     expect(labelElement.classList.contains('cds--visually-hidden')).toBeTruthy();
   });
 
-  // it('fires onChange$ callback when keys are typed', async () => {
-  //   const { screen, render, userEvent } = await createDOM();
+  it('fires onChange$ callback when its value is changed', async () => {
+    const { screen, render, userEvent } = await createDOM();
 
-  //   const called = { clicked: false };
+    const Wrapper = component$(() => {
+      const content = useSignal('.');
+      return (
+        <>
+          <Form>
+            <TextInput
+              onChange$={$((event: TextInputChangeEvent) => {
+                content.value = event.value;
+              })}
+            />
+          </Form>
+          <div id="output">{content.value}</div>
+        </>
+      );
+    });
 
-  //   const handler = {
-  //     handleChange: $((event: QwikChangeEvent<HTMLInputElement>, element: HTMLInputElement) => {
-  //       console.log('change called');
-  //     }),
-  //     handleClick: $(() => {
-  //       called.clicked = true;
-  //       console.log('clicked');
-  //       console.log('def. clicked');
-  //       console.log('called.click', called.clicked);
-  //     }),
-  //   };
+    await render(
+      <CarbonRoot>
+        <Wrapper />
+      </CarbonRoot>
+    );
 
-  //   await render(
-  //     <CarbonRoot>
-  //       <Form>
-  //         <TextInput onChange$={handler.handleChange} onClick$={handler.handleClick} value="x" />
-  //       </Form>
-  //     </CarbonRoot>
-  //   );
+    const value = 'changed value';
+    const inputElement = screen.querySelector('input') as HTMLInputElement;
+    await userEvent(inputElement, 'input', { target: { value } });
+    await userEvent(inputElement, 'change', { target: { value } });
+    await userEvent(inputElement, 'click');
 
-  //   const inputElement = screen.querySelector('input') as HTMLInputElement;
-  //   await userEvent('input', 'click');
-  //   setTimeout(() => {
-  //     expect(called.clicked).toBeTruthy();
-  //   });
-  // });
+    const outputElement = screen.querySelector('div#output') as HTMLDivElement;
+    expect(outputElement.textContent).toEqual(value);
+  });
 });

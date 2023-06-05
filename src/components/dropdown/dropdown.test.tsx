@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { createDOM } from '@builder.io/qwik/testing';
 import { CarbonRoot } from '../carbon-root/carbon-root';
 import { Form } from '../form/form';
-import { Dropdown, Item, RenderSelectedItemProps } from './dropdown';
-import { component$, $ } from '@builder.io/qwik';
+import { Dropdown, DropdownSelectEvent, Item, RenderSelectedItemProps } from './dropdown';
+import { component$, $, useSignal } from '@builder.io/qwik';
 
 describe('Dropdown', () => {
   it('renders expected CSS classes per attributes', async () => {
@@ -202,12 +202,15 @@ describe('Dropdown', () => {
       <CarbonRoot>
         <Form>
           <Dropdown initialSelectedItem={selectedItem} items={items} />
+          <Dropdown initialSelectedItem={'Nonesuch'} items={items} id="invalid-selected-item" />
         </Form>
       </CarbonRoot>
     );
 
     const selectedItemSpan = screen.querySelector('div.cds--dropdown button span') as HTMLSpanElement;
     expect(selectedItemSpan.textContent).toEqual(selectedItem);
+    const invalidSelectedItemSpan = screen.querySelector('#invalid-selected-item button span') as HTMLSpanElement;
+    expect(invalidSelectedItemSpan.textContent).toEqual('');
   });
 
   it('renders first of a set of initially selected items', async () => {
@@ -290,31 +293,38 @@ describe('Dropdown', () => {
     expect(menuItems[1].classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
   });
 
-  // it('invokes onChange callback when an item is selected with the mouse', async () => {
-  //   const { screen, render, userEvent } = await createDOM();
-  //   const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
-  //   const initialItem = items.find((item) => item === 'Banana');
-  //   const selection = { item: initialItem };
+  it('invokes onChange callback when an item is selected with the mouse', async () => {
+    const { screen, render, userEvent } = await createDOM();
+    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
+    const initialItem = items.find((item) => item === 'Banana');
 
-  //   await render(
-  //     <CarbonRoot>
-  //       <Form>
-  //         <Dropdown
-  //           items={items}
-  //           selectedItem={initialItem}
-  //           onChange$={$((item: Item) => {
-  //             console.log('item selected', item);
-  //             selection.item = item;
-  //           })}
-  //         />
-  //       </Form>
-  //     </CarbonRoot>
-  //   );
+    const Wrapper = component$(() => {
+      const selectedOption = useSignal<Item>('');
+      return (
+        <>
+          <Form>
+            <Dropdown
+              items={items}
+              selectedItem={initialItem}
+              onChange$={$((event: DropdownSelectEvent) => {
+                selectedOption.value = event.selectedItem as string;
+              })}
+            />
+          </Form>
+          <span>{(selectedOption.value as string) ?? '-'}</span>
+        </>
+      );
+    });
+    await render(
+      <CarbonRoot>
+        <Wrapper />
+      </CarbonRoot>
+    );
 
-  //   await userEvent('button', 'click');
-  //   const options = screen.querySelectorAll('div.cds--list-box__menu-item__option');
-  //   // console.log('options', options);
-  //   await userEvent(options[0], 'click');
-  //   expect(selection.item).toEqual(items[0]);
-  // });
+    await userEvent('button', 'click');
+    const options = screen.querySelectorAll('div.cds--list-box__menu-item__option');
+    await userEvent(options[0], 'click');
+    const outputElement = screen.querySelector('span') as HTMLSpanElement;
+    expect(outputElement.textContent).toEqual(items[0]);
+  });
 });

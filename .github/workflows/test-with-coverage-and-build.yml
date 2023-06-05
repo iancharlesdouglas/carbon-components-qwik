@@ -12,4 +12,3 @@ jobs:
       - run: npm i -g pnpm
       - run: pnpm i
       - run: pnpm coverage
-      - run: pnpm build

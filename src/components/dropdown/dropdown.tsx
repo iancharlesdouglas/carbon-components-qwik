@@ -1,4 +1,4 @@
-import { Component, PropFunction, /*QwikFocusEvent, */ QwikIntrinsicElements, component$, useContext, useSignal, $ } from '@builder.io/qwik';
+import { Component, PropFunction, /*QwikFocusEvent, */ QwikIntrinsicElements, component$, useContext, useSignal, $, QwikMouseEvent } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { formContext } from '../../internal/contexts/form-context';
 import classNames from 'classnames';
@@ -20,11 +20,19 @@ export type Item = string | { label: string };
  */
 export type ItemToString = (item: Item) => string;
 
+/**
+ * Dropdown select event
+ * @property {Item} selectedItem - Selected item
+ */
+export type DropdownSelectEvent = {
+  selectedItem: Item;
+};
+
 const defaultItemToString: ItemToString = (item: Item) => {
   if (typeof item === 'string') {
     return item;
   }
-  return item ? item.label : '';
+  return item?.label;
 };
 
 const ariaNormalize = (
@@ -55,6 +63,9 @@ const ariaNormalize = (
   }
   if (selectedIndex !== undefined) {
     selectedId = selectedIndex > -1 ? itemIds?.[selectedIndex] : undefined;
+    if (selectedIndex == -1) {
+      selectedOption = undefined;
+    }
   }
   return {
     id: actualId,
@@ -102,7 +113,7 @@ export type DropdownProps = QwikIntrinsicElements['div'] & {
   itemToString?: ItemToString;
   items?: Item[];
   label?: string;
-  onChange$?: PropFunction;
+  onChange$?: PropFunction<(event: DropdownSelectEvent) => void>;
   renderSelectedItem?: Component<RenderSelectedItemProps>;
   size?: 'sm' | 'md' | 'lg';
   selectedItem?: Item;
@@ -250,7 +261,7 @@ export const Dropdown = component$((props: DropdownProps) => {
               const itemSelected = selectedOption.value === item;
               return (
                 <ListBoxMenuItem
-                  key={itemAttrs?.[index].id ?? item.toString()}
+                  key={itemAttrs?.[index].id}
                   isActive={selectedOption.value === item}
                   isHighlighted={selectedOption.value === item}
                   title={title}
@@ -258,9 +269,10 @@ export const Dropdown = component$((props: DropdownProps) => {
                   onClick$={$(() => {
                     selectedOption.value = item;
                     isOpen.value = false;
-                    if (onChange$) {
-                      onChange$(item);
-                    }
+                    // if (onChange$) {
+                    //   // onChange$(item);
+                    // }
+                    onChange$ && onChange$({ selectedItem: item });
                   })}
                 >
                   {/* TODO - itemToElement if supplied... */}

@@ -13,6 +13,7 @@ export type ListBoxMenuItemProps = QwikIntrinsicElements['div'] & {
   isActive: boolean;
   isHighlighted: boolean;
   title?: string;
+  // onClick$?: PropFunction<(event: QwikMouseEvent<HTMLDivElement, MouseEvent>, element: HTMLDivElement) => void>;
 };
 
 /**
@@ -40,7 +41,16 @@ export const ListBoxMenuItem = component$((props: ListBoxMenuItemProps) => {
   const sanitizedProps = _.omit(props, 'isActive', 'isHighlighted', 'title');
 
   return (
-    <div {...sanitizedProps} class={classes} title={isTruncated.value ? title : undefined} tabIndex={-1} ref={divElementRef}>
+    <div
+      {...sanitizedProps}
+      class={classes}
+      title={isTruncated.value ? title : undefined}
+      tabIndex={-1}
+      ref={divElementRef}
+      // onClick$={$((event: QwikMouseEvent<HTMLDivElement, MouseEvent>, element: HTMLDivElement) => {
+      //   props.onClick$ && props.onClick$(event, element);
+      // })}
+    >
       <div class={`${prefix}--list-box__menu-item__option`}>
         <Slot />
       </div>
