@@ -269,7 +269,7 @@ describe('Dropdown', () => {
     expect(listBoxDiv.childElementCount).toEqual(items.length);
     const menuItems = Array.from(screen.querySelectorAll('div.cds--list-box__menu div.cds--list-box__menu-item'));
     items.forEach((item, index) => expect(menuItems[index].textContent).toEqual((item as { label: string }).label));
-    expect(menuItems[1].classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
+    expect(menuItems[1].classList.contains('cds--list-box__menu-item--active')).toBeTruthy();
   });
 
   it('renders list box menu item strings as supplied', async () => {
@@ -290,7 +290,7 @@ describe('Dropdown', () => {
     expect(listBoxDiv.childElementCount).toEqual(items.length);
     const menuItems = Array.from(screen.querySelectorAll('div.cds--list-box__menu div.cds--list-box__menu-item'));
     items.forEach((item, index) => expect(menuItems[index].textContent).toEqual(item));
-    expect(menuItems[1].classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
+    expect(menuItems[1].classList.contains('cds--list-box__menu-item--active')).toBeTruthy();
   });
 
   it('invokes onChange callback when an item is selected with the mouse', async () => {
@@ -368,5 +368,22 @@ describe('Dropdown', () => {
     itemsWithIds.forEach((item, index) => expect(itemsWithIdsElements[index].getAttribute('id')).toEqual((item as unknown as { id: string }).id));
     const itemsWithKeysElements = Array.from(screen.querySelectorAll('#dropdown-with-keys div.cds--list-box__menu-item')) as HTMLDivElement[];
     itemsWithKeys.forEach((item, index) => expect(itemsWithKeysElements[index].getAttribute('id')).toEqual((item as unknown as { key: string }).key));
+  });
+
+  it('opens the items menu when the down arrow is pressed if the button element has the focus', async () => {
+    const { screen, render, userEvent } = await createDOM();
+    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <Dropdown items={items} />
+        </Form>
+      </CarbonRoot>
+    );
+
+    await userEvent('button', 'keydown', { keyCode: 40 });
+    const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
+    expect(listBoxDiv.childElementCount).toEqual(items.length);
   });
 });

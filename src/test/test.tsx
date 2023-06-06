@@ -8,7 +8,7 @@ import { Form } from '../components/form/form';
 import { Grid } from '../components/grid/grid';
 import { Column } from '../components/grid/column';
 import { Checkbox } from '../components/checkbox/checkbox';
-import { Dropdown, Item, ItemProps, defaultItemToString } from '../components/dropdown/dropdown';
+import { Dropdown, Item, ItemProps } from '../components/dropdown/dropdown';
 
 /**
  * Local test harness for dev. purposes
@@ -19,7 +19,7 @@ const Test = component$(() => {
     <span class="selected-item-class">Here: {typeof props.item === 'string' ? props.item : props.item.label}</span>
   ));
   const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry'].map((label) => ({ label, key: label }));
-  const ItemComponent = component$(({ item }: ItemProps) => <span class="item-class">{defaultItemToString(item)}</span>);
+  // const ItemComponent = component$(({ item }: ItemProps) => <span class="item-class">{defaultItemToString(item)}</span>);
 
   return (
     <CarbonRoot>
@@ -60,7 +60,7 @@ const Test = component$(() => {
               renderSelectedItem={SelectedItemRenderComp}
               items={items}
               helperText="Optional"
-              itemToElement={ItemComponent}
+              // itemToElement={ItemComponent}
             />
           </Column>
         </Grid>

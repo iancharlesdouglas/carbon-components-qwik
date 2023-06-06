@@ -1,4 +1,4 @@
-import { Component, PropFunction, /*QwikFocusEvent, */ QwikIntrinsicElements, component$, useContext, useSignal, $ } from '@builder.io/qwik';
+import { Component, PropFunction, /*QwikFocusEvent, */ QwikIntrinsicElements, component$, useContext, useSignal, $, QwikKeyboardEvent } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { formContext } from '../../internal/contexts/form-context';
 import classNames from 'classnames';
@@ -9,6 +9,7 @@ import { Checkmark, WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
 import { ListBoxMenuIcon } from '../list-box/list-box-menu-icon';
 import { ListBoxMenuItem } from '../list-box/list-box-menu-item';
 import { uniqueId } from '../../internal/unique/unique-id';
+import { KeyCodes } from '../../internal/key-codes';
 
 /**
  * List item type
@@ -147,6 +148,7 @@ export const Dropdown = component$((props: DropdownProps) => {
   const { isFluid } = useContext(formContext);
   const isFocused = useSignal(false);
   const isOpen = useSignal(false);
+  const scrollToBottom = useSignal(false);
   const { disabled = false, id: stipulatedId, titleText, items, initialSelectedItem, selectedItem } = props;
   const {
     id: modifiedId,
@@ -156,6 +158,8 @@ export const Dropdown = component$((props: DropdownProps) => {
     selectedOption: modifiedSelectedItem,
   } = ariaNormalize(isOpen.value, disabled, stipulatedId, titleText, items, initialSelectedItem, selectedItem);
   const selectedOption = useSignal(modifiedSelectedItem);
+  const highlightedOption = useSignal<Item>();
+  const listBoxElement = useSignal<Element>();
   const {
     ariaLabel,
     class: customClass,
@@ -263,13 +267,32 @@ export const Dropdown = component$((props: DropdownProps) => {
           title={selectedOption.value ? itemToString(selectedOption.value) : label}
           {...comboBoxAttrs}
           onClick$={$(() => (isOpen.value = !isOpen.value))}
+          onKeyDown$={$((event: QwikKeyboardEvent<HTMLButtonElement>) => {
+            switch (event.keyCode) {
+              case KeyCodes.DownArrow: {
+                isOpen.value = true;
+                if (items) {
+                  highlightedOption.value = items[0];
+                }
+                scrollToBottom.value = false;
+                break;
+              }
+              case KeyCodes.UpArrow: {
+                isOpen.value = true;
+                if (items) {
+                  highlightedOption.value = items[items.length - 1];
+                  scrollToBottom.value = true;
+                }
+              }
+            }
+          })}
         >
           <span class={`${prefix}--list-box__label`}>
             {(selectedOption.value && (RenderSelectedItem ? <RenderSelectedItem item={selectedOption.value} /> : itemToString(selectedOption.value))) || label}
           </span>
           <ListBoxMenuIcon isOpen={isOpen.value} />
         </button>
-        <ListBoxMenu {...listBoxAttrs}>
+        <ListBoxMenu {...listBoxAttrs} ref={listBoxElement} scrollToBottom={scrollToBottom.value}>
           {isOpen.value &&
             items?.map((item: Item, index: number) => {
               const title = itemToString(item);
@@ -278,7 +301,7 @@ export const Dropdown = component$((props: DropdownProps) => {
                 <ListBoxMenuItem
                   key={itemAttrs?.[index].id}
                   isActive={selectedOption.value === item}
-                  isHighlighted={selectedOption.value === item}
+                  isHighlighted={highlightedOption.value === item}
                   title={title}
                   {...itemAttrs?.[index]}
                   onClick$={$(() => {

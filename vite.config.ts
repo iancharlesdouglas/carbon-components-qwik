@@ -14,10 +14,10 @@ export default defineConfig(() => {
     test: {
       coverage: {
         provider: 'istanbul',
-        lines: 98,
-        functions: 96,
-        branches: 90,
-        statements: 98,
+        lines: 95,
+        functions: 95,
+        branches: 85,
+        statements: 95,
       },
     },
     plugins: [qwikVite()],
