@@ -4,7 +4,7 @@ import { formContext } from '../../internal/contexts/form-context';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { ListBox } from '../list-box/list-box';
-import { ListBoxMenu } from '../list-box/list-box-menu';
+import { ListBoxMenu, ScrollPosition } from '../list-box/list-box-menu';
 import { Checkmark, WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
 import { ListBoxMenuIcon } from '../list-box/list-box-menu-icon';
 import { ListBoxMenuItem } from '../list-box/list-box-menu-item';
@@ -148,7 +148,7 @@ export const Dropdown = component$((props: DropdownProps) => {
   const { isFluid } = useContext(formContext);
   const isFocused = useSignal(false);
   const isOpen = useSignal(false);
-  const scrollToBottom = useSignal(false);
+  const scrollPosition = useSignal(ScrollPosition.Top);
   const { disabled = false, id: stipulatedId, titleText, items, initialSelectedItem, selectedItem } = props;
   const {
     id: modifiedId,
@@ -159,6 +159,8 @@ export const Dropdown = component$((props: DropdownProps) => {
   } = ariaNormalize(isOpen.value, disabled, stipulatedId, titleText, items, initialSelectedItem, selectedItem);
   const selectedOption = useSignal(modifiedSelectedItem);
   const highlightedOption = useSignal<Item>();
+  const keysTyped = useSignal<string[]>();
+  const keystrokeTimer = useSignal<number>();
   const listBoxElement = useSignal<Element>();
   const {
     ariaLabel,
@@ -266,22 +268,50 @@ export const Dropdown = component$((props: DropdownProps) => {
           class={`${prefix}--list-box__field`}
           title={selectedOption.value ? itemToString(selectedOption.value) : label}
           {...comboBoxAttrs}
-          onClick$={$(() => (isOpen.value = !isOpen.value))}
+          onClick$={$(() => {
+            isOpen.value = !isOpen.value;
+            console.log('onClick - button');
+          })}
           onKeyDown$={$((event: QwikKeyboardEvent<HTMLButtonElement>) => {
             switch (event.keyCode) {
-              case KeyCodes.DownArrow: {
+              case KeyCodes.DownArrow:
+              case KeyCodes.UpArrow:
+              case KeyCodes.Home: {
                 isOpen.value = true;
-                if (items) {
-                  highlightedOption.value = items[0];
+                keysTyped.value = [];
+                if (event.getModifierState && !event.getModifierState('Alt')) {
+                  if (items) {
+                    highlightedOption.value = items[0];
+                  }
                 }
-                scrollToBottom.value = false;
+                scrollPosition.value = ScrollPosition.Top;
                 break;
               }
-              case KeyCodes.UpArrow: {
+              case KeyCodes.End: {
                 isOpen.value = true;
+                keysTyped.value = [];
                 if (items) {
                   highlightedOption.value = items[items.length - 1];
-                  scrollToBottom.value = true;
+                  scrollPosition.value = ScrollPosition.Bottom;
+                }
+                break;
+              }
+              default: {
+                if (event.keyCode >= 65 && event.keyCode <= 90 && items) {
+                  clearTimeout(keystrokeTimer.value);
+                  if (keysTyped.value?.length === 0 || keysTyped.value?.[0] !== event.key) {
+                    keysTyped.value = [];
+                  }
+                  const matchingItems = items?.filter((item) => defaultItemToString(item).substring(0, 1).toLowerCase() === event.key);
+                  if (matchingItems?.length > 0) {
+                    const matchingItem = matchingItems[keysTyped.value.length];
+                    highlightedOption.value = matchingItem;
+                    if (matchingItems.length === keysTyped.value.length) {
+                      keysTyped.value = [];
+                    } else {
+                      keystrokeTimer.value = setTimeout(() => keysTyped.value?.push(event.key), 500) as unknown as number;
+                    }
+                  }
                 }
               }
             }
@@ -292,7 +322,7 @@ export const Dropdown = component$((props: DropdownProps) => {
           </span>
           <ListBoxMenuIcon isOpen={isOpen.value} />
         </button>
-        <ListBoxMenu {...listBoxAttrs} ref={listBoxElement} scrollToBottom={scrollToBottom.value}>
+        <ListBoxMenu {...listBoxAttrs} ref={listBoxElement} scrollPosition={scrollPosition.value}>
           {isOpen.value &&
             items?.map((item: Item, index: number) => {
               const title = itemToString(item);
@@ -309,6 +339,17 @@ export const Dropdown = component$((props: DropdownProps) => {
                     isOpen.value = false;
                     onSelect$ && onSelect$({ selectedItem: item });
                   })}
+                  onKeyDown$={$((event: QwikKeyboardEvent<HTMLDivElement>) => {
+                    switch (event.keyCode) {
+                      case KeyCodes.Enter: {
+                        selectedOption.value = item;
+                        isOpen.value = false;
+                        onSelect$ && onSelect$({ selectedItem: item });
+                        break;
+                      }
+                    }
+                  })}
+                  preventdefault:keydown
                 >
                   {ItemToElement && <ItemToElement item={item} />}
                   {!ItemToElement && itemToString(item)}
