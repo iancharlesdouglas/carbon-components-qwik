@@ -1,6 +1,6 @@
 import { createDOM } from '@builder.io/qwik/testing';
-import { $, QwikChangeEvent, component$, useSignal } from '@builder.io/qwik';
-import { describe, expect, it, vi } from 'vitest';
+import { $, component$, useSignal } from '@builder.io/qwik';
+import { describe, expect, it } from 'vitest';
 import { CarbonRoot } from '../carbon-root/carbon-root';
 import { TextInput, TextInputChangeEvent } from './text-input';
 import { Form } from '../form/form';

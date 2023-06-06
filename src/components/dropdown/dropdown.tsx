@@ -1,4 +1,4 @@
-import { Component, PropFunction, /*QwikFocusEvent, */ QwikIntrinsicElements, component$, useContext, useSignal, $, QwikMouseEvent } from '@builder.io/qwik';
+import { Component, PropFunction, /*QwikFocusEvent, */ QwikIntrinsicElements, component$, useContext, useSignal, $ } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { formContext } from '../../internal/contexts/form-context';
 import classNames from 'classnames';
@@ -28,7 +28,12 @@ export type DropdownSelectEvent = {
   selectedItem: Item;
 };
 
-const defaultItemToString: ItemToString = (item: Item) => {
+/**
+ * Returns the string representation of an item (either the label or the item itself if it is a string)
+ * @param {Item} item - Item to render
+ * @returns {string} String representation
+ */
+export const defaultItemToString: ItemToString = (item: Item) => {
   if (typeof item === 'string') {
     return item;
   }
@@ -48,8 +53,7 @@ const ariaNormalize = (
   const listBoxId = `listbox-${actualId}`;
   const labelId = titleText ? `${actualId}--label` : undefined;
   const hasPopup: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog' | undefined = 'listbox';
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const itemIds = items ? items.map((_) => uniqueId()) : undefined;
+  const itemIds = items ? items.map((item) => getItemId(item)) : undefined;
   let selectedIndex: number | undefined;
   let selectedId: string | undefined;
   let selectedOption: Item | undefined;
@@ -87,11 +91,22 @@ const ariaNormalize = (
   };
 };
 
+const getItemId = (item: Item) => {
+  const attributes = Object.getOwnPropertyNames(item);
+  if (attributes.includes('id')) {
+    return (item as unknown as { id: string }).id;
+  }
+  if (attributes.includes('key')) {
+    return (item as unknown as { key: string }).key;
+  }
+  return uniqueId();
+};
+
 /**
- * Props for a custom component to render the selected item
+ * Props for a component to render an item
  * @property {Item} item - Item to render
  */
-export type RenderSelectedItemProps = {
+export type ItemProps = {
   item: Item;
 };
 
@@ -109,12 +124,12 @@ export type DropdownProps = QwikIntrinsicElements['div'] & {
   initialSelectedItem?: Item | Item[];
   invalid?: boolean;
   invalidText?: string;
-  itemToElement?: Component<any>;
+  itemToElement?: Component<ItemProps>;
   itemToString?: ItemToString;
   items?: Item[];
   label?: string;
-  onChange$?: PropFunction<(event: DropdownSelectEvent) => void>;
-  renderSelectedItem?: Component<RenderSelectedItemProps>;
+  onSelect$?: PropFunction<(event: DropdownSelectEvent) => void>;
+  renderSelectedItem?: Component<ItemProps>;
   size?: 'sm' | 'md' | 'lg';
   selectedItem?: Item;
   titleText?: string;
@@ -150,9 +165,10 @@ export const Dropdown = component$((props: DropdownProps) => {
     id = modifiedId,
     invalid = false,
     invalidText,
+    itemToElement: ItemToElement,
     itemToString = defaultItemToString,
     label,
-    onChange$,
+    onSelect$,
     renderSelectedItem: RenderSelectedItem,
     size = 'md',
     type = 'default',
@@ -256,7 +272,6 @@ export const Dropdown = component$((props: DropdownProps) => {
         <ListBoxMenu {...listBoxAttrs}>
           {isOpen.value &&
             items?.map((item: Item, index: number) => {
-              // TODO - title - itemToElement ? item.text...
               const title = itemToString(item);
               const itemSelected = selectedOption.value === item;
               return (
@@ -269,15 +284,12 @@ export const Dropdown = component$((props: DropdownProps) => {
                   onClick$={$(() => {
                     selectedOption.value = item;
                     isOpen.value = false;
-                    // if (onChange$) {
-                    //   // onChange$(item);
-                    // }
-                    onChange$ && onChange$({ selectedItem: item });
+                    onSelect$ && onSelect$({ selectedItem: item });
                   })}
                 >
-                  {/* TODO - itemToElement if supplied... */}
-                  {itemToString(item)}
-                  {itemSelected && <Checkmark class={`${prefix}--list-box__menu-item__selected-icon`} size={16} />}
+                  {ItemToElement && <ItemToElement item={item} />}
+                  {!ItemToElement && itemToString(item)}
+                  {itemSelected && !ItemToElement && <Checkmark class={`${prefix}--list-box__menu-item__selected-icon`} size={16} />}
                 </ListBoxMenuItem>
               );
             })}

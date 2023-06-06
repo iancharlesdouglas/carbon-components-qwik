@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { createDOM } from '@builder.io/qwik/testing';
 import { CarbonRoot } from '../carbon-root/carbon-root';
 import { Form } from '../form/form';
-import { Dropdown, DropdownSelectEvent, Item, RenderSelectedItemProps } from './dropdown';
+import { Dropdown, DropdownSelectEvent, Item, ItemProps, defaultItemToString } from './dropdown';
 import { component$, $, useSignal } from '@builder.io/qwik';
 
 describe('Dropdown', () => {
@@ -174,7 +174,7 @@ describe('Dropdown', () => {
     const objectItemsDropdown = 'dropdown-object-items';
     const stringItemsDropdown = 'dropdown-string-items';
 
-    const SelectedItemRenderComp = component$((props: RenderSelectedItemProps) => (
+    const SelectedItemRenderComp = component$((props: ItemProps) => (
       <span class={selectedItemClass}>{typeof props.item === 'string' ? props.item : props.item.label}</span>
     ));
 
@@ -306,8 +306,8 @@ describe('Dropdown', () => {
             <Dropdown
               items={items}
               selectedItem={initialItem}
-              onChange$={$((event: DropdownSelectEvent) => {
-                selectedOption.value = event.selectedItem as string;
+              onSelect$={$((item: DropdownSelectEvent) => {
+                selectedOption.value = item.selectedItem;
               })}
             />
           </Form>
@@ -326,5 +326,47 @@ describe('Dropdown', () => {
     await userEvent(options[0], 'click');
     const outputElement = screen.querySelector('span') as HTMLSpanElement;
     expect(outputElement.textContent).toEqual(items[0]);
+  });
+
+  it('renders items with a custom itemToElement function', async () => {
+    const { screen, render, userEvent } = await createDOM();
+    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
+
+    const itemClass = 'item-component';
+    const ItemComponent = component$(({ item }: ItemProps) => <span class={itemClass}>{defaultItemToString(item)}</span>);
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <Dropdown items={items} itemToElement={ItemComponent} />
+        </Form>
+      </CarbonRoot>
+    );
+
+    await userEvent('button', 'click');
+    const itemElements = Array.from(screen.querySelectorAll(`span.${itemClass}`)) as HTMLSpanElement[];
+    expect(itemElements.length).toEqual(items.length);
+    items.forEach((item, index) => expect(itemElements[index]?.textContent).toEqual(item));
+  });
+
+  it('renders items with supplied IDs or keys', async () => {
+    const { screen, render, userEvent } = await createDOM();
+    const itemsWithIds: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'].map((label) => ({ label, id: label }));
+    const itemsWithKeys: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'].map((label) => ({ label, key: label }));
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <Dropdown items={itemsWithIds} id="dropdown-with-ids" />
+          <Dropdown items={itemsWithKeys} id="dropdown-with-keys" />
+        </Form>
+      </CarbonRoot>
+    );
+
+    await userEvent('button', 'click');
+    const itemsWithIdsElements = Array.from(screen.querySelectorAll('#dropdown-with-ids div.cds--list-box__menu-item')) as HTMLDivElement[];
+    itemsWithIds.forEach((item, index) => expect(itemsWithIdsElements[index].getAttribute('id')).toEqual((item as unknown as { id: string }).id));
+    const itemsWithKeysElements = Array.from(screen.querySelectorAll('#dropdown-with-keys div.cds--list-box__menu-item')) as HTMLDivElement[];
+    itemsWithKeys.forEach((item, index) => expect(itemsWithKeysElements[index].getAttribute('id')).toEqual((item as unknown as { key: string }).key));
   });
 });

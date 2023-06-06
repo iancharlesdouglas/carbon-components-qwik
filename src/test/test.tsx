@@ -1,4 +1,4 @@
-import { component$, $, QwikChangeEvent } from '@builder.io/qwik';
+import { component$, $ } from '@builder.io/qwik';
 import { CarbonRoot } from '../components/carbon-root/carbon-root';
 import { Link } from '../components/link/link';
 import { Add, Edit } from 'carbon-icons-qwik';
@@ -8,17 +8,19 @@ import { Form } from '../components/form/form';
 import { Grid } from '../components/grid/grid';
 import { Column } from '../components/grid/column';
 import { Checkbox } from '../components/checkbox/checkbox';
-import { Dropdown, Item, RenderSelectedItemProps } from '../components/dropdown/dropdown';
+import { Dropdown, Item, ItemProps, defaultItemToString } from '../components/dropdown/dropdown';
 
 /**
  * Local test harness for dev. purposes
  */
 const Test = component$(() => {
   const textValue = 'Test value';
-  const SelectedItemRenderComp = component$((props: RenderSelectedItemProps) => (
+  const SelectedItemRenderComp = component$((props: ItemProps) => (
     <span class="selected-item-class">Here: {typeof props.item === 'string' ? props.item : props.item.label}</span>
   ));
-  const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry'].map((label) => ({ label }));
+  const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry'].map((label) => ({ label, key: label }));
+  const ItemComponent = component$(({ item }: ItemProps) => <span class="item-class">{defaultItemToString(item)}</span>);
+
   return (
     <CarbonRoot>
       <Link href="https://github.com" target="blank" data-x="test" id="link_id" size="lg" visited renderIcon={Edit} onClick$={() => alert('clicked')}>
@@ -58,6 +60,7 @@ const Test = component$(() => {
               renderSelectedItem={SelectedItemRenderComp}
               items={items}
               helperText="Optional"
+              itemToElement={ItemComponent}
             />
           </Column>
         </Grid>

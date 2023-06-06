@@ -47,6 +47,7 @@ export const ListBoxMenuItem = component$((props: ListBoxMenuItemProps) => {
       title={isTruncated.value ? title : undefined}
       tabIndex={-1}
       ref={divElementRef}
+      role="button"
       // onClick$={$((event: QwikMouseEvent<HTMLDivElement, MouseEvent>, element: HTMLDivElement) => {
       //   props.onClick$ && props.onClick$(event, element);
       // })}
