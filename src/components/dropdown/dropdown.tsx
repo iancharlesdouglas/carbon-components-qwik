@@ -268,10 +268,7 @@ export const Dropdown = component$((props: DropdownProps) => {
           class={`${prefix}--list-box__field`}
           title={selectedOption.value ? itemToString(selectedOption.value) : label}
           {...comboBoxAttrs}
-          onClick$={$(() => {
-            isOpen.value = !isOpen.value;
-            console.log('onClick - button');
-          })}
+          onClick$={$(() => (isOpen.value = !isOpen.value))}
           onKeyDown$={$((event: QwikKeyboardEvent<HTMLButtonElement>) => {
             switch (event.keyCode) {
               case KeyCodes.DownArrow:
@@ -299,6 +296,7 @@ export const Dropdown = component$((props: DropdownProps) => {
               default: {
                 if (event.keyCode >= 65 && event.keyCode <= 90 && items) {
                   clearTimeout(keystrokeTimer.value);
+                  isOpen.value = true;
                   if (keysTyped.value?.length === 0 || keysTyped.value?.[0] !== event.key) {
                     keysTyped.value = [];
                   }

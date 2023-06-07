@@ -4,6 +4,7 @@ import { CarbonRoot } from '../carbon-root/carbon-root';
 import { Form } from '../form/form';
 import { Dropdown, DropdownSelectEvent, Item, ItemProps, defaultItemToString } from './dropdown';
 import { component$, $, useSignal } from '@builder.io/qwik';
+import { KeyCodes } from '../../internal/key-codes';
 
 describe('Dropdown', () => {
   it('renders expected CSS classes per attributes', async () => {
@@ -370,7 +371,7 @@ describe('Dropdown', () => {
     itemsWithKeys.forEach((item, index) => expect(itemsWithKeysElements[index].getAttribute('id')).toEqual((item as unknown as { key: string }).key));
   });
 
-  it('opens the items menu when the down arrow is pressed if the button element has the focus', async () => {
+  it('opens the items menu when the Down Arrow key is pressed with the combobox having the focus', async () => {
     const { screen, render, userEvent } = await createDOM();
     const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
 
@@ -382,8 +383,77 @@ describe('Dropdown', () => {
       </CarbonRoot>
     );
 
-    await userEvent('button', 'keydown', { keyCode: 40 });
+    await userEvent('button', 'keydown', { keyCode: KeyCodes.DownArrow, getModifierState: () => '' });
     const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
     expect(listBoxDiv.childElementCount).toEqual(items.length);
+  });
+  it('opens the items menu when the Up Arrow key is pressed with the combobox having the focus', async () => {
+    const { screen, render, userEvent } = await createDOM();
+    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <Dropdown items={items} />
+        </Form>
+      </CarbonRoot>
+    );
+
+    await userEvent('button', 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => '' });
+    const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
+    expect(listBoxDiv.childElementCount).toEqual(items.length);
+  });
+
+  it('opens the items menu when the Down Arrow key is pressed with the Alt modifier with the combobox having the focus', async () => {
+    const { screen, render, userEvent } = await createDOM();
+    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <Dropdown items={items} />
+        </Form>
+      </CarbonRoot>
+    );
+
+    await userEvent('button', 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => 'Alt' });
+    const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
+    expect(listBoxDiv.childElementCount).toEqual(items.length);
+  });
+
+  it('opens the items menu when the Home key is pressed with the combobox having the focus, and selects the first item', async () => {
+    const { screen, render, userEvent } = await createDOM();
+    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <Dropdown items={items} />
+        </Form>
+      </CarbonRoot>
+    );
+
+    await userEvent('button', 'keydown', { keyCode: KeyCodes.Home, getModifierState: () => '' });
+    const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
+    const first = listBoxDiv.children.item(0);
+    expect(first?.classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
+  });
+
+  it('opens the items menu when the End key is pressed with the combobox having the focus, and selects the last item', async () => {
+    const { screen, render, userEvent } = await createDOM();
+    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <Dropdown items={items} />
+        </Form>
+      </CarbonRoot>
+    );
+
+    await userEvent('button', 'keydown', { keyCode: KeyCodes.End });
+    const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
+    const last = listBoxDiv.children.item(listBoxDiv.childElementCount - 1);
+    expect(last?.classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
   });
 });
