@@ -159,7 +159,7 @@ export const Dropdown = component$((props: DropdownProps) => {
   } = ariaNormalize(isOpen.value, disabled, stipulatedId, titleText, items, initialSelectedItem, selectedItem);
   const selectedOption = useSignal(modifiedSelectedItem);
   const highlightedOption = useSignal<Item>();
-  const keysTyped = useSignal<string[]>();
+  const keysTyped = useSignal<string[]>([]);
   const keystrokeTimer = useSignal<number>();
   const listBoxElement = useSignal<Element>();
   const {
@@ -297,19 +297,19 @@ export const Dropdown = component$((props: DropdownProps) => {
                 if (event.keyCode >= 65 && event.keyCode <= 90 && items) {
                   clearTimeout(keystrokeTimer.value);
                   isOpen.value = true;
-                  if (keysTyped.value?.length === 0 || keysTyped.value?.[0] !== event.key) {
+                  keysTyped.value.push(event.key);
+                  const repeatedKey = keysTyped.value.every((key) => key === event.key);
+                  const matchingItem = repeatedKey
+                    ? items?.filter((item) => defaultItemToString(item).substring(0, 1).toLowerCase() === event.key)?.[keysTyped.value.length - 1]
+                    : items?.find((item) => defaultItemToString(item).substring(0, keysTyped.value?.length).toLowerCase() === keysTyped.value?.join(''));
+                  highlightedOption.value = matchingItem;
+                  if (
+                    repeatedKey &&
+                    items.filter((item) => defaultItemToString(item).substring(0, 1).toLowerCase() === event.key)?.length === keysTyped.value.length
+                  ) {
                     keysTyped.value = [];
                   }
-                  const matchingItems = items?.filter((item) => defaultItemToString(item).substring(0, 1).toLowerCase() === event.key);
-                  if (matchingItems?.length > 0) {
-                    const matchingItem = matchingItems[keysTyped.value.length];
-                    highlightedOption.value = matchingItem;
-                    if (matchingItems.length === keysTyped.value.length) {
-                      keysTyped.value = [];
-                    } else {
-                      keystrokeTimer.value = setTimeout(() => keysTyped.value?.push(event.key), 500) as unknown as number;
-                    }
-                  }
+                  keystrokeTimer.value = setTimeout(() => (keysTyped.value = []), 500) as unknown as number;
                 }
               }
             }
