@@ -456,4 +456,30 @@ describe('Dropdown', () => {
     const last = listBoxDiv.children.item(listBoxDiv.childElementCount - 1);
     expect(last?.classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
   });
+
+  it('opens the items menu and selects the first item that starts with a typed character', async () => {
+    const { screen, render, userEvent } = await createDOM();
+    const items: Item[] = ['Apple', 'Banana', 'Blackberry', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <Dropdown items={items} />
+        </Form>
+      </CarbonRoot>
+    );
+
+    const oldSetTimeout = setTimeout;
+    //@ts-ignore
+    // eslint-disable-next-line no-global-assign
+    setTimeout = (callback: () => void) => callback();
+    await userEvent('button', 'keydown', { key: 'b', keyCode: 66 });
+    const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
+    const expectedItem = listBoxDiv.children.item(1);
+    expect(expectedItem?.classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
+
+    //@ts-ignore
+    // eslint-disable-next-line no-global-assign
+    setTimeout = oldSetTimeout;
+  });
 });

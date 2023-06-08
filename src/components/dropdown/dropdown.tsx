@@ -1,4 +1,15 @@
-import { Component, PropFunction, /*QwikFocusEvent, */ QwikIntrinsicElements, component$, useContext, useSignal, $, QwikKeyboardEvent } from '@builder.io/qwik';
+import {
+  Component,
+  PropFunction,
+  /*QwikFocusEvent, */ QwikIntrinsicElements,
+  component$,
+  useContext,
+  useSignal,
+  $,
+  QwikKeyboardEvent,
+  useStore,
+  useTask$,
+} from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { formContext } from '../../internal/contexts/form-context';
 import classNames from 'classnames';
@@ -159,8 +170,6 @@ export const Dropdown = component$((props: DropdownProps) => {
   } = ariaNormalize(isOpen.value, disabled, stipulatedId, titleText, items, initialSelectedItem, selectedItem);
   const selectedOption = useSignal(modifiedSelectedItem);
   const highlightedOption = useSignal<Item>();
-  const keysTyped = useSignal<string[]>([]);
-  const keystrokeTimer = useSignal<number>();
   const listBoxElement = useSignal<Element>();
   const {
     ariaLabel,
@@ -181,6 +190,25 @@ export const Dropdown = component$((props: DropdownProps) => {
     warn = false,
     warnText,
   } = props;
+
+  type Keys = {
+    typed: string[];
+    reset: boolean;
+    timer?: number;
+  };
+  const keysObj: Keys = { typed: [], reset: false };
+  const keys = useStore(keysObj);
+  useTask$(({ track }) => {
+    track(() => keys.reset);
+    keys.reset = false;
+    if (keys.typed.length > 0) {
+      if (keys.timer) {
+        clearTimeout(keys.timer);
+      }
+      keys.timer = setTimeout(() => (keys.typed = []), 500) as unknown as number;
+      return () => clearTimeout(keys.timer);
+    }
+  });
 
   const inline = type === 'inline';
   const showWarning = !invalid && warn;
@@ -275,7 +303,8 @@ export const Dropdown = component$((props: DropdownProps) => {
               case KeyCodes.UpArrow:
               case KeyCodes.Home: {
                 isOpen.value = true;
-                keysTyped.value = [];
+                keys.typed = [];
+                keys.reset = true;
                 if (event.getModifierState && !event.getModifierState('Alt')) {
                   if (items) {
                     highlightedOption.value = items[0];
@@ -286,7 +315,8 @@ export const Dropdown = component$((props: DropdownProps) => {
               }
               case KeyCodes.End: {
                 isOpen.value = true;
-                keysTyped.value = [];
+                keys.typed = [];
+                keys.reset = true;
                 if (items) {
                   highlightedOption.value = items[items.length - 1];
                   scrollPosition.value = ScrollPosition.Bottom;
@@ -295,21 +325,20 @@ export const Dropdown = component$((props: DropdownProps) => {
               }
               default: {
                 if (event.keyCode >= 65 && event.keyCode <= 90 && items) {
-                  clearTimeout(keystrokeTimer.value);
                   isOpen.value = true;
-                  keysTyped.value.push(event.key);
-                  const repeatedKey = keysTyped.value.every((key) => key === event.key);
+                  keys.reset = true;
+                  keys.typed.push(event.key);
+                  const repeatedKey = keys.typed.every((key) => key === event.key);
                   const matchingItem = repeatedKey
-                    ? items?.filter((item) => defaultItemToString(item).substring(0, 1).toLowerCase() === event.key)?.[keysTyped.value.length - 1]
-                    : items?.find((item) => defaultItemToString(item).substring(0, keysTyped.value?.length).toLowerCase() === keysTyped.value?.join(''));
+                    ? items?.filter((item) => defaultItemToString(item).substring(0, 1).toLowerCase() === event.key)?.[keys.typed.length - 1]
+                    : items?.find((item) => defaultItemToString(item).substring(0, keys.typed.length).toLowerCase() === keys.typed.join(''));
                   highlightedOption.value = matchingItem;
                   if (
                     repeatedKey &&
-                    items.filter((item) => defaultItemToString(item).substring(0, 1).toLowerCase() === event.key)?.length === keysTyped.value.length
+                    items.filter((item) => defaultItemToString(item).substring(0, 1).toLowerCase() === event.key)?.length === keys.typed.length
                   ) {
-                    keysTyped.value = [];
+                    keys.typed = [];
                   }
-                  keystrokeTimer.value = setTimeout(() => (keysTyped.value = []), 500) as unknown as number;
                 }
               }
             }
