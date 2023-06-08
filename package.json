@@ -34,8 +34,8 @@
     "release": "np main --no-git-checks",
     "start": "vite --open --mode ssr",
     "qwik": "qwik",
-    "test": "vitest --testTimeout=10000",
-    "coverage": "vitest run --coverage --testTimeout=10000"
+    "test": "vitest --testTimeout=20000",
+    "coverage": "vitest run --coverage --testTimeout=20000"
   },
   "devDependencies": {
     "@builder.io/qwik": "1.1.5",

@@ -349,7 +349,18 @@ export const Dropdown = component$((props: DropdownProps) => {
           </span>
           <ListBoxMenuIcon isOpen={isOpen.value} />
         </button>
-        <ListBoxMenu {...listBoxAttrs} ref={listBoxElement} scrollPosition={scrollPosition.value}>
+        <ListBoxMenu
+          {...listBoxAttrs}
+          ref={listBoxElement}
+          scrollPosition={scrollPosition.value}
+          onKeyDown$={$((event: QwikKeyboardEvent<HTMLDivElement>) => {
+            switch (event.keyCode) {
+              case KeyCodes.DownArrow: {
+                break;
+              }
+            }
+          })}
+        >
           {isOpen.value &&
             items?.map((item: Item, index: number) => {
               const title = itemToString(item);
