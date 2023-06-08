@@ -7,6 +7,7 @@ import { usePrefix } from '../../internal/hooks/use-prefix';
 export enum ScrollPosition {
   Top = 'top',
   Bottom = 'bottom',
+  Unspecified = 'none',
 }
 
 /**
@@ -37,6 +38,7 @@ export const ListBoxMenu = component$((props: ListBoxMenuProps) => {
     } else if (scrollPosition === ScrollPosition.Top && listBoxElement.value) {
       listBoxElement.value.scrollTo && listBoxElement.value.scrollTo(0, 0);
     }
+    listBoxElement.value?.focus();
   });
   return (
     <div id={id} class={`${prefix}--list-box__menu`} role="listbox" {...props} ref={listBoxElement}>

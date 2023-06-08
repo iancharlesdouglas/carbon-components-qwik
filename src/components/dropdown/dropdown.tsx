@@ -9,6 +9,7 @@ import {
   QwikKeyboardEvent,
   useStore,
   useTask$,
+  useVisibleTask$,
 } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { formContext } from '../../internal/contexts/form-context';
@@ -171,6 +172,7 @@ export const Dropdown = component$((props: DropdownProps) => {
   const selectedOption = useSignal(modifiedSelectedItem);
   const highlightedOption = useSignal<Item>();
   const listBoxElement = useSignal<Element>();
+  const comboboxElement = useSignal<Element>();
   const {
     ariaLabel,
     class: customClass,
@@ -207,6 +209,12 @@ export const Dropdown = component$((props: DropdownProps) => {
       }
       keys.timer = setTimeout(() => (keys.typed = []), 500) as unknown as number;
       return () => clearTimeout(keys.timer);
+    }
+  });
+
+  useVisibleTask$(() => {
+    if (isOpen.value && comboboxElement.value) {
+      (comboboxElement.value as HTMLButtonElement).focus();
     }
   });
 
@@ -296,6 +304,7 @@ export const Dropdown = component$((props: DropdownProps) => {
           class={`${prefix}--list-box__field`}
           title={selectedOption.value ? itemToString(selectedOption.value) : label}
           {...comboBoxAttrs}
+          ref={comboboxElement}
           onClick$={$(() => (isOpen.value = !isOpen.value))}
           onKeyDown$={$((event: QwikKeyboardEvent<HTMLButtonElement>) => {
             switch (event.keyCode) {
@@ -310,7 +319,7 @@ export const Dropdown = component$((props: DropdownProps) => {
                     highlightedOption.value = items[0];
                   }
                 }
-                scrollPosition.value = ScrollPosition.Top;
+                scrollPosition.value = event.keyCode === KeyCodes.Home ? ScrollPosition.Top : ScrollPosition.Unspecified;
                 break;
               }
               case KeyCodes.End: {
@@ -356,6 +365,25 @@ export const Dropdown = component$((props: DropdownProps) => {
           onKeyDown$={$((event: QwikKeyboardEvent<HTMLDivElement>) => {
             switch (event.keyCode) {
               case KeyCodes.DownArrow: {
+                if (highlightedOption.value && items) {
+                  const currentIndex = items.indexOf(highlightedOption.value);
+                  if (currentIndex < items.length - 1) {
+                    highlightedOption.value = items[currentIndex + 1];
+                  }
+                }
+                break;
+              }
+              case KeyCodes.UpArrow: {
+                if (highlightedOption.value && items) {
+                  const currentIndex = items.indexOf(highlightedOption.value);
+                  if (currentIndex > 0) {
+                    highlightedOption.value = items[currentIndex - 1];
+                  }
+                }
+                break;
+              }
+              case KeyCodes.Escape: {
+                isOpen.value = false;
                 break;
               }
             }
@@ -378,6 +406,7 @@ export const Dropdown = component$((props: DropdownProps) => {
                     onSelect$ && onSelect$({ selectedItem: item });
                   })}
                   onKeyDown$={$((event: QwikKeyboardEvent<HTMLDivElement>) => {
+                    console.log('listbox menu item keydown', event.keyCode);
                     switch (event.keyCode) {
                       case KeyCodes.Enter: {
                         selectedOption.value = item;
