@@ -9,7 +9,6 @@ import {
   QwikKeyboardEvent,
   useStore,
   useTask$,
-  useVisibleTask$,
 } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { formContext } from '../../internal/contexts/form-context';
@@ -159,7 +158,12 @@ export const Dropdown = component$((props: DropdownProps) => {
   const prefix = usePrefix();
   const { isFluid } = useContext(formContext);
   const isFocused = useSignal(false);
-  const isOpen = useSignal(false);
+  type State = {
+    isOpen: boolean;
+  };
+  const stateObj: State = { isOpen: false };
+  const state = useStore(stateObj);
+  // const isOpen = useSignal(false);
   const scrollPosition = useSignal(ScrollPosition.Top);
   const { disabled = false, id: stipulatedId, titleText, items, initialSelectedItem, selectedItem } = props;
   const {
@@ -168,7 +172,7 @@ export const Dropdown = component$((props: DropdownProps) => {
     items: itemAttrs,
     listBox: listBoxAttrs,
     selectedOption: modifiedSelectedItem,
-  } = ariaNormalize(isOpen.value, disabled, stipulatedId, titleText, items, initialSelectedItem, selectedItem);
+  } = ariaNormalize(state.isOpen, disabled, stipulatedId, titleText, items, initialSelectedItem, selectedItem);
   const selectedOption = useSignal(modifiedSelectedItem);
   const highlightedOption = useSignal<Item>();
   const listBoxElement = useSignal<Element>();
@@ -212,8 +216,9 @@ export const Dropdown = component$((props: DropdownProps) => {
     }
   });
 
-  useVisibleTask$(() => {
-    if (isOpen.value && comboboxElement.value) {
+  useTask$(({ track }) => {
+    track(() => state.isOpen);
+    if (!state.isOpen && comboboxElement.value) {
       (comboboxElement.value as HTMLButtonElement).focus();
     }
   });
@@ -224,7 +229,7 @@ export const Dropdown = component$((props: DropdownProps) => {
   const classes = classNames(`${prefix}--dropdown`, {
     [`${prefix}--dropdown--invalid`]: invalid,
     [`${prefix}--dropdown--warning`]: showWarning,
-    [`${prefix}--dropdown--open`]: isOpen.value,
+    [`${prefix}--dropdown--open`]: state.isOpen,
     [`${prefix}--dropdown--inline`]: inline,
     [`${prefix}--dropdown--disabled`]: disabled,
     [`${prefix}--dropdown--${size}`]: size,
@@ -244,7 +249,7 @@ export const Dropdown = component$((props: DropdownProps) => {
     [`${prefix}--dropdown__wrapper--inline--invalid`]: inline && invalid,
     [`${prefix}--list-box__wrapper--inline--invalid`]: inline && invalid,
     [`${prefix}--list-box__wrapper--fluid--invalid`]: isFluid && invalid,
-    [`${prefix}--list-box__wrapper--fluid--focus`]: isFluid && isFocused && !isOpen.value,
+    [`${prefix}--list-box__wrapper--fluid--focus`]: isFluid && isFocused && !state.isOpen,
   });
 
   const sanitizedProps = _.omit(
@@ -294,7 +299,7 @@ export const Dropdown = component$((props: DropdownProps) => {
         invalidText={invalidText}
         warn={warn}
         warnText={warnText}
-        isOpen={isOpen.value}
+        isOpen={state.isOpen}
         id={id}
       >
         {invalid && <WarningFilled class={`${prefix}--list-box__invalid-icon`} size={16} />}
@@ -305,13 +310,13 @@ export const Dropdown = component$((props: DropdownProps) => {
           title={selectedOption.value ? itemToString(selectedOption.value) : label}
           {...comboBoxAttrs}
           ref={comboboxElement}
-          onClick$={$(() => (isOpen.value = !isOpen.value))}
+          onClick$={$(() => (state.isOpen = !state.isOpen))}
           onKeyDown$={$((event: QwikKeyboardEvent<HTMLButtonElement>) => {
             switch (event.keyCode) {
               case KeyCodes.DownArrow:
               case KeyCodes.UpArrow:
               case KeyCodes.Home: {
-                isOpen.value = true;
+                state.isOpen = true;
                 keys.typed = [];
                 keys.reset = true;
                 if (event.getModifierState && !event.getModifierState('Alt')) {
@@ -323,7 +328,7 @@ export const Dropdown = component$((props: DropdownProps) => {
                 break;
               }
               case KeyCodes.End: {
-                isOpen.value = true;
+                state.isOpen = true;
                 keys.typed = [];
                 keys.reset = true;
                 if (items) {
@@ -334,7 +339,7 @@ export const Dropdown = component$((props: DropdownProps) => {
               }
               default: {
                 if (event.keyCode >= 65 && event.keyCode <= 90 && items) {
-                  isOpen.value = true;
+                  state.isOpen = true;
                   keys.reset = true;
                   keys.typed.push(event.key);
                   const repeatedKey = keys.typed.every((key) => key === event.key);
@@ -356,7 +361,7 @@ export const Dropdown = component$((props: DropdownProps) => {
           <span class={`${prefix}--list-box__label`}>
             {(selectedOption.value && (RenderSelectedItem ? <RenderSelectedItem item={selectedOption.value} /> : itemToString(selectedOption.value))) || label}
           </span>
-          <ListBoxMenuIcon isOpen={isOpen.value} />
+          <ListBoxMenuIcon isOpen={state.isOpen} />
         </button>
         <ListBoxMenu
           {...listBoxAttrs}
@@ -383,13 +388,13 @@ export const Dropdown = component$((props: DropdownProps) => {
                 break;
               }
               case KeyCodes.Escape: {
-                isOpen.value = false;
+                state.isOpen = false;
                 break;
               }
             }
           })}
         >
-          {isOpen.value &&
+          {state.isOpen &&
             items?.map((item: Item, index: number) => {
               const title = itemToString(item);
               const itemSelected = selectedOption.value === item;
@@ -402,7 +407,7 @@ export const Dropdown = component$((props: DropdownProps) => {
                   {...itemAttrs?.[index]}
                   onClick$={$(() => {
                     selectedOption.value = item;
-                    isOpen.value = false;
+                    state.isOpen = false;
                     onSelect$ && onSelect$({ selectedItem: item });
                   })}
                   onKeyDown$={$((event: QwikKeyboardEvent<HTMLDivElement>) => {
@@ -410,7 +415,7 @@ export const Dropdown = component$((props: DropdownProps) => {
                     switch (event.keyCode) {
                       case KeyCodes.Enter: {
                         selectedOption.value = item;
-                        isOpen.value = false;
+                        state.isOpen = false;
                         onSelect$ && onSelect$({ selectedItem: item });
                         break;
                       }
