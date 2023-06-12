@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { createDOM } from '@builder.io/qwik/testing';
 import { CarbonRoot } from '../carbon-root/carbon-root';
 import { Form } from '../form/form';
-import { Dropdown, DropdownSelectEvent, Item, ItemProps, defaultItemToString } from './dropdown';
+import { Dropdown, Item, ItemProps, defaultItemToString } from './dropdown';
 import { component$, $, useSignal } from '@builder.io/qwik';
 import { KeyCodes } from '../../internal/key-codes';
 
@@ -307,8 +307,8 @@ describe('Dropdown', () => {
             <Dropdown
               items={items}
               selectedItem={initialItem}
-              onSelect$={$((item: DropdownSelectEvent) => {
-                selectedOption.value = item.selectedItem;
+              onSelect$={$((item: Item) => {
+                selectedOption.value = item;
               })}
             />
           </Form>
@@ -472,8 +472,9 @@ describe('Dropdown', () => {
     const oldSetTimeout = setTimeout;
     //@ts-ignore
     // eslint-disable-next-line no-global-assign
-    setTimeout = (callback: () => void) => callback();
+    setTimeout = () => {};
     await userEvent('button', 'keydown', { key: 'b', keyCode: 66 });
+    await userEvent('button', 'keydown', { key: 'a', keyCode: 65 });
     const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
     const expectedItem = listBoxDiv.children.item(1);
     expect(expectedItem?.classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
@@ -481,5 +482,73 @@ describe('Dropdown', () => {
     //@ts-ignore
     // eslint-disable-next-line no-global-assign
     setTimeout = oldSetTimeout;
+  });
+
+  it('selects the second item from the menu if the down arrow key is pressed twice', async () => {
+    const { screen, render, userEvent } = await createDOM();
+    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <Dropdown items={items} />
+        </Form>
+      </CarbonRoot>
+    );
+
+    await userEvent('button', 'keydown', { keyCode: KeyCodes.DownArrow, getModifierState: () => false });
+    const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
+    await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.DownArrow, getModifierState: () => false });
+    const secondItem = screen.querySelectorAll('div.cds--list-box__menu-item')?.[1];
+    expect(secondItem?.classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
+  });
+
+  it('selects the first item from the menu if the up arrow key is pressed twice', async () => {
+    const { screen, render, userEvent } = await createDOM();
+    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <Dropdown items={items} />
+        </Form>
+      </CarbonRoot>
+    );
+
+    await userEvent('button', 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => false });
+    const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
+    await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => false });
+    const secondItem = screen.querySelectorAll('div.cds--list-box__menu-item')?.[0];
+    expect(secondItem?.classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
+  });
+
+  it('selects the current option if [Alt]+[Up Arrow] is selected', async () => {
+    const { screen, render, userEvent } = await createDOM();
+    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
+    type Selected = {
+      item?: Item;
+    };
+    const selected: Selected = {};
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <Dropdown
+            items={items}
+            onSelect$={$((item: Item) => {
+              selected.item = item;
+            })}
+          />
+        </Form>
+      </CarbonRoot>
+    );
+
+    await userEvent('button', 'keydown', { keyCode: KeyCodes.DownArrow, getModifierState: () => false });
+    const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
+    await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => true });
+    await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => false }); // dummy event cycle to give handler a chance to run
+    const secondItem = screen.querySelectorAll('div.cds--list-box__menu-item')?.[0];
+    expect(secondItem?.classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
+    expect(selected.item).toEqual(items[0]);
   });
 });

@@ -1,15 +1,4 @@
-import {
-  Component,
-  PropFunction,
-  /*QwikFocusEvent, */ QwikIntrinsicElements,
-  component$,
-  useContext,
-  useSignal,
-  $,
-  QwikKeyboardEvent,
-  useStore,
-  useTask$,
-} from '@builder.io/qwik';
+import { Component, PropFunction, QwikIntrinsicElements, component$, useContext, useSignal, $, QwikKeyboardEvent, useStore, useTask$ } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { formContext } from '../../internal/contexts/form-context';
 import classNames from 'classnames';
@@ -31,14 +20,6 @@ export type Item = string | { label: string };
  * Function that takes an item and returns a string representation of it
  */
 export type ItemToString = (item: Item) => string;
-
-/**
- * Dropdown select event
- * @property {Item} selectedItem - Selected item
- */
-export type DropdownSelectEvent = {
-  selectedItem: Item;
-};
 
 /**
  * Returns the string representation of an item (either the label or the item itself if it is a string)
@@ -140,7 +121,7 @@ export type DropdownProps = QwikIntrinsicElements['div'] & {
   itemToString?: ItemToString;
   items?: Item[];
   label?: string;
-  onSelect$?: PropFunction<(event: DropdownSelectEvent) => void>;
+  onSelect$?: PropFunction<(item: Item) => void>;
   renderSelectedItem?: Component<ItemProps>;
   size?: 'sm' | 'md' | 'lg';
   selectedItem?: Item;
@@ -163,7 +144,6 @@ export const Dropdown = component$((props: DropdownProps) => {
   };
   const stateObj: State = { isOpen: false };
   const state = useStore(stateObj);
-  // const isOpen = useSignal(false);
   const scrollPosition = useSignal(ScrollPosition.Top);
   const { disabled = false, id: stipulatedId, titleText, items, initialSelectedItem, selectedItem } = props;
   const {
@@ -279,8 +259,107 @@ export const Dropdown = component$((props: DropdownProps) => {
     'warnText'
   );
 
-  // const handleFocus = $((event: QwikFocusEvent<HTMLDivElement>) => (isFocused.value = event.type === 'focus'));
   const labelId = titleText ? `${id}--label` : undefined;
+
+  const handleKeyDown = $(async (event: QwikKeyboardEvent<HTMLDivElement>) => {
+    switch (event.keyCode) {
+      case KeyCodes.DownArrow: {
+        keys.typed = [];
+        keys.reset = true;
+        if (highlightedOption.value && items) {
+          const currentIndex = items.indexOf(highlightedOption.value);
+          if (currentIndex < items.length - 1) {
+            highlightedOption.value = items[currentIndex + 1];
+          }
+        } else if (items) {
+          state.isOpen = true;
+          if (event.getModifierState && !event.getModifierState('Alt')) {
+            highlightedOption.value = items[0];
+            scrollPosition.value = ScrollPosition.Unspecified;
+          }
+        }
+        break;
+      }
+      case KeyCodes.UpArrow: {
+        keys.typed = [];
+        keys.reset = true;
+        if (state.isOpen) {
+          if (event.getModifierState && event.getModifierState('Alt')) {
+            selectedOption.value = highlightedOption.value;
+            state.isOpen = false;
+            onSelect$ && onSelect$(selectedOption.value!);
+          } else {
+            if (highlightedOption.value && items) {
+              const currentIndex = items.indexOf(highlightedOption.value);
+              if (currentIndex > 0) {
+                highlightedOption.value = items[currentIndex - 1];
+              }
+            }
+          }
+        } else if (items) {
+          state.isOpen = true;
+          if (event.getModifierState && !event.getModifierState('Alt')) {
+            highlightedOption.value = items[0];
+            scrollPosition.value = ScrollPosition.Unspecified;
+          }
+        }
+        break;
+      }
+      case KeyCodes.Enter:
+      case KeyCodes.Space:
+      case KeyCodes.Tab: {
+        if (state.isOpen) {
+          selectedOption.value = highlightedOption.value;
+          onSelect$ && onSelect$(selectedOption.value!);
+          state.isOpen = false;
+        } else if (event.keyCode !== KeyCodes.Tab) {
+          state.isOpen = true;
+        }
+        break;
+      }
+      case KeyCodes.Home: {
+        state.isOpen = true;
+        keys.typed = [];
+        keys.reset = true;
+        if (event.getModifierState && !event.getModifierState('Alt')) {
+          if (items) {
+            highlightedOption.value = items[0];
+          }
+        }
+        scrollPosition.value = event.keyCode === KeyCodes.Home ? ScrollPosition.Top : ScrollPosition.Unspecified;
+        break;
+      }
+      case KeyCodes.End: {
+        state.isOpen = true;
+        keys.typed = [];
+        keys.reset = true;
+        if (items) {
+          highlightedOption.value = items[items.length - 1];
+          scrollPosition.value = ScrollPosition.Bottom;
+        }
+        break;
+      }
+      case KeyCodes.Escape: {
+        state.isOpen = false;
+        break;
+      }
+      default: {
+        if (event.keyCode >= 65 && event.keyCode <= 90 && items) {
+          state.isOpen = true;
+          keys.reset = true;
+          keys.typed.push(event.key);
+          const repeatedKey = keys.typed.every((key) => key === event.key);
+          const matchingItem = repeatedKey
+            ? items?.filter((item) => defaultItemToString(item).substring(0, 1).toLowerCase() === event.key)?.[keys.typed.length - 1]
+            : items?.find((item) => defaultItemToString(item).substring(0, keys.typed.length).toLowerCase() === keys.typed.join(''));
+          highlightedOption.value = matchingItem;
+          if (repeatedKey && items?.filter((item) => defaultItemToString(item).substring(0, 1).toLowerCase() === event.key)?.length === keys.typed.length) {
+            keys.typed = [];
+          }
+        }
+      }
+    }
+  });
 
   return (
     <div class={wrapperClasses} {...sanitizedProps}>
@@ -290,8 +369,6 @@ export const Dropdown = component$((props: DropdownProps) => {
         </label>
       )}
       <ListBox
-        // onFocus$={handleFocus}
-        // onBlur$={handleFocus}
         aria-label={ariaLabel}
         size={size}
         class={classes}
@@ -310,90 +387,19 @@ export const Dropdown = component$((props: DropdownProps) => {
           title={selectedOption.value ? itemToString(selectedOption.value) : label}
           {...comboBoxAttrs}
           ref={comboboxElement}
-          onClick$={$(() => (state.isOpen = !state.isOpen))}
-          onKeyDown$={$((event: QwikKeyboardEvent<HTMLButtonElement>) => {
-            switch (event.keyCode) {
-              case KeyCodes.DownArrow:
-              case KeyCodes.UpArrow:
-              case KeyCodes.Home: {
-                state.isOpen = true;
-                keys.typed = [];
-                keys.reset = true;
-                if (event.getModifierState && !event.getModifierState('Alt')) {
-                  if (items) {
-                    highlightedOption.value = items[0];
-                  }
-                }
-                scrollPosition.value = event.keyCode === KeyCodes.Home ? ScrollPosition.Top : ScrollPosition.Unspecified;
-                break;
-              }
-              case KeyCodes.End: {
-                state.isOpen = true;
-                keys.typed = [];
-                keys.reset = true;
-                if (items) {
-                  highlightedOption.value = items[items.length - 1];
-                  scrollPosition.value = ScrollPosition.Bottom;
-                }
-                break;
-              }
-              default: {
-                if (event.keyCode >= 65 && event.keyCode <= 90 && items) {
-                  state.isOpen = true;
-                  keys.reset = true;
-                  keys.typed.push(event.key);
-                  const repeatedKey = keys.typed.every((key) => key === event.key);
-                  const matchingItem = repeatedKey
-                    ? items?.filter((item) => defaultItemToString(item).substring(0, 1).toLowerCase() === event.key)?.[keys.typed.length - 1]
-                    : items?.find((item) => defaultItemToString(item).substring(0, keys.typed.length).toLowerCase() === keys.typed.join(''));
-                  highlightedOption.value = matchingItem;
-                  if (
-                    repeatedKey &&
-                    items.filter((item) => defaultItemToString(item).substring(0, 1).toLowerCase() === event.key)?.length === keys.typed.length
-                  ) {
-                    keys.typed = [];
-                  }
-                }
-              }
-            }
+          onClick$={$(() => {
+            state.isOpen = !state.isOpen;
           })}
+          onKeyDown$={handleKeyDown}
+          preventdefault:click
+          preventdefault:keydown
         >
           <span class={`${prefix}--list-box__label`}>
             {(selectedOption.value && (RenderSelectedItem ? <RenderSelectedItem item={selectedOption.value} /> : itemToString(selectedOption.value))) || label}
           </span>
           <ListBoxMenuIcon isOpen={state.isOpen} />
         </button>
-        <ListBoxMenu
-          {...listBoxAttrs}
-          ref={listBoxElement}
-          scrollPosition={scrollPosition.value}
-          onKeyDown$={$((event: QwikKeyboardEvent<HTMLDivElement>) => {
-            switch (event.keyCode) {
-              case KeyCodes.DownArrow: {
-                if (highlightedOption.value && items) {
-                  const currentIndex = items.indexOf(highlightedOption.value);
-                  if (currentIndex < items.length - 1) {
-                    highlightedOption.value = items[currentIndex + 1];
-                  }
-                }
-                break;
-              }
-              case KeyCodes.UpArrow: {
-                if (highlightedOption.value && items) {
-                  const currentIndex = items.indexOf(highlightedOption.value);
-                  if (currentIndex > 0) {
-                    highlightedOption.value = items[currentIndex - 1];
-                  }
-                }
-                break;
-              }
-              case KeyCodes.Escape: {
-                state.isOpen = false;
-                break;
-              }
-            }
-          })}
-        >
+        <ListBoxMenu {...listBoxAttrs} ref={listBoxElement} scrollPosition={scrollPosition.value} onKeyDown$={handleKeyDown}>
           {state.isOpen &&
             items?.map((item: Item, index: number) => {
               const title = itemToString(item);
@@ -408,20 +414,8 @@ export const Dropdown = component$((props: DropdownProps) => {
                   onClick$={$(() => {
                     selectedOption.value = item;
                     state.isOpen = false;
-                    onSelect$ && onSelect$({ selectedItem: item });
+                    onSelect$ && onSelect$(item);
                   })}
-                  onKeyDown$={$((event: QwikKeyboardEvent<HTMLDivElement>) => {
-                    console.log('listbox menu item keydown', event.keyCode);
-                    switch (event.keyCode) {
-                      case KeyCodes.Enter: {
-                        selectedOption.value = item;
-                        state.isOpen = false;
-                        onSelect$ && onSelect$({ selectedItem: item });
-                        break;
-                      }
-                    }
-                  })}
-                  preventdefault:keydown
                 >
                   {ItemToElement && <ItemToElement item={item} />}
                   {!ItemToElement && itemToString(item)}

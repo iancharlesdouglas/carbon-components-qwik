@@ -1,14 +1,14 @@
-import { component$, $ } from '@builder.io/qwik';
+import { component$, $, useSignal } from '@builder.io/qwik';
 import { CarbonRoot } from '../components/carbon-root/carbon-root';
 import { Link } from '../components/link/link';
-import { Add, Edit } from 'carbon-icons-qwik';
+import { Edit } from 'carbon-icons-qwik';
 import { Button } from '../components/button/button';
 import { TextInput, TextInputChangeEvent } from '../components/text-input/text-input';
 import { Form } from '../components/form/form';
 import { Grid } from '../components/grid/grid';
 import { Column } from '../components/grid/column';
 import { Checkbox } from '../components/checkbox/checkbox';
-import { Dropdown, Item, ItemProps } from '../components/dropdown/dropdown';
+import { Dropdown, Item, ItemProps, defaultItemToString } from '../components/dropdown/dropdown';
 
 /**
  * Local test harness for dev. purposes
@@ -20,16 +20,13 @@ const Test = component$(() => {
   ));
   const items: Item[] = ['Apple', 'Banana', 'Blackberry', 'Blueberry', 'Cherry', 'Dragonfruit', 'Durian', 'Elderberry'].map((label) => ({ label, key: label }));
   // const ItemComponent = component$(({ item }: ItemProps) => <span class="item-class">{defaultItemToString(item)}</span>);
+  const selectedItem = useSignal<Item>({ label: '' });
 
   return (
     <CarbonRoot>
       <Link href="https://github.com" target="blank" data-x="test" id="link_id" size="lg" visited renderIcon={Edit} onClick$={() => alert('clicked')}>
         GitHub
       </Link>
-      <Button size="sm" title="Button" onClick$={() => alert('clicked')} hasIconOnly={true} renderIcon={Add} class="test-class">
-        Test
-        <Add q:slot="icon" size={16} />
-      </Button>
       <Button href="https://github.com">Link button</Button>
       <Form>
         <TextInput
@@ -60,8 +57,15 @@ const Test = component$(() => {
               renderSelectedItem={SelectedItemRenderComp}
               items={items}
               helperText="Optional"
+              onSelect$={$((item: Item) => {
+                console.log('got selected item', item);
+                selectedItem.value = item;
+              })}
               // itemToElement={ItemComponent}
             />
+          </Column>
+          <Column lg={1}>
+            <span>{defaultItemToString(selectedItem.value)}</span>
           </Column>
         </Grid>
       </Form>
