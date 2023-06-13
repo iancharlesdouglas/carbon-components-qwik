@@ -1,4 +1,16 @@
-import { Component, PropFunction, QwikIntrinsicElements, component$, useContext, useSignal, $, QwikKeyboardEvent, useStore, useTask$ } from '@builder.io/qwik';
+import {
+  Component,
+  PropFunction,
+  QwikIntrinsicElements,
+  component$,
+  useContext,
+  useSignal,
+  $,
+  QwikKeyboardEvent,
+  useStore,
+  useTask$,
+  QwikMouseEvent,
+} from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { formContext } from '../../internal/contexts/form-context';
 import classNames from 'classnames';
@@ -391,6 +403,12 @@ export const Dropdown = component$((props: DropdownProps) => {
             state.isOpen = !state.isOpen;
           })}
           onKeyDown$={handleKeyDown}
+          document:onClick$={$((event: QwikMouseEvent) => {
+            const element = event.target as HTMLElement;
+            if (element.getAttribute('aria-controls') !== listBoxAttrs.id && state.isOpen) {
+              state.isOpen = false;
+            }
+          })}
           preventdefault:click
           preventdefault:keydown
         >
