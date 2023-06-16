@@ -1,23 +1,17 @@
 import { QwikIntrinsicElements, Slot, component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
-
-/**
- * Scroll position
- */
-export enum ScrollPosition {
-  Top = 'top',
-  Bottom = 'bottom',
-  Unspecified = 'none',
-}
+import { Item } from '../dropdown/dropdown';
 
 /**
  * ListBoxMenu props
  * @property {string} id - ID
- * @property {boolean} scrollToBottom - Whether to scroll to the bottom of the list
+ * @property {Item[]} items - Items
+ * @property {Item} highlightedItem - Highlighted item
  */
 export type ListBoxMenuProps = QwikIntrinsicElements['div'] & {
   id?: string;
-  scrollPosition: ScrollPosition;
+  items?: Item[];
+  highlightedItem?: Item;
 };
 
 /**
@@ -25,18 +19,22 @@ export type ListBoxMenuProps = QwikIntrinsicElements['div'] & {
  */
 export const ListBoxMenu = component$((props: ListBoxMenuProps) => {
   const prefix = usePrefix();
-  const { id, scrollPosition } = props;
+  const { id, items, highlightedItem } = props;
   const listBoxElement = useSignal<HTMLDivElement>();
   useVisibleTask$(({ track }) => {
     track(props);
-    if (scrollPosition === ScrollPosition.Bottom && listBoxElement.value) {
-      const children = Array.from(listBoxElement.value.children);
-      const childrenHeight = children.reduce((total, child) => total + child.clientHeight, 0);
-      if (childrenHeight > listBoxElement.value.clientHeight) {
-        listBoxElement.value.scrollTo(0, childrenHeight - listBoxElement.value.clientHeight);
+    if (items && highlightedItem && listBoxElement.value) {
+      const highlightedIndex = items.indexOf(highlightedItem);
+      if (highlightedIndex > -1) {
+        const children = Array.from(listBoxElement.value.children);
+        const itemHeight = children[0]?.clientHeight;
+        const itemTop = highlightedIndex * itemHeight;
+        if (itemTop < listBoxElement.value.scrollTop) {
+          listBoxElement.value.scrollTo(0, itemTop);
+        } else if (itemTop + itemHeight > listBoxElement.value.clientHeight + listBoxElement.value.scrollTop) {
+          listBoxElement.value.scrollTo(0, itemTop - itemHeight);
+        }
       }
-    } else if (scrollPosition === ScrollPosition.Top && listBoxElement.value) {
-      listBoxElement.value.scrollTo && listBoxElement.value.scrollTo(0, 0);
     }
     listBoxElement.value?.focus();
   });

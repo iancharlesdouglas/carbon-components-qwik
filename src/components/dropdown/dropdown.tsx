@@ -10,13 +10,14 @@ import {
   useStore,
   useTask$,
   QwikMouseEvent,
+  useVisibleTask$,
 } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { formContext } from '../../internal/contexts/form-context';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { ListBox } from '../list-box/list-box';
-import { ListBoxMenu, ScrollPosition } from '../list-box/list-box-menu';
+import { ListBoxMenu } from '../list-box/list-box-menu';
 import { Checkmark, WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
 import { ListBoxMenuIcon } from '../list-box/list-box-menu-icon';
 import { ListBoxMenuItem } from '../list-box/list-box-menu-item';
@@ -156,7 +157,6 @@ export const Dropdown = component$((props: DropdownProps) => {
   };
   const stateObj: State = { isOpen: false };
   const state = useStore(stateObj);
-  const scrollPosition = useSignal(ScrollPosition.Top);
   const { disabled = false, id: stipulatedId, titleText, items, initialSelectedItem, selectedItem } = props;
   const {
     id: modifiedId,
@@ -189,6 +189,24 @@ export const Dropdown = component$((props: DropdownProps) => {
     warnText,
   } = props;
 
+  useVisibleTask$(() => {
+    console.log('vis task - listbox ref', listBoxElement.value);
+
+    // const listBoxDiv = document.getElementById(`${prefix}--list-box__menu`);
+    // console.log('listBoxDiv height', listBoxDiv?.clientHeight);
+    // if (listBoxElement.value) {
+    //   console.log('dropdown vis task - listbox height', listBoxElement.value.clientHeight);
+    // }
+  });
+
+  useTask$(
+    ({ track }) => {
+      track(listBoxElement);
+      console.log('tracked listboxel. ref.', listBoxElement.value);
+    },
+    { eagerness: 'load' }
+  );
+
   type Keys = {
     typed: string[];
     reset: boolean;
@@ -213,6 +231,11 @@ export const Dropdown = component$((props: DropdownProps) => {
     if (!state.isOpen && comboboxElement.value) {
       (comboboxElement.value as HTMLButtonElement).focus();
     }
+  });
+
+  useTask$(({ track }) => {
+    track(props);
+    console.log('props task');
   });
 
   const inline = type === 'inline';
@@ -287,7 +310,6 @@ export const Dropdown = component$((props: DropdownProps) => {
           state.isOpen = true;
           if (event.getModifierState && !event.getModifierState('Alt')) {
             highlightedOption.value = items[0];
-            scrollPosition.value = ScrollPosition.Unspecified;
           }
         }
         break;
@@ -312,7 +334,6 @@ export const Dropdown = component$((props: DropdownProps) => {
           state.isOpen = true;
           if (event.getModifierState && !event.getModifierState('Alt')) {
             highlightedOption.value = items[0];
-            scrollPosition.value = ScrollPosition.Unspecified;
           }
         }
         break;
@@ -338,7 +359,6 @@ export const Dropdown = component$((props: DropdownProps) => {
             highlightedOption.value = items[0];
           }
         }
-        scrollPosition.value = event.keyCode === KeyCodes.Home ? ScrollPosition.Top : ScrollPosition.Unspecified;
         break;
       }
       case KeyCodes.End: {
@@ -347,7 +367,6 @@ export const Dropdown = component$((props: DropdownProps) => {
         keys.reset = true;
         if (items) {
           highlightedOption.value = items[items.length - 1];
-          scrollPosition.value = ScrollPosition.Bottom;
         }
         break;
       }
@@ -409,15 +428,13 @@ export const Dropdown = component$((props: DropdownProps) => {
               state.isOpen = false;
             }
           })}
-          preventdefault:click
-          preventdefault:keydown
         >
           <span class={`${prefix}--list-box__label`}>
             {(selectedOption.value && (RenderSelectedItem ? <RenderSelectedItem item={selectedOption.value} /> : itemToString(selectedOption.value))) || label}
           </span>
           <ListBoxMenuIcon isOpen={state.isOpen} />
         </button>
-        <ListBoxMenu {...listBoxAttrs} ref={listBoxElement} scrollPosition={scrollPosition.value} onKeyDown$={handleKeyDown}>
+        <ListBoxMenu {...listBoxAttrs} ref={listBoxElement} items={items} highlightedItem={highlightedOption.value} onKeyDown$={handleKeyDown}>
           {state.isOpen &&
             items?.map((item: Item, index: number) => {
               const title = itemToString(item);

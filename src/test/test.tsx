@@ -18,7 +18,21 @@ const Test = component$(() => {
   const SelectedItemRenderComp = component$((props: ItemProps) => (
     <span class="selected-item-class">Here: {typeof props.item === 'string' ? props.item : props.item.label}</span>
   ));
-  const items: Item[] = ['Apple', 'Banana', 'Blackberry', 'Blueberry', 'Cherry', 'Dragonfruit', 'Durian', 'Elderberry'].map((label) => ({ label, key: label }));
+  const items: Item[] = [
+    'Apple',
+    'Banana',
+    'Blackberry',
+    'Blueberry',
+    'Cherry',
+    'Dragonfruit',
+    'Durian',
+    'Elderberry',
+    'Fig',
+    'Guava',
+    'Huckleberry',
+    'Ichigo',
+    'Jackfruit',
+  ].map((label) => ({ label, key: label }));
   // const ItemComponent = component$(({ item }: ItemProps) => <span class="item-class">{defaultItemToString(item)}</span>);
   const selectedItem = useSignal<Item>({ label: '' });
 

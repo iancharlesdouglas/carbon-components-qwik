@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 /**
  * ListBoxMenuItem props
- * @property {boolean} isActive - Whether the menu item is active
+ * @property {boolean} isActive - Whether the menu item is active (selected)
  * @property {boolean} isHighlighted - Whether the menu item is highlighted
  * @property {string} title - Title to show in tooltip
  */
