@@ -10,14 +10,13 @@ import {
   useStore,
   useTask$,
   QwikMouseEvent,
-  useVisibleTask$,
 } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { formContext } from '../../internal/contexts/form-context';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { ListBox } from '../list-box/list-box';
-import { ListBoxMenu } from '../list-box/list-box-menu';
+import { ListBoxDimensions, ListBoxMenu } from '../list-box/list-box-menu';
 import { Checkmark, WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
 import { ListBoxMenuIcon } from '../list-box/list-box-menu-icon';
 import { ListBoxMenuItem } from '../list-box/list-box-menu-item';
@@ -25,9 +24,16 @@ import { uniqueId } from '../../internal/unique/unique-id';
 import { KeyCodes } from '../../internal/key-codes';
 
 /**
+ * Item with a label property
+ */
+type Labelled = {
+  label: string;
+};
+
+/**
  * List item type
  */
-export type Item = string | { label: string };
+export type Item = string | Labelled;
 
 /**
  * Function that takes an item and returns a string representation of it
@@ -44,6 +50,15 @@ export const defaultItemToString: ItemToString = (item: Item) => {
     return item;
   }
   return item?.label;
+};
+
+const itemsEqual = (item1: Item, item2: Item) => {
+  if (typeof item1 === 'string' && typeof item2 === 'string') {
+    return item1 === item2;
+  }
+  const labelledItem1 = item1 as Labelled;
+  const labelledItem2 = item2 as Labelled;
+  return labelledItem1.label === labelledItem2.label;
 };
 
 const ariaNormalize = (
@@ -64,7 +79,7 @@ const ariaNormalize = (
   let selectedId: string | undefined;
   let selectedOption: Item | undefined;
   if (items && selectedItem) {
-    selectedIndex = items.findIndex((item) => item === selectedItem);
+    selectedIndex = items.findIndex((item) => itemsEqual(item, selectedItem));
     selectedOption = selectedItem;
   } else if (items && initialSelectedItem) {
     const initialItems = Array.isArray(initialSelectedItem) ? initialSelectedItem : [initialSelectedItem];
@@ -168,6 +183,7 @@ export const Dropdown = component$((props: DropdownProps) => {
   const selectedOption = useSignal(modifiedSelectedItem);
   const highlightedOption = useSignal<Item>();
   const listBoxElement = useSignal<Element>();
+  const listBoxDimensions = useStore<ListBoxDimensions>({ height: 0, itemHeight: 0, visibleRows: 0 });
   const comboboxElement = useSignal<Element>();
   const {
     ariaLabel,
@@ -188,24 +204,6 @@ export const Dropdown = component$((props: DropdownProps) => {
     warn = false,
     warnText,
   } = props;
-
-  useVisibleTask$(() => {
-    console.log('vis task - listbox ref', listBoxElement.value);
-
-    // const listBoxDiv = document.getElementById(`${prefix}--list-box__menu`);
-    // console.log('listBoxDiv height', listBoxDiv?.clientHeight);
-    // if (listBoxElement.value) {
-    //   console.log('dropdown vis task - listbox height', listBoxElement.value.clientHeight);
-    // }
-  });
-
-  useTask$(
-    ({ track }) => {
-      track(listBoxElement);
-      console.log('tracked listboxel. ref.', listBoxElement.value);
-    },
-    { eagerness: 'load' }
-  );
 
   type Keys = {
     typed: string[];
@@ -231,11 +229,6 @@ export const Dropdown = component$((props: DropdownProps) => {
     if (!state.isOpen && comboboxElement.value) {
       (comboboxElement.value as HTMLButtonElement).focus();
     }
-  });
-
-  useTask$(({ track }) => {
-    track(props);
-    console.log('props task');
   });
 
   const inline = type === 'inline';
@@ -347,6 +340,7 @@ export const Dropdown = component$((props: DropdownProps) => {
           state.isOpen = false;
         } else if (event.keyCode !== KeyCodes.Tab) {
           state.isOpen = true;
+          event.stopPropagation();
         }
         break;
       }
@@ -367,6 +361,28 @@ export const Dropdown = component$((props: DropdownProps) => {
         keys.reset = true;
         if (items) {
           highlightedOption.value = items[items.length - 1];
+        }
+        break;
+      }
+      case KeyCodes.PageDown: {
+        if (listBoxDimensions.visibleRows) {
+          if (highlightedOption.value && items) {
+            const currentIndex = items.indexOf(highlightedOption.value);
+            if (currentIndex > -1 && currentIndex + listBoxDimensions.visibleRows <= items.length) {
+              highlightedOption.value = items[currentIndex + listBoxDimensions.visibleRows];
+            }
+          }
+        }
+        break;
+      }
+      case KeyCodes.PageUp: {
+        if (listBoxDimensions.visibleRows) {
+          if (highlightedOption.value && items) {
+            const currentIndex = items.indexOf(highlightedOption.value);
+            if (currentIndex > -1 && currentIndex - listBoxDimensions.visibleRows >= 0) {
+              highlightedOption.value = items[currentIndex - listBoxDimensions.visibleRows];
+            }
+          }
         }
         break;
       }
@@ -428,22 +444,33 @@ export const Dropdown = component$((props: DropdownProps) => {
               state.isOpen = false;
             }
           })}
+          preventdefault:keydown
         >
           <span class={`${prefix}--list-box__label`}>
             {(selectedOption.value && (RenderSelectedItem ? <RenderSelectedItem item={selectedOption.value} /> : itemToString(selectedOption.value))) || label}
           </span>
           <ListBoxMenuIcon isOpen={state.isOpen} />
         </button>
-        <ListBoxMenu {...listBoxAttrs} ref={listBoxElement} items={items} highlightedItem={highlightedOption.value} onKeyDown$={handleKeyDown}>
+        <ListBoxMenu
+          {...listBoxAttrs}
+          ref={listBoxElement}
+          items={items}
+          highlightedItem={highlightedOption.value}
+          onKeyDown$={handleKeyDown}
+          onMeasure$={$((dimensions: ListBoxDimensions) => {
+            listBoxDimensions.visibleRows = dimensions.visibleRows;
+          })}
+          preventdefault:keydown
+        >
           {state.isOpen &&
             items?.map((item: Item, index: number) => {
               const title = itemToString(item);
-              const itemSelected = selectedOption.value === item;
+              const itemSelected = selectedOption.value ? itemsEqual(selectedOption.value, item) : undefined;
               return (
                 <ListBoxMenuItem
                   key={itemAttrs?.[index].id}
-                  isActive={selectedOption.value === item}
-                  isHighlighted={highlightedOption.value === item}
+                  isActive={!!itemSelected}
+                  isHighlighted={highlightedOption.value ? itemsEqual(highlightedOption.value, item) : false}
                   title={title}
                   {...itemAttrs?.[index]}
                   onClick$={$(() => {

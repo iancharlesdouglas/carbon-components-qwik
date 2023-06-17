@@ -5,6 +5,7 @@
 |-|-|-|
 |Button|0.0.1-1||
 |Checkbox|0.0.1-1||
+|Dropdown|0.0.2||
 |FluidForm|0.0.1-1||
 |Form|0.0.1-1||
 |Grid|0.0.1-1|Incl. Row, Column.  Grid is CSS grid|
@@ -35,7 +36,6 @@
 - DefinitionTooltip
 - Dialog
 - Disclosure
-- Dropdown
 - ErrorBoundary
 - ExpandableSearch
 - FileUploader

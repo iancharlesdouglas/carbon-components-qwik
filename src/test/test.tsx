@@ -34,7 +34,7 @@ const Test = component$(() => {
     'Jackfruit',
   ].map((label) => ({ label, key: label }));
   // const ItemComponent = component$(({ item }: ItemProps) => <span class="item-class">{defaultItemToString(item)}</span>);
-  const selectedItem = useSignal<Item>({ label: '' });
+  const selectedItem = useSignal<Item>(items.find((item) => (item as { label: string }).label === 'Banana')!);
 
   return (
     <CarbonRoot>
@@ -67,7 +67,7 @@ const Test = component$(() => {
             <Dropdown
               titleText="Select"
               label="Select an item"
-              selectedItem={items.find((item) => (item as { label: string }).label === 'Banana')}
+              selectedItem={selectedItem.value}
               renderSelectedItem={SelectedItemRenderComp}
               items={items}
               helperText="Optional"

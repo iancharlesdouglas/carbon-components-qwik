@@ -11,3 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 |-|-|-|-|
 |Initial components|-|-|-|
 
+## [0.0.2](https://github.com/iancharlesdouglas/carbon-icons-qwik/releases/tag/0.0.2) - 2023-06-17
+
+|Added|Fixed|Changed|Removed|
+|-|-|-|-|
+|Dropdown compoenent|-|-|-|
+
