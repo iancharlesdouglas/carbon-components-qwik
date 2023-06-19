@@ -16,7 +16,7 @@ export type ListBoxMenuItemProps = QwikIntrinsicElements['div'] & {
 };
 
 /**
- * ListBoxMenuItem
+ * An item in a listbox menu for a combobox
  */
 export const ListBoxMenuItem = component$((props: ListBoxMenuItemProps) => {
   const { isActive, isHighlighted, title = '' } = props;

@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import _ from 'lodash';
 import { formContext } from '../../internal/contexts/form-context';
 import { IconProps, WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
+import { uniqueId } from '../../internal/unique/unique-id';
 
 /**
  * Text input component size
@@ -72,7 +73,7 @@ export const TextInput = component$((props: TextInputProps) => {
     disabled = false,
     helperText,
     hideLabel,
-    id,
+    id = `text-input-${uniqueId()}`,
     inline = false,
     invalid = false,
     invalidText,
