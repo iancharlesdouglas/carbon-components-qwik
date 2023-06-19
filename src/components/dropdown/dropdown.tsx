@@ -20,13 +20,14 @@ import { ListBoxDimensions, ListBoxMenu } from '../list-box/list-box-menu';
 import { Checkmark, WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
 import { ListBoxMenuIcon } from '../list-box/list-box-menu-icon';
 import { ListBoxMenuItem } from '../list-box/list-box-menu-item';
-import { uniqueId } from '../../internal/unique/unique-id';
+// import { uniqueId } from '../../internal/unique/unique-id';
 import { KeyCodes } from '../../internal/key-codes';
+import { qombobox } from '../../internal/qombobox';
 
 /**
  * Item with a label property
  */
-type Labelled = {
+export type Labelled = {
   label: string;
 };
 
@@ -61,67 +62,67 @@ const itemsEqual = (item1: Item, item2: Item) => {
   return labelledItem1.label === labelledItem2.label;
 };
 
-const ariaNormalize = (
-  isOpen: boolean,
-  disabled: boolean,
-  id?: string,
-  titleText?: string,
-  items?: Item[],
-  initialSelectedItem?: Item | Item[],
-  selectedItem?: Item
-) => {
-  const actualId = id ?? uniqueId();
-  const listBoxId = `listbox-${actualId}`;
-  const labelId = titleText ? `${actualId}--label` : undefined;
-  const hasPopup: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog' | undefined = 'listbox';
-  const itemIds = items ? items.map((item) => getItemId(item)) : undefined;
-  let selectedIndex: number | undefined;
-  let selectedId: string | undefined;
-  let selectedOption: Item | undefined;
-  if (items && selectedItem) {
-    selectedIndex = items.findIndex((item) => itemsEqual(item, selectedItem));
-    selectedOption = selectedItem;
-  } else if (items && initialSelectedItem) {
-    const initialItems = Array.isArray(initialSelectedItem) ? initialSelectedItem : [initialSelectedItem];
-    selectedIndex = items.findIndex((item) => item === initialItems[0]);
-    selectedOption = initialItems[0];
-  }
-  if (selectedIndex !== undefined) {
-    selectedId = selectedIndex > -1 ? itemIds?.[selectedIndex] : undefined;
-    if (selectedIndex == -1) {
-      selectedOption = undefined;
-    }
-  }
-  return {
-    id: actualId,
-    label: { id: labelId },
-    listBox: { id: listBoxId, role: 'listbox', tabIndex: -1, 'aria-labelled-by': labelId },
-    comboBox: {
-      role: 'combobox',
-      'aria-controls': listBoxId,
-      'aria-expanded': isOpen,
-      'aria-haspopup': hasPopup,
-      'aria-label': 'Open menu',
-      'aria-disabled': disabled,
-      'aria-activedescendant': isOpen ? selectedId : undefined,
-      disabled,
-      tabIndex: 0,
-    },
-    items: itemIds?.map((itemId) => ({ id: itemId, role: 'option', 'aria-selected': itemId === selectedId })),
-    selectedOption,
-  };
-};
+// const ariaNormalize = (
+//   isOpen: boolean,
+//   disabled: boolean,
+//   id?: string,
+//   titleText?: string,
+//   items?: Item[],
+//   initialSelectedItem?: Item | Item[],
+//   selectedItem?: Item
+// ) => {
+//   const actualId = id ?? uniqueId();
+//   const listBoxId = `listbox-${actualId}`;
+//   const labelId = titleText ? `${actualId}--label` : undefined;
+//   const hasPopup: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog' | undefined = 'listbox';
+//   const itemIds = items ? items.map((item) => getItemId(item)) : undefined;
+//   let selectedIndex: number | undefined;
+//   let selectedId: string | undefined;
+//   let selectedOption: Item | undefined;
+//   if (items && selectedItem) {
+//     selectedIndex = items.findIndex((item) => itemsEqual(item, selectedItem));
+//     selectedOption = selectedItem;
+//   } else if (items && initialSelectedItem) {
+//     const initialItems = Array.isArray(initialSelectedItem) ? initialSelectedItem : [initialSelectedItem];
+//     selectedIndex = items.findIndex((item) => item === initialItems[0]);
+//     selectedOption = initialItems[0];
+//   }
+//   if (selectedIndex !== undefined) {
+//     selectedId = selectedIndex > -1 ? itemIds?.[selectedIndex] : undefined;
+//     if (selectedIndex == -1) {
+//       selectedOption = undefined;
+//     }
+//   }
+//   return {
+//     id: actualId,
+//     label: { id: labelId },
+//     listBox: { id: listBoxId, role: 'listbox', tabIndex: -1, 'aria-labelled-by': labelId },
+//     comboBox: {
+//       role: 'combobox',
+//       'aria-controls': listBoxId,
+//       'aria-expanded': isOpen,
+//       'aria-haspopup': hasPopup,
+//       'aria-label': 'Open menu',
+//       'aria-disabled': disabled,
+//       'aria-activedescendant': isOpen ? selectedId : undefined,
+//       disabled,
+//       tabIndex: 0,
+//     },
+//     items: itemIds?.map((itemId) => ({ id: itemId, role: 'option', 'aria-selected': itemId === selectedId })),
+//     selectedOption,
+//   };
+// };
 
-const getItemId = (item: Item) => {
-  const attributes = Object.getOwnPropertyNames(item);
-  if (attributes.includes('id')) {
-    return (item as unknown as { id: string }).id;
-  }
-  if (attributes.includes('key')) {
-    return (item as unknown as { key: string }).key;
-  }
-  return uniqueId();
-};
+// const getItemId = (item: Item) => {
+//   const attributes = Object.getOwnPropertyNames(item);
+//   if (attributes.includes('id')) {
+//     return (item as unknown as { id: string }).id;
+//   }
+//   if (attributes.includes('key')) {
+//     return (item as unknown as { key: string }).key;
+//   }
+//   return uniqueId();
+// };
 
 /**
  * Props for a component to render an item
@@ -179,7 +180,7 @@ export const Dropdown = component$((props: DropdownProps) => {
     items: itemAttrs,
     listBox: listBoxAttrs,
     selectedOption: modifiedSelectedItem,
-  } = ariaNormalize(state.isOpen, disabled, stipulatedId, titleText, items, initialSelectedItem, selectedItem);
+  } = qombobox(state.isOpen, disabled, stipulatedId, titleText, items, initialSelectedItem, selectedItem);
   const selectedOption = useSignal(modifiedSelectedItem);
   const highlightedOption = useSignal<Item>();
   const listBoxElement = useSignal<Element>();

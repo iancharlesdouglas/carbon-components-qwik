@@ -33,6 +33,9 @@
     "@typescript-eslint/no-this-alias": "off",
     "@typescript-eslint/ban-types": "off",
     "@typescript-eslint/ban-ts-comment": "off",
+    "jsdoc/require-param-type": "off",
+    "jsdoc/require-property-type": "off",
+    "jsdoc/require-returns-type": "off",
     "prefer-spread": "off",
     "no-case-declarations": "off",
     "no-console": "off",
@@ -53,7 +56,7 @@
         "identifiers": true,
         "templates": true,
         "lang": "en_US",
-        "skipWords": ["activedescendant", "assistive", "breakpoint", "calc", "cds", "checkbox", "checkmark", "classnames", "combobox", "describedby", "divs", "dropdown", "durian", "flexbox", "haspopup", "href", "jsx", "keydown", "labelled", "labelledby", "listbox", "ltr", "modif", "modifs", "msg", "noopener", "perc", "qwik", "readonly", "rtl", "subgrid", "svg", "tooltip", "uid", "unlabelled", "utf", "xlg", "2xl"],
+        "skipWords": ["activedescendant", "assistive", "breakpoint", "calc", "cds", "checkbox", "checkmark", "classnames", "combobox", "describedby", "divs", "dropdown", "durian", "flexbox", "haspopup", "href", "jsx", "keydown", "labelled", "labelledby", "listbox", "ltr", "modif", "modifs", "msg", "noopener", "perc", "qombobox", "qwik", "readonly", "rtl", "subgrid", "svg", "tooltip", "uid", "unlabelled", "utf", "xlg", "2xl"],
         "skipIfMatch": ["http://[^s]*", "^[-\\w]+/[-\\w\\.]+$"],
         "skipWordIfMatch": ["^foobar.*$"],
         "minLength": 3
