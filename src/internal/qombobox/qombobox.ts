@@ -1,5 +1,5 @@
-import { Item, Labelled } from '../components/dropdown/dropdown';
-import { uniqueId } from './unique/unique-id';
+import { Item, Labelled } from '../../components/dropdown/dropdown';
+import { uniqueId } from '../unique/unique-id';
 
 /**
  * Return value of qombobox function

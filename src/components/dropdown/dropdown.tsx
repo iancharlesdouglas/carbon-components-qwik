@@ -20,8 +20,8 @@ import { ListBoxDimensions, ListBoxMenu } from '../list-box/list-box-menu';
 import { Checkmark, WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
 import { ListBoxMenuIcon } from '../list-box/list-box-menu-icon';
 import { ListBoxMenuItem } from '../list-box/list-box-menu-item';
-import { KeyCodes } from '../../internal/key-codes';
-import { qombobox } from '../../internal/qombobox';
+import { qombobox } from '../../internal/qombobox/qombobox';
+import { Keys, State, handleKeyDown } from '../../internal/qombobox/handle-keydown';
 
 /**
  * Item with a label property
@@ -105,9 +105,6 @@ export const Dropdown = component$((props: DropdownProps) => {
   const prefix = usePrefix();
   const { isFluid } = useContext(formContext);
   const isFocused = useSignal(false);
-  type State = {
-    isOpen: boolean;
-  };
   const stateObj: State = { isOpen: false };
   const state = useStore(stateObj);
   const { disabled = false, id: stipulatedId, titleText, items, initialSelectedItem, selectedItem } = props;
@@ -143,11 +140,6 @@ export const Dropdown = component$((props: DropdownProps) => {
     warnText,
   } = props;
 
-  type Keys = {
-    typed: string[];
-    reset: boolean;
-    timer?: number;
-  };
   const keysObj: Keys = { typed: [], reset: false };
   const keys = useStore(keysObj);
   useTask$(({ track }) => {
@@ -227,125 +219,6 @@ export const Dropdown = component$((props: DropdownProps) => {
 
   const labelId = titleText ? `${id}--label` : undefined;
 
-  const handleKeyDown = $(async (event: QwikKeyboardEvent<HTMLDivElement>) => {
-    switch (event.keyCode) {
-      case KeyCodes.DownArrow: {
-        keys.typed = [];
-        keys.reset = true;
-        if (highlightedOption.value && items) {
-          const currentIndex = items.indexOf(highlightedOption.value);
-          if (currentIndex < items.length - 1) {
-            highlightedOption.value = items[currentIndex + 1];
-          }
-        } else if (items) {
-          state.isOpen = true;
-          if (event.getModifierState && !event.getModifierState('Alt')) {
-            highlightedOption.value = items[0];
-          }
-        }
-        break;
-      }
-      case KeyCodes.UpArrow: {
-        keys.typed = [];
-        keys.reset = true;
-        if (state.isOpen) {
-          if (event.getModifierState && event.getModifierState('Alt')) {
-            selectedOption.value = highlightedOption.value;
-            state.isOpen = false;
-            onSelect$ && onSelect$(selectedOption.value!);
-          } else {
-            if (highlightedOption.value && items) {
-              const currentIndex = items.indexOf(highlightedOption.value);
-              if (currentIndex > 0) {
-                highlightedOption.value = items[currentIndex - 1];
-              }
-            }
-          }
-        } else if (items) {
-          state.isOpen = true;
-          if (event.getModifierState && !event.getModifierState('Alt')) {
-            highlightedOption.value = items[0];
-          }
-        }
-        break;
-      }
-      case KeyCodes.Enter:
-      case KeyCodes.Space:
-      case KeyCodes.Tab: {
-        if (state.isOpen) {
-          selectedOption.value = highlightedOption.value;
-          onSelect$ && onSelect$(selectedOption.value!);
-          state.isOpen = false;
-        } else if (event.keyCode !== KeyCodes.Tab) {
-          state.isOpen = true;
-          event.stopPropagation();
-        }
-        break;
-      }
-      case KeyCodes.Home: {
-        state.isOpen = true;
-        keys.typed = [];
-        keys.reset = true;
-        if (event.getModifierState && !event.getModifierState('Alt')) {
-          if (items) {
-            highlightedOption.value = items[0];
-          }
-        }
-        break;
-      }
-      case KeyCodes.End: {
-        state.isOpen = true;
-        keys.typed = [];
-        keys.reset = true;
-        if (items) {
-          highlightedOption.value = items[items.length - 1];
-        }
-        break;
-      }
-      case KeyCodes.PageDown: {
-        if (listBoxDimensions.visibleRows) {
-          if (highlightedOption.value && items) {
-            const currentIndex = items.indexOf(highlightedOption.value);
-            if (currentIndex > -1 && currentIndex + listBoxDimensions.visibleRows <= items.length) {
-              highlightedOption.value = items[currentIndex + listBoxDimensions.visibleRows];
-            }
-          }
-        }
-        break;
-      }
-      case KeyCodes.PageUp: {
-        if (listBoxDimensions.visibleRows) {
-          if (highlightedOption.value && items) {
-            const currentIndex = items.indexOf(highlightedOption.value);
-            if (currentIndex > -1 && currentIndex - listBoxDimensions.visibleRows >= 0) {
-              highlightedOption.value = items[currentIndex - listBoxDimensions.visibleRows];
-            }
-          }
-        }
-        break;
-      }
-      case KeyCodes.Escape: {
-        state.isOpen = false;
-        break;
-      }
-      default: {
-        if (event.keyCode >= 65 && event.keyCode <= 90 && items) {
-          state.isOpen = true;
-          keys.reset = true;
-          keys.typed.push(event.key);
-          const repeatedKey = keys.typed.every((key) => key === event.key);
-          const matchingItem = repeatedKey
-            ? items?.filter((item) => defaultItemToString(item).substring(0, 1).toLowerCase() === event.key)?.[keys.typed.length - 1]
-            : items?.find((item) => defaultItemToString(item).substring(0, keys.typed.length).toLowerCase() === keys.typed.join(''));
-          highlightedOption.value = matchingItem;
-          if (repeatedKey && items?.filter((item) => defaultItemToString(item).substring(0, 1).toLowerCase() === event.key)?.length === keys.typed.length) {
-            keys.typed = [];
-          }
-        }
-      }
-    }
-  });
-
   return (
     <div class={wrapperClasses} {...sanitizedProps}>
       {titleText && (
@@ -375,7 +248,9 @@ export const Dropdown = component$((props: DropdownProps) => {
           onClick$={$(() => {
             state.isOpen = !state.isOpen;
           })}
-          onKeyDown$={handleKeyDown}
+          onKeyDown$={$((event: QwikKeyboardEvent<HTMLDivElement>) =>
+            handleKeyDown(event, keys, highlightedOption, items, state, selectedOption, onSelect$, listBoxDimensions, defaultItemToString)
+          )}
           document:onClick$={$((event: QwikMouseEvent) => {
             const element = event.target as HTMLElement;
             if (element.getAttribute('aria-controls') !== listBoxAttrs.id && state.isOpen) {
@@ -394,7 +269,9 @@ export const Dropdown = component$((props: DropdownProps) => {
           ref={listBoxElement}
           items={items}
           highlightedItem={highlightedOption.value}
-          onKeyDown$={handleKeyDown}
+          onKeyDown$={$((event: QwikKeyboardEvent<HTMLDivElement>) =>
+            handleKeyDown(event, keys, highlightedOption, items, state, selectedOption, onSelect$, listBoxDimensions, defaultItemToString)
+          )}
           onMeasure$={$((dimensions: ListBoxDimensions) => {
             listBoxDimensions.visibleRows = dimensions.visibleRows;
           })}
