@@ -31,6 +31,7 @@ export type State = {
  * @param onSelect$ Select handler
  * @param listBoxDimensions Listbox dimensions as measured
  * @param defaultItemToString Default item to string converter
+ * @param triggerElement
  */
 export const handleKeyDown = async (
   event: QwikKeyboardEvent<HTMLDivElement>,
@@ -41,7 +42,8 @@ export const handleKeyDown = async (
   selectedOption: Signal<Item | undefined>,
   onSelect$: PropFunction<(item: Item) => void> | undefined,
   listBoxDimensions: ListBoxDimensions,
-  defaultItemToString: ItemToString
+  defaultItemToString: ItemToString,
+  triggerElement: Signal<Element | undefined>
 ) => {
   switch (event.keyCode) {
     case KeyCodes.DownArrow: {
@@ -141,6 +143,7 @@ export const handleKeyDown = async (
     }
     case KeyCodes.Escape: {
       state.isOpen = false;
+      (triggerElement.value as HTMLButtonElement).focus();
       break;
     }
     default: {

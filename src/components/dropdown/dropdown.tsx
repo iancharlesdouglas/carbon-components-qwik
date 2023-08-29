@@ -239,17 +239,17 @@ export const Dropdown = component$((props: DropdownProps) => {
       >
         {invalid && <WarningFilled class={`${prefix}--list-box__invalid-icon`} size={16} />}
         {showWarning && <WarningAltFilled class={`${prefix}--list-box__invalid-icon ${prefix}--list-box__invalid-icon--warning`} size={16} />}
-        <button
-          type="button"
+        <div
           class={`${prefix}--list-box__field`}
           title={selectedOption.value ? itemToString(selectedOption.value) : label}
           {...comboBoxAttrs}
           ref={comboboxElement}
+          tabIndex={0}
           onClick$={$(() => {
             state.isOpen = !state.isOpen;
           })}
           onKeyDown$={$((event: QwikKeyboardEvent<HTMLDivElement>) =>
-            handleKeyDown(event, keys, highlightedOption, items, state, selectedOption, onSelect$, listBoxDimensions, defaultItemToString)
+            handleKeyDown(event, keys, highlightedOption, items, state, selectedOption, onSelect$, listBoxDimensions, defaultItemToString, comboboxElement)
           )}
           document:onClick$={$((event: QwikMouseEvent) => {
             const element = event.target as HTMLElement;
@@ -257,20 +257,19 @@ export const Dropdown = component$((props: DropdownProps) => {
               state.isOpen = false;
             }
           })}
-          preventdefault:keydown
         >
           <span class={`${prefix}--list-box__label`}>
             {(selectedOption.value && (RenderSelectedItem ? <RenderSelectedItem item={selectedOption.value} /> : itemToString(selectedOption.value))) || label}
           </span>
           <ListBoxMenuIcon isOpen={state.isOpen} />
-        </button>
+        </div>
         <ListBoxMenu
           {...listBoxAttrs}
           ref={listBoxElement}
           items={items}
           highlightedItem={highlightedOption.value}
           onKeyDown$={$((event: QwikKeyboardEvent<HTMLDivElement>) =>
-            handleKeyDown(event, keys, highlightedOption, items, state, selectedOption, onSelect$, listBoxDimensions, defaultItemToString)
+            handleKeyDown(event, keys, highlightedOption, items, state, selectedOption, onSelect$, listBoxDimensions, defaultItemToString, comboboxElement)
           )}
           onMeasure$={$((dimensions: ListBoxDimensions) => {
             listBoxDimensions.visibleRows = dimensions.visibleRows;

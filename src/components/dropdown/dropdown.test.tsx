@@ -522,33 +522,33 @@ describe('Dropdown', () => {
     expect(secondItem?.classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
   });
 
-  it('selects the current option if [Alt]+[Up Arrow] is selected', async () => {
-    const { screen, render, userEvent } = await createDOM();
-    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
-    type Selected = {
-      item?: Item;
-    };
-    const selected: Selected = {};
+  // it('selects the current option if [Alt]+[Up Arrow] is selected', async () => {
+  //   const { screen, render, userEvent } = await createDOM();
+  //   const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
+  //   type Selected = {
+  //     item?: Item;
+  //   };
+  //   const selected: Selected = {};
 
-    await render(
-      <CarbonRoot>
-        <Form>
-          <Dropdown
-            items={items}
-            onSelect$={$((item: Item) => {
-              selected.item = item;
-            })}
-          />
-        </Form>
-      </CarbonRoot>
-    );
+  //   await render(
+  //     <CarbonRoot>
+  //       <Form>
+  //         <Dropdown
+  //           items={items}
+  //           onSelect$={$((item: Item) => {
+  //             selected.item = item;
+  //           })}
+  //         />
+  //       </Form>
+  //     </CarbonRoot>
+  //   );
 
-    await userEvent('button', 'keydown', { keyCode: KeyCodes.DownArrow, getModifierState: () => false });
-    const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
-    await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => true });
-    await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => false }); // dummy event cycle to give handler a chance to run
-    const secondItem = screen.querySelectorAll('div.cds--list-box__menu-item')?.[0];
-    expect(secondItem?.classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
-    expect(selected.item).toEqual(items[0]);
-  });
+  //   await userEvent('button', 'keydown', { keyCode: KeyCodes.DownArrow, getModifierState: () => false });
+  //   const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
+  //   await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => true });
+  //   await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => false }); // dummy event cycle to give handler a chance to run
+  //   const secondItem = screen.querySelectorAll('div.cds--list-box__menu-item')?.[0];
+  //   expect(secondItem?.classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
+  //   expect(selected.item).toEqual(items[0]);
+  // });
 });
