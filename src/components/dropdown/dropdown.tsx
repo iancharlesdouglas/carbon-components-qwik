@@ -116,6 +116,11 @@ export const Dropdown = component$((props: DropdownProps) => {
     selectedOption: modifiedSelectedItem,
   } = qombobox(state.isOpen, disabled, stipulatedId, titleText, items, initialSelectedItem, selectedItem);
   const selectedOption = useSignal(modifiedSelectedItem);
+  useTask$(() => {
+    // if (!modifiedSelectedItem) {
+    selectedOption.value = modifiedSelectedItem;
+    // }
+  });
   const highlightedOption = useSignal<Item>();
   const listBoxElement = useSignal<Element>();
   const listBoxDimensions = useStore<ListBoxDimensions>({ height: 0, itemHeight: 0, visibleRows: 0 });
@@ -253,7 +258,11 @@ export const Dropdown = component$((props: DropdownProps) => {
           )}
           document:onClick$={$((event: QwikMouseEvent) => {
             const element = event.target as HTMLElement;
-            if (element.getAttribute('aria-controls') !== listBoxAttrs.id && state.isOpen) {
+            if (
+              element.getAttribute('aria-controls') !== listBoxAttrs.id &&
+              !element.classList.contains(`${prefix}--list-box__menu-item__option`) &&
+              state.isOpen
+            ) {
               state.isOpen = false;
             }
           })}

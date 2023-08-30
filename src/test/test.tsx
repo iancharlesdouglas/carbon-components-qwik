@@ -34,7 +34,7 @@ const Test = component$(() => {
     'Jackfruit',
   ].map((label) => ({ label, key: label }));
   // const ItemComponent = component$(({ item }: ItemProps) => <span class="item-class">{defaultItemToString(item)}</span>);
-  const selectedItem = useSignal<Item>(items.find((item) => (item as { label: string }).label === 'Banana')!);
+  const selectedItem = useSignal<Item | undefined>(items.find((item) => (item as { label: string }).label === 'Banana')!);
 
   return (
     <CarbonRoot>
@@ -88,6 +88,7 @@ const Test = component$(() => {
           <Grid class="subgrid-class" id="sub-grid" fullWidth>
             <Column sm={1} md={1} lg xlg max>
               <Checkbox labelText="Active" checked={false} onChange$={$(() => console.log('changed'))} />
+              <Button onClick$={$(() => (selectedItem.value = undefined))}>Clear Selection</Button>
             </Column>
             <Column sm={1} md={1} lg={'25%'}></Column>
             <Column sm={1} md={1} lg={{ start: 1, end: 3 }}>
