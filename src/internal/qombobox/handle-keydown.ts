@@ -39,7 +39,7 @@ export const handleKeyDown = async (
   highlightedOption: Signal<Item | undefined>,
   items: Item[] | undefined,
   state: State,
-  selectedOption: Signal<Item | undefined>,
+  selectedOption: Item | undefined,
   onSelect$: PropFunction<(item: Item) => void> | undefined,
   listBoxDimensions: ListBoxDimensions,
   defaultItemToString: ItemToString,
@@ -67,9 +67,9 @@ export const handleKeyDown = async (
       keys.reset = true;
       if (state.isOpen) {
         if (event.getModifierState && event.getModifierState('Alt')) {
-          selectedOption.value = highlightedOption.value;
+          selectedOption = highlightedOption.value;
           state.isOpen = false;
-          onSelect$ && onSelect$(selectedOption.value!);
+          onSelect$ && onSelect$(selectedOption!);
         } else {
           if (highlightedOption.value && items) {
             const currentIndex = items.indexOf(highlightedOption.value);
@@ -90,8 +90,8 @@ export const handleKeyDown = async (
     case KeyCodes.Space:
     case KeyCodes.Tab: {
       if (state.isOpen) {
-        selectedOption.value = highlightedOption.value;
-        onSelect$ && onSelect$(selectedOption.value!);
+        selectedOption = highlightedOption.value;
+        onSelect$ && onSelect$(selectedOption!);
         state.isOpen = false;
       } else if (event.keyCode !== KeyCodes.Tab) {
         state.isOpen = true;

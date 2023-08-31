@@ -116,11 +116,11 @@ export const Dropdown = component$((props: DropdownProps) => {
     selectedOption: modifiedSelectedItem,
   } = qombobox(state.isOpen, disabled, stipulatedId, titleText, items, initialSelectedItem, selectedItem);
   const selectedOption = useSignal(modifiedSelectedItem);
-  useTask$(() => {
-    // if (!modifiedSelectedItem) {
-    selectedOption.value = modifiedSelectedItem;
-    // }
-  });
+  // useTask$(() => {
+  //   // if (!modifiedSelectedItem) {
+  //   selectedOption.value = modifiedSelectedItem;
+  //   // }
+  // });
   const highlightedOption = useSignal<Item>();
   const listBoxElement = useSignal<Element>();
   const listBoxDimensions = useStore<ListBoxDimensions>({ height: 0, itemHeight: 0, visibleRows: 0 });
@@ -246,7 +246,7 @@ export const Dropdown = component$((props: DropdownProps) => {
         {showWarning && <WarningAltFilled class={`${prefix}--list-box__invalid-icon ${prefix}--list-box__invalid-icon--warning`} size={16} />}
         <div
           class={`${prefix}--list-box__field`}
-          title={selectedOption.value ? itemToString(selectedOption.value) : label}
+          title={modifiedSelectedItem ? itemToString(modifiedSelectedItem) : label}
           {...comboBoxAttrs}
           ref={comboboxElement}
           tabIndex={0}
@@ -254,7 +254,18 @@ export const Dropdown = component$((props: DropdownProps) => {
             state.isOpen = !state.isOpen;
           })}
           onKeyDown$={$((event: QwikKeyboardEvent<HTMLDivElement>) =>
-            handleKeyDown(event, keys, highlightedOption, items, state, selectedOption, onSelect$, listBoxDimensions, defaultItemToString, comboboxElement)
+            handleKeyDown(
+              event,
+              keys,
+              highlightedOption,
+              items,
+              state,
+              modifiedSelectedItem,
+              onSelect$,
+              listBoxDimensions,
+              defaultItemToString,
+              comboboxElement
+            )
           )}
           document:onClick$={$((event: QwikMouseEvent) => {
             const element = event.target as HTMLElement;
@@ -268,7 +279,7 @@ export const Dropdown = component$((props: DropdownProps) => {
           })}
         >
           <span class={`${prefix}--list-box__label`}>
-            {(selectedOption.value && (RenderSelectedItem ? <RenderSelectedItem item={selectedOption.value} /> : itemToString(selectedOption.value))) || label}
+            {(modifiedSelectedItem && (RenderSelectedItem ? <RenderSelectedItem item={modifiedSelectedItem} /> : itemToString(modifiedSelectedItem))) || label}
           </span>
           <ListBoxMenuIcon isOpen={state.isOpen} />
         </div>
@@ -278,7 +289,18 @@ export const Dropdown = component$((props: DropdownProps) => {
           items={items}
           highlightedItem={highlightedOption.value}
           onKeyDown$={$((event: QwikKeyboardEvent<HTMLDivElement>) =>
-            handleKeyDown(event, keys, highlightedOption, items, state, selectedOption, onSelect$, listBoxDimensions, defaultItemToString, comboboxElement)
+            handleKeyDown(
+              event,
+              keys,
+              highlightedOption,
+              items,
+              state,
+              modifiedSelectedItem,
+              onSelect$,
+              listBoxDimensions,
+              defaultItemToString,
+              comboboxElement
+            )
           )}
           onMeasure$={$((dimensions: ListBoxDimensions) => {
             listBoxDimensions.visibleRows = dimensions.visibleRows;
@@ -288,7 +310,7 @@ export const Dropdown = component$((props: DropdownProps) => {
           {state.isOpen &&
             items?.map((item: Item, index: number) => {
               const title = itemToString(item);
-              const itemSelected = selectedOption.value ? itemsEqual(selectedOption.value, item) : undefined;
+              const itemSelected = modifiedSelectedItem ? itemsEqual(modifiedSelectedItem, item) : undefined;
               return (
                 <ListBoxMenuItem
                   key={itemAttrs?.[index].id}

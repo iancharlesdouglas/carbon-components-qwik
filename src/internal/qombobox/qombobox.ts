@@ -61,12 +61,9 @@ export const qombobox = (
     selectedIndex = items.findIndex((item) => itemsEqual(item, selectedItem));
     selectedOption = selectedItem;
   } else if (items && initialSelectedItem) {
-    console.log('no selected item but initially selected item');
     const initialItems = Array.isArray(initialSelectedItem) ? initialSelectedItem : [initialSelectedItem];
     selectedIndex = items.findIndex((item) => item === initialItems[0]);
     selectedOption = initialItems[0];
-  } else {
-    console.log('here - selected option', selectedOption);
   }
   if (selectedIndex !== undefined) {
     selectedId = selectedIndex > -1 ? itemIds?.[selectedIndex] : undefined;

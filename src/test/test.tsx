@@ -72,7 +72,6 @@ const Test = component$(() => {
               items={items}
               helperText="Optional"
               onSelect$={$((item: Item) => {
-                console.log('got selected item', item);
                 selectedItem.value = item;
               })}
               // itemToElement={ItemComponent}
