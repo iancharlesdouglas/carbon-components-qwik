@@ -319,6 +319,7 @@ export const Dropdown = component$((props: DropdownProps) => {
                   title={title}
                   {...itemAttrs?.[index]}
                   onClick$={$(() => {
+                    console.log('item clicked', item);
                     selectedOption.value = item;
                     state.isOpen = false;
                     onSelect$ && onSelect$(item);

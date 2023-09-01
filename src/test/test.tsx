@@ -78,7 +78,7 @@ const Test = component$(() => {
             />
           </Column>
           <Column lg={1}>
-            <span>{defaultItemToString(selectedItem.value)}</span>
+            <span>{defaultItemToString(selectedItem.value!)}</span>
           </Column>
         </Grid>
       </Form>
