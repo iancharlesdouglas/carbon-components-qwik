@@ -35,7 +35,7 @@ const Test = component$(() => {
   ].map((label) => ({ label, key: label }));
   const newItems = items.filter((item) => (item as Labelled).label !== 'Banana');
   const itemOptions = useSignal(items);
-  const selectedItem = useSignal<Item | undefined>(items.find((item) => (item as { label: string }).label === 'Banana')!);
+  const selectedItem = useSignal<Item | undefined>(items.find((item) => (item as { label: string }).label === 'Guava')!);
 
   return (
     <CarbonRoot>

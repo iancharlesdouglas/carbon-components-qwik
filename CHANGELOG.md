@@ -17,9 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 |-|-|-|-|
 |Dropdown compoenent|-|-|-|
 
-## [0.0.3](https://github.com/iancharlesdouglas/carbon-icons-qwik/releases/tag/0.0.2) - 2023-08-29
+## [0.0.3](https://github.com/iancharlesdouglas/carbon-icons-qwik/releases/tag/0.0.3) - 2023-09-02
 
 |Added|Fixed|Changed|Removed|
 |-|-|-|-|
-|-|-|Updated dependencies|-|
+|-|Dropdown scrolls selected item into view if shown on further page; cleared selection is shown as cleared; list change where item no longer is present in list causes selection to be cleared|Updated dependencies|-|
 

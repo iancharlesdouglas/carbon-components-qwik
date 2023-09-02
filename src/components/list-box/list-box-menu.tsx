@@ -16,11 +16,13 @@ export type ListBoxDimensions = {
  * @property {string} id - ID
  * @property {Item[]} items - Items
  * @property {Item} highlightedItem - Highlighted item
+ * @property {Item} selectedItem - Selected item
  */
 export type ListBoxMenuProps = QwikIntrinsicElements['div'] & {
   id?: string;
   items?: Item[];
   highlightedItem?: Item;
+  selectedItem?: Item;
   onMeasure$?: PropFunction<(dimensions: ListBoxDimensions) => void>;
 };
 
@@ -29,14 +31,15 @@ export type ListBoxMenuProps = QwikIntrinsicElements['div'] & {
  */
 export const ListBoxMenu = component$((props: ListBoxMenuProps) => {
   const prefix = usePrefix();
-  const { id, items, highlightedItem, onMeasure$ } = props;
+  const { id, items, highlightedItem, selectedItem, onMeasure$ } = props;
   const listBoxElement = useSignal<HTMLDivElement>();
   useVisibleTask$(({ track }) => {
     track(props);
-    if (items && highlightedItem && listBoxElement.value) {
+    const focusItem = highlightedItem ?? selectedItem;
+    if (items && focusItem && listBoxElement.value) {
       const children = Array.from(listBoxElement.value.children);
       const itemHeight = children[0]?.clientHeight;
-      const highlightedIndex = items.indexOf(highlightedItem);
+      const highlightedIndex = items.indexOf(focusItem);
       if (highlightedIndex > -1) {
         const itemTop = highlightedIndex * itemHeight;
         if (itemTop < listBoxElement.value.scrollTop) {

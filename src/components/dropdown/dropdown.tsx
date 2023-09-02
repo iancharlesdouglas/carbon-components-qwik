@@ -116,11 +116,6 @@ export const Dropdown = component$((props: DropdownProps) => {
     selectedOption: modifiedSelectedItem,
   } = qombobox(state.isOpen, disabled, stipulatedId, titleText, items, initialSelectedItem, selectedItem);
   const selectedOption = useSignal(modifiedSelectedItem);
-  // useTask$(() => {
-  //   // if (!modifiedSelectedItem) {
-  //   selectedOption.value = modifiedSelectedItem;
-  //   // }
-  // });
   const highlightedOption = useSignal<Item>();
   const listBoxElement = useSignal<Element>();
   const listBoxDimensions = useStore<ListBoxDimensions>({ height: 0, itemHeight: 0, visibleRows: 0 });
@@ -288,6 +283,7 @@ export const Dropdown = component$((props: DropdownProps) => {
           ref={listBoxElement}
           items={items}
           highlightedItem={highlightedOption.value}
+          selectedItem={modifiedSelectedItem}
           onKeyDown$={$((event: QwikKeyboardEvent<HTMLDivElement>) =>
             handleKeyDown(
               event,
@@ -319,7 +315,6 @@ export const Dropdown = component$((props: DropdownProps) => {
                   title={title}
                   {...itemAttrs?.[index]}
                   onClick$={$(() => {
-                    console.log('item clicked', item);
                     selectedOption.value = item;
                     state.isOpen = false;
                     onSelect$ && onSelect$(item);

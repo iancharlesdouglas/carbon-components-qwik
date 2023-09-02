@@ -313,7 +313,6 @@ describe('Dropdown', () => {
               items={items}
               selectedItem={selectedOption.value}
               onSelect$={async (item: Item) => {
-                console.log('here', item);
                 selectedOption.value = item;
                 selected.item = item;
                 expect(item).toEqual('Apple');
@@ -654,8 +653,4 @@ describe('Dropdown', () => {
     const selectionSpan = screen.querySelector('div.cds--dropdown div.cds--list-box__field span') as HTMLSpanElement;
     expect(selectionSpan.textContent).toEqual('');
   });
-
-  // it('scrolls to selected item if it appears on a later page', async () => {
-  //   throw 'not implemented';
-  // });
 });
