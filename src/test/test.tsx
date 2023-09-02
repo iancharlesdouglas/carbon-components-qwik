@@ -8,7 +8,7 @@ import { Form } from '../components/form/form';
 import { Grid } from '../components/grid/grid';
 import { Column } from '../components/grid/column';
 import { Checkbox } from '../components/checkbox/checkbox';
-import { Dropdown, Item, ItemProps, defaultItemToString } from '../components/dropdown/dropdown';
+import { Dropdown, Item, ItemProps, Labelled, defaultItemToString } from '../components/dropdown/dropdown';
 
 /**
  * Local test harness for dev. purposes
@@ -33,7 +33,8 @@ const Test = component$(() => {
     'Ichigo',
     'Jackfruit',
   ].map((label) => ({ label, key: label }));
-  // const ItemComponent = component$(({ item }: ItemProps) => <span class="item-class">{defaultItemToString(item)}</span>);
+  const newItems = items.filter((item) => (item as Labelled).label !== 'Banana');
+  const itemOptions = useSignal(items);
   const selectedItem = useSignal<Item | undefined>(items.find((item) => (item as { label: string }).label === 'Banana')!);
 
   return (
@@ -69,7 +70,7 @@ const Test = component$(() => {
               label="Select a fruit"
               selectedItem={selectedItem.value}
               renderSelectedItem={SelectedItemRenderComp}
-              items={items}
+              items={itemOptions.value}
               helperText="Optional"
               onSelect$={$((item: Item) => {
                 selectedItem.value = item;
@@ -85,10 +86,23 @@ const Test = component$(() => {
       <Grid class="test-class" id="main-grid" fullWidth>
         <Column sm={4} md={8} lg={16}>
           <Grid class="subgrid-class" id="sub-grid" fullWidth>
-            <Column sm={1} md={1} lg xlg max>
+            <Column sm={1} md={2} lg={4}>
               <Checkbox labelText="Active" checked={false} onChange$={$(() => console.log('changed'))} />
-              <Button onClick$={$(() => (selectedItem.value = undefined))} renderIcon={ErrorOutline}>
+              <Button
+                onClick$={$(() => {
+                  selectedItem.value = undefined;
+                })}
+                renderIcon={ErrorOutline}
+              >
                 Clear Selection
+              </Button>
+              <Button
+                onClick$={$(() => {
+                  itemOptions.value = newItems;
+                })}
+                renderIcon={ErrorOutline}
+              >
+                Change list
               </Button>
             </Column>
             <Column sm={1} md={1} lg={'25%'}></Column>

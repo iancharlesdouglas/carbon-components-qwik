@@ -3,8 +3,10 @@ import { createDOM } from '@builder.io/qwik/testing';
 import { CarbonRoot } from '../carbon-root/carbon-root';
 import { Form } from '../form/form';
 import { Dropdown, Item, ItemProps, Labelled, defaultItemToString } from './dropdown';
-import { component$, $, useSignal } from '@builder.io/qwik';
+import { component$, $, useSignal, FunctionComponent } from '@builder.io/qwik';
 import { KeyCodes } from '../../internal/key-codes';
+import { Button } from '../button/button';
+import { DropdownTestWrapper } from './test-wrapper';
 
 describe('Dropdown', () => {
   it('renders expected CSS classes per attributes', async () => {
@@ -627,4 +629,34 @@ describe('Dropdown', () => {
     await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.Enter });
     expect(listBoxDiv.childElementCount).toEqual(0);
   });
+
+  it('clears the selection when the selected item is cleared', async () => {
+    const { screen, render, userEvent } = await createDOM();
+
+    await render(<DropdownTestWrapper />);
+
+    const selectedItemSpan = screen.querySelector('div.cds--dropdown div.cds--list-box__field span') as HTMLSpanElement;
+    expect(selectedItemSpan.textContent).toEqual('Cherry');
+
+    await userEvent('button#clear-selection', 'click');
+    const selectionSpan = screen.querySelector('div.cds--dropdown div.cds--list-box__field span') as HTMLSpanElement;
+    expect(selectionSpan.textContent).toEqual('');
+  });
+
+  it('clears the selection when the list of items changes and no longer contains it', async () => {
+    const { screen, render, userEvent } = await createDOM();
+
+    await render(<DropdownTestWrapper />);
+
+    const selectedItemSpan = screen.querySelector('div.cds--dropdown div.cds--list-box__field span') as HTMLSpanElement;
+    expect(selectedItemSpan.textContent).toEqual('Cherry');
+
+    await userEvent('button#change-list', 'click');
+    const selectionSpan = screen.querySelector('div.cds--dropdown div.cds--list-box__field span') as HTMLSpanElement;
+    expect(selectionSpan.textContent).toEqual('');
+  });
+
+  // it('scrolls to selected item if it appears on a later page', async () => {
+  //   throw 'not implemented';
+  // });
 });
