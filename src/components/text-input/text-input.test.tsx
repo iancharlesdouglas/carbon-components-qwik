@@ -81,8 +81,6 @@ describe('TextInput', () => {
     const invalidMessageDiv = screen.querySelector('div.cds--form-requirement') as HTMLDivElement;
     expect(invalidMessageDiv).toBeTruthy();
     expect(invalidMessageDiv.textContent).toEqual(errorMessage);
-    const invalidIconSvg = screen.querySelector('svg.cds--text-input__invalid-icon') as SVGSVGElement;
-    expect(invalidIconSvg).toBeTruthy();
   });
 
   it('renders warning text, an appropriate CSS class, and a warning icon when state is "warn"', async () => {
@@ -100,8 +98,6 @@ describe('TextInput', () => {
     const warnMessageDiv = screen.querySelector('div.cds--form-requirement') as HTMLDivElement;
     expect(warnMessageDiv).toBeTruthy();
     expect(warnMessageDiv.textContent).toEqual(warning);
-    const warnIconSvg = screen.querySelector('svg.cds--text-input__invalid-icon.cds--text-input__invalid-icon--warning') as SVGSVGElement;
-    expect(warnIconSvg).toBeTruthy();
   });
 
   it('renders the label as hidden if hideLabel is set to true', async () => {

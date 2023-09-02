@@ -56,7 +56,7 @@
         "identifiers": true,
         "templates": true,
         "lang": "en_US",
-        "skipWords": ["activedescendant", "assistive", "breakpoint", "calc", "cds", "checkbox", "checkmark", "classnames", "combobox", "describedby", "divs", "dropdown", "durian", "flexbox", "haspopup", "href", "jsx", "keydown", "labelled", "labelledby", "listbox", "ltr", "modif", "modifs", "msg", "noopener", "perc", "qombobox", "qwik", "readonly", "rtl", "subgrid", "svg", "tooltip", "uid", "unlabelled", "utf", "xlg", "2xl"],
+        "skipWords": ["activedescendant", "assistive", "breakpoint", "calc", "cds", "checkbox", "checkmark", "classnames", "combobox", "describedby", "divs", "dragonfruit", "dropdown", "durian", "flexbox", "haspopup", "href", "ichigo", "jackfruit", "jsx", "keydown", "labelled", "labelledby", "listbox", "ltr", "modif", "modifs", "msg", "noopener", "perc", "qombobox", "qwik", "readonly", "rtl", "subgrid", "svg", "tooltip", "uid", "unlabelled", "utf", "xlg", "2xl"],
         "skipIfMatch": ["http://[^s]*", "^[-\\w]+/[-\\w\\.]+$"],
         "skipWordIfMatch": ["^foobar.*$"],
         "minLength": 3

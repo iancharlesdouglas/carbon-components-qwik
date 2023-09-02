@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { createDOM } from '@builder.io/qwik/testing';
 import { CarbonRoot } from '../carbon-root/carbon-root';
 import { Form } from '../form/form';
-import { Dropdown, Item, ItemProps, defaultItemToString } from './dropdown';
+import { Dropdown, Item, ItemProps, Labelled, defaultItemToString } from './dropdown';
 import { component$, $, useSignal } from '@builder.io/qwik';
 import { KeyCodes } from '../../internal/key-codes';
 
@@ -556,5 +556,75 @@ describe('Dropdown', () => {
     await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => false }); // dummy event cycle to give handler a chance to run
     const secondItem = screen.querySelectorAll('div.cds--list-box__menu-item')?.[0];
     expect(secondItem?.classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
+  });
+
+  it('opens the items menu and scrolls down when Page Down is pressed', async () => {
+    const { screen, render, userEvent } = await createDOM();
+    const items: Item[] = [
+      'Apple',
+      'Banana',
+      'Blackberry',
+      'Blueberry',
+      'Cherry',
+      'Dragonfruit',
+      'Durian',
+      'Elderberry',
+      'Fig',
+      'Guava',
+      'Huckleberry',
+      'Ichigo',
+      'Jackfruit',
+    ].map((item) => ({ label: item }));
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <Dropdown items={items} selectedItem={items.find((item) => (item as Labelled).label === 'Guava')} />
+        </Form>
+      </CarbonRoot>
+    );
+
+    await userEvent('div.cds--list-box__field', 'keydown', { key: 'a', keyCode: 66 });
+    await userEvent('div.cds--list-box__field', 'keydown', { keyCode: KeyCodes.PageDown });
+    await userEvent('div.cds--list-box__field', 'keydown', { keyCode: KeyCodes.PageUp });
+    const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
+    expect(listBoxDiv.childElementCount).toEqual(items.length);
+  });
+
+  it('closes the items menu when Esc is pressed', async () => {
+    const { screen, render, userEvent } = await createDOM();
+    const items: Item[] = ['Apple', 'Banana', 'Blackberry'];
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <Dropdown items={items} />
+        </Form>
+      </CarbonRoot>
+    );
+
+    await userEvent('div.cds--list-box__field', 'keydown', { key: 'a', keyCode: 66 });
+    await userEvent('div.cds--list-box__field', 'keydown', { keyCode: KeyCodes.Escape });
+    const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
+    expect(listBoxDiv.childElementCount).toEqual(0);
+  });
+
+  it('selects the first item from the menu if Enter is pressed', async () => {
+    const { screen, render, userEvent } = await createDOM();
+    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <Dropdown items={items} />
+        </Form>
+      </CarbonRoot>
+    );
+
+    await userEvent('div.cds--list-box__field', 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => false });
+    const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
+    await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => false });
+    await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.Enter });
+    expect(listBoxDiv.childElementCount).toEqual(0);
   });
 });

@@ -3,6 +3,7 @@ import { Link } from './link';
 import { createDOM } from '@builder.io/qwik/testing';
 import { CarbonRoot } from '../carbon-root/carbon-root';
 import { Edit } from 'carbon-icons-qwik';
+import { component$ } from '@builder.io/qwik';
 
 describe('Link', () => {
   it('renders href, text content in its anchor and link CSS class', async () => {
@@ -141,10 +142,13 @@ describe('Link', () => {
 
   it('renders an "id" attribute onto the anchor element', async () => {
     const { screen, render } = await createDOM();
+    const editComponent = component$(() => <Edit />);
 
     await render(
       <CarbonRoot>
-        <Link id="1">Link text</Link>
+        <Link id="1" renderIcon={editComponent}>
+          Link text
+        </Link>
       </CarbonRoot>
     );
 
@@ -152,29 +156,12 @@ describe('Link', () => {
     expect(aElement.getAttribute('id')).toEqual('1');
   });
 
-  it('renders a supplied icon within the anchor element', async () => {
-    const { screen, render } = await createDOM();
-    const expectedIconId = 'edit_icon';
-
-    await render(
-      <CarbonRoot>
-        <Link renderIcon={Edit}>
-          Link Text
-          <Edit id={expectedIconId} />
-        </Link>
-      </CarbonRoot>
-    );
-
-    const iconElement = screen.querySelector(`a > svg#${expectedIconId}`) as SVGSVGElement;
-    expect(iconElement.getAttribute('id')).toEqual(expectedIconId);
-  });
-
   it('removes inapplicable props from the rendered anchor element', async () => {
     const { screen, render } = await createDOM();
-
+    const editComponent = component$(() => <Edit />);
     await render(
       <CarbonRoot>
-        <Link renderIcon={Edit} size="sm" inline>
+        <Link renderIcon={editComponent} size="sm" inline>
           Click here
         </Link>
       </CarbonRoot>

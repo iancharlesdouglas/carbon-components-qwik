@@ -1,7 +1,7 @@
 import { QwikIntrinsicElements, Slot, component$ } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import classNames from 'classnames';
-import _ from 'lodash';
+// import _ from 'lodash';
 
 /**
  * Column span
@@ -42,7 +42,7 @@ export const Column = component$((props: ColumnProps) => {
   const breakpointClass = getClassesForBreakpoints(props, prefix);
   const spanClass = getClassesForSpan(span, prefix);
   const classes = classNames(customClass, breakpointClass, spanClass, `${prefix}--css-grid-column`);
-  const sanitizedProps = _.omit(props, 'class', 'sm', 'md', 'lg', 'xlg', 'max', 'span');
+  const sanitizedProps = props; // _.omit(props, 'class', 'sm', 'md', 'lg', 'xlg', 'max', 'span');
   return (
     <div class={classes} {...sanitizedProps}>
       <Slot />

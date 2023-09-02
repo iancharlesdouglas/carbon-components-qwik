@@ -128,28 +128,4 @@ describe('ListBox', () => {
     expect(menuIconDivs[0].classList.contains('cds--list-box__menu-icon--open')).toBeTruthy();
     expect(menuIconDivs[1].classList.contains('cds--list-box__menu-icon--open')).toBeFalsy();
   });
-
-  // it('list box menu item renders title only when truncated', async () => {
-  //   const { screen, render } = await createDOM();
-  //   const listBoxId = 'list-box-id';
-  //   const longListBoxMenuItemId = 'long-list-box-menu-item-id';
-  //   const shortListBoxMenuItemId = 'short-list-box-menu-item-id';
-
-  //   await render(
-  //     <CarbonRoot>
-  //       <Form>
-  //         <ListBox id={listBoxId} style="width: 100px; overflow: hidden">
-  //           <ListBoxMenuItem id={longListBoxMenuItemId} style="width: 300px" title="Title" />
-  //           <ListBoxMenuItem id={shortListBoxMenuItemId} />
-  //         </ListBox>
-  //       </Form>
-  //     </CarbonRoot>
-  //   );
-
-  //   const longMenuItemDiv = screen.querySelector(`div#${longListBoxMenuItemId}`) as HTMLDivElement;
-  //   const rect = longMenuItemDiv.offsetWidth;
-  //   expect(longMenuItemDiv.hasAttribute('title')).toBeTruthy();
-  //   const shortMenuItemDiv = screen.querySelector(`div#${shortListBoxMenuItemId}`) as HTMLDivElement;
-  //   expect(shortMenuItemDiv.hasAttribute('title')).toBeFalsy();
-  // });
 });

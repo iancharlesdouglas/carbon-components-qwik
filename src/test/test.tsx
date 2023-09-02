@@ -1,7 +1,7 @@
 import { component$, $, useSignal } from '@builder.io/qwik';
 import { CarbonRoot } from '../components/carbon-root/carbon-root';
 import { Link } from '../components/link/link';
-import { Edit } from 'carbon-icons-qwik';
+import { Edit, ErrorOutline } from 'carbon-icons-qwik';
 import { Button } from '../components/button/button';
 import { TextInput, TextInputChangeEvent } from '../components/text-input/text-input';
 import { Form } from '../components/form/form';
@@ -87,7 +87,9 @@ const Test = component$(() => {
           <Grid class="subgrid-class" id="sub-grid" fullWidth>
             <Column sm={1} md={1} lg xlg max>
               <Checkbox labelText="Active" checked={false} onChange$={$(() => console.log('changed'))} />
-              <Button onClick$={$(() => (selectedItem.value = undefined))}>Clear Selection</Button>
+              <Button onClick$={$(() => (selectedItem.value = undefined))} renderIcon={ErrorOutline}>
+                Clear Selection
+              </Button>
             </Column>
             <Column sm={1} md={1} lg={'25%'}></Column>
             <Column sm={1} md={1} lg={{ start: 1, end: 3 }}>

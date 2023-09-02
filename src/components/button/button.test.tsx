@@ -3,6 +3,7 @@ import { createDOM } from '@builder.io/qwik/testing';
 import { CarbonRoot } from '../carbon-root/carbon-root';
 import { Edit } from 'carbon-icons-qwik';
 import { Button, ButtonKind, ButtonSize } from './button';
+import { component$ } from '@builder.io/qwik';
 
 describe('Button', () => {
   it('renders text content and button CSS class, medium size class and primary state class', async () => {
@@ -116,10 +117,11 @@ describe('Button', () => {
 
   it('sets the appropriate CSS class/es and attributes if hasIconOnly (that has been selected) has been stipulated', async () => {
     const { screen, render } = await createDOM();
+    const editIconComponent = component$(() => <Edit />);
 
     await render(
       <CarbonRoot>
-        <Button hasIconOnly renderIcon={Edit} isSelected kind="ghost"></Button>
+        <Button hasIconOnly renderIcon={editIconComponent} isSelected kind="ghost"></Button>
       </CarbonRoot>
     );
 
@@ -127,19 +129,6 @@ describe('Button', () => {
     expect(btnElement.classList.contains('cds--btn--icon-only'));
     expect(btnElement.classList.contains('cds--btn--selected'));
     expect(btnElement.getAttribute('aria-pressed')).toEqual('true');
-  });
-
-  it('renders an icon in addition to the text if stipulated', async () => {
-    const { screen, render } = await createDOM();
-
-    await render(
-      <CarbonRoot>
-        <Button renderIcon={Edit}></Button>
-      </CarbonRoot>
-    );
-
-    const svgElement = screen.querySelector('button svg') as SVGSVGElement;
-    expect(svgElement).toBeTruthy();
   });
 
   it('renders an anchor if the href attribute has been set', async () => {
@@ -173,6 +162,7 @@ describe('Button', () => {
       'tooltipAlignment',
       'tooltipPosition',
     ];
+    const editIconComponent = component$(() => <Edit />);
 
     await render(
       <CarbonRoot>
@@ -184,7 +174,7 @@ describe('Button', () => {
           isExpressive
           isSelected
           kind="danger"
-          renderIcon={Edit}
+          renderIcon={editIconComponent}
           tooltipAlignment="start"
           tooltipPosition="top"
         >

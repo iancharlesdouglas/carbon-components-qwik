@@ -31,7 +31,7 @@ export type State = {
  * @param onSelect$ Select handler
  * @param listBoxDimensions Listbox dimensions as measured
  * @param defaultItemToString Default item to string converter
- * @param triggerElement
+ * @param triggerElement Triggering element
  */
 export const handleKeyDown = async (
   event: QwikKeyboardEvent<HTMLDivElement>,
