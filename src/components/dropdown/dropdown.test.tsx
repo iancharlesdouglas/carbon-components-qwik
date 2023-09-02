@@ -3,9 +3,8 @@ import { createDOM } from '@builder.io/qwik/testing';
 import { CarbonRoot } from '../carbon-root/carbon-root';
 import { Form } from '../form/form';
 import { Dropdown, Item, ItemProps, Labelled, defaultItemToString } from './dropdown';
-import { component$, $, useSignal, FunctionComponent } from '@builder.io/qwik';
+import { component$, $, useSignal } from '@builder.io/qwik';
 import { KeyCodes } from '../../internal/key-codes';
-import { Button } from '../button/button';
 import { DropdownTestWrapper } from './test-wrapper';
 
 describe('Dropdown', () => {
