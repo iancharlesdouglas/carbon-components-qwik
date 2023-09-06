@@ -72,3 +72,21 @@ export const Invalid: Story = {
   },
   argTypes: { ...Default.argTypes },
 };
+
+export const ReadOnly: Story = {
+  name: 'Read-only',
+  args: {
+    ...Default.args,
+    readOnly: true,
+  },
+  argTypes: { ...Default.argTypes },
+};
+
+export const Inline: Story = {
+  args: {
+    ...Default.args,
+    inline: true,
+    helperText: undefined,
+  },
+  argTypes: { ...Default.argTypes },
+};
