@@ -77,6 +77,8 @@ export const ReadOnly: Story = {
   name: 'Read-only',
   args: {
     ...Default.args,
+    placeholder: undefined,
+    value: 'Some value',
     readOnly: true,
   },
   argTypes: { ...Default.argTypes },
