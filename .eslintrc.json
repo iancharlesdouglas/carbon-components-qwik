@@ -9,19 +9,27 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:qwik/recommended",
-    "plugin:jsdoc/recommended"
+    "plugin:jsdoc/recommended",
+    "plugin:storybook/recommended"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "tsconfigRootDir": "",
-    "project": ["./tsconfig.json"],
+    "project": [
+      "./tsconfig.json"
+    ],
     "ecmaVersion": 2021,
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
     }
   },
-  "plugins": ["@typescript-eslint", "prettier", "jsdoc", "spellcheck"],
+  "plugins": [
+    "@typescript-eslint",
+    "prettier",
+    "jsdoc",
+    "spellcheck"
+  ],
   "rules": {
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
@@ -39,7 +47,9 @@
     "prefer-spread": "off",
     "no-case-declarations": "off",
     "no-console": "off",
-    "@typescript-eslint/no-unused-vars": ["error"],
+    "@typescript-eslint/no-unused-vars": [
+      "error"
+    ],
     "prettier/prettier": [
       "error",
       {
@@ -56,9 +66,57 @@
         "identifiers": true,
         "templates": true,
         "lang": "en_US",
-        "skipWords": ["activedescendant", "assistive", "breakpoint", "calc", "cds", "checkbox", "checkmark", "classnames", "combobox", "describedby", "divs", "dragonfruit", "dropdown", "durian", "flexbox", "haspopup", "href", "ichigo", "jackfruit", "jsx", "keydown", "labelled", "labelledby", "listbox", "ltr", "modif", "modifs", "msg", "noopener", "perc", "qombobox", "qwik", "readonly", "rtl", "subgrid", "svg", "tooltip", "uid", "unlabelled", "utf", "xlg", "2xl"],
-        "skipIfMatch": ["http://[^s]*", "^[-\\w]+/[-\\w\\.]+$"],
-        "skipWordIfMatch": ["^foobar.*$"],
+        "skipWords": [
+          "activedescendant",
+          "assistive",
+          "breakpoint",
+          "calc",
+          "cds",
+          "checkbox",
+          "checkmark",
+          "classnames",
+          "combobox",
+          "describedby",
+          "divs",
+          "dragonfruit",
+          "dropdown",
+          "durian",
+          "flexbox",
+          "haspopup",
+          "href",
+          "ichigo",
+          "jackfruit",
+          "jsx",
+          "keydown",
+          "labelled",
+          "labelledby",
+          "listbox",
+          "ltr",
+          "modif",
+          "modifs",
+          "msg",
+          "noopener",
+          "perc",
+          "qombobox",
+          "qwik",
+          "readonly",
+          "rtl",
+          "subgrid",
+          "svg",
+          "tooltip",
+          "uid",
+          "unlabelled",
+          "utf",
+          "xlg",
+          "2xl"
+        ],
+        "skipIfMatch": [
+          "http://[^s]*",
+          "^[-\\w]+/[-\\w\\.]+$"
+        ],
+        "skipWordIfMatch": [
+          "^foobar.*$"
+        ],
         "minLength": 3
       }
     ]

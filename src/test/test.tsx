@@ -48,7 +48,7 @@ const Test = component$(() => {
           value={textValue}
           data-x="x"
           type="text"
-          renderSize="sm"
+          renderSize="lg"
           labelText="Label"
           hideLabel={false}
           helperText="Helper text"
