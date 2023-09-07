@@ -42,6 +42,7 @@
   "devDependencies": {
     "@builder.io/qwik": "1.2.10",
     "@carbon/styles": "^1.36.0",
+    "@storybook/addon-a11y": "^7.4.0",
     "@storybook/addon-actions": "^7.4.0",
     "@storybook/addon-essentials": "^7.4.0",
     "@storybook/addon-interactions": "^7.4.0",

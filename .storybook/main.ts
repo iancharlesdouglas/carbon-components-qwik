@@ -7,6 +7,7 @@ const config: StorybookConfig = {
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
     { name: 'storybook-addon-sass-postcss', options: { loadSassAfterPostCSS: true } },
+    '@storybook/addon-a11y'
   ],
   framework: {
     name: 'storybook-framework-qwik',

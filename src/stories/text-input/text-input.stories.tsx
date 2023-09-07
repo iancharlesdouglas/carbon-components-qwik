@@ -1,11 +1,12 @@
 import { CarbonRoot } from '../../components/carbon-root/carbon-root';
 import { Form } from '../../components/form/form';
 import { Meta, StoryObj } from 'storybook-framework-qwik/*';
-import { TextInput, TextInputProps } from '../../components/text-input/text-input';
-import { component$ } from '@builder.io/qwik';
+import { TextInput, TextInputChangeEvent, TextInputProps } from '../../components/text-input/text-input';
+import { $, QwikMouseEvent, component$ } from '@builder.io/qwik';
 import './text-input.scss';
 import { Grid } from '../../components/grid/grid';
 import { Column } from '../../components/grid/column';
+import { action } from "@storybook/addon-actions";
 
 const TextInputWrapper = component$<TextInputProps>((props) => {
   return (
@@ -28,6 +29,7 @@ const meta: Meta<TextInputProps> = {
     labelText: 'Label',
     type: 'text',
   },
+  tags: ['autodocs'],
   render: (args) => <TextInputWrapper {...args} />,
 };
 
@@ -46,13 +48,19 @@ export const Default: Story = {
     renderSize: 'md',
     enableCounter: false,
     maxCount: 20,
+    onClick$: $((e: QwikMouseEvent<HTMLInputElement, MouseEvent>) => {
+      action("click")(e);
+    }),
+    onChange$: $((e: unknown) => {
+      action("change")(e);
+    })
   },
   argTypes: {
     renderSize: {
       control: { type: 'select' },
       options: ['sm', 'md', 'lg'],
     },
-  },
+  },parameters: {}
 };
 
 export const Warning: Story = {
