@@ -50,13 +50,14 @@ export const Default: Story = {
     type: 'text',
     maxCount: 20,
     onClick$: $((e: QwikMouseEvent<HTMLInputElement, MouseEvent>) => {
-      action('click')(e);
+      action('clicked')(e);
     }),
     onChange$: $((e: unknown) => {
-      action('change')(e);
+      action('text changed')(e);
     }),
   },
   argTypes: {
+    class: { description: 'HTML class attribute' },
     enableCounter: { description: 'Enable the character counter' },
     hideLabel: { description: 'Hide the label' },
     helperText: { description: 'Helper text to display beneath the textbox' },
