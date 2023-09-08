@@ -69,6 +69,7 @@
         "skipWords": [
           "activedescendant",
           "assistive",
+          "autodocs",
           "breakpoint",
           "calc",
           "cds",
@@ -101,8 +102,10 @@
           "qwik",
           "readonly",
           "rtl",
+          "selectable",
           "subgrid",
           "svg",
+          "textbox",
           "tooltip",
           "uid",
           "unlabelled",
