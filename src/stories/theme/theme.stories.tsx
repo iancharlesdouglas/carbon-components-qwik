@@ -16,7 +16,7 @@ const ThemeWrapper = component$<ThemeProps>((props) => {
         <Form>
           <Grid>
             <Column lg={4} md={3} sm={2} style="margin-bottom: 0.5rem">
-              <TextInput value="Some text"></TextInput>
+              <TextInput value="Some text" labelText="Text"></TextInput>
               <Checkbox labelText="Confirmed" checked />
             </Column>
           </Grid>
