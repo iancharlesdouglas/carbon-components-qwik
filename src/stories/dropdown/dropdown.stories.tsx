@@ -103,6 +103,7 @@ type Story = StoryObj<DropdownProps>;
 
 export const Default: Story = {
   args: {
+    helperText: 'Optional',
     onSelect$: $((e: Item) => {
       action('selected')(e);
     }),
@@ -145,6 +146,7 @@ export const ReadOnly: Story = {
     ...Default.args,
     readOnly: true,
     placeholder: undefined,
+    helperText: '',
     selectedItem: 'Banana',
   },
   argTypes: { ...Default.argTypes },
@@ -154,7 +156,6 @@ export const Inline: Story = {
   args: {
     ...Default.args,
     type: 'inline',
-    helperText: undefined,
   },
   argTypes: { ...Default.argTypes },
 };
