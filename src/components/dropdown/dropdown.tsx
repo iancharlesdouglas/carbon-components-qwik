@@ -22,6 +22,7 @@ import { ListBoxMenuIcon } from '../list-box/list-box-menu-icon';
 import { ListBoxMenuItem } from '../list-box/list-box-menu-item';
 import { qombobox } from '../../internal/qombobox/qombobox';
 import { Keys, State, handleKeyDown } from '../../internal/qombobox/handle-keydown';
+import './dropdown.scss';
 
 /**
  * Item with a label property
@@ -86,12 +87,13 @@ export type DropdownProps = QwikIntrinsicElements['div'] & {
   itemToElement?: Component<ItemProps>;
   itemToString?: ItemToString;
   items?: Item[];
-  label?: string;
+  placeholder?: string;
   onSelect$?: PropFunction<(item: Item) => void>;
+  readOnly?: boolean;
   renderSelectedItem?: Component<ItemProps>;
   size?: 'sm' | 'md' | 'lg';
   selectedItem?: Item;
-  titleText?: string;
+  label?: string;
   translateWithId?: () => string;
   type?: 'default' | 'inline';
   warn?: boolean;
@@ -107,7 +109,7 @@ export const Dropdown = component$((props: DropdownProps) => {
   const isFocused = useSignal(false);
   const stateObj: State = { isOpen: false };
   const state = useStore(stateObj);
-  const { disabled = false, id: stipulatedId, titleText, items, initialSelectedItem, selectedItem } = props;
+  const { disabled = false, id: stipulatedId, label: titleText, items, initialSelectedItem, selectedItem } = props;
   const {
     id: modifiedId,
     comboBox: comboBoxAttrs,
@@ -131,8 +133,9 @@ export const Dropdown = component$((props: DropdownProps) => {
     invalidText,
     itemToElement: ItemToElement,
     itemToString = defaultItemToString,
-    label,
+    placeholder: label,
     onSelect$,
+    readOnly,
     renderSelectedItem: RenderSelectedItem,
     size = 'md',
     type = 'default',
@@ -240,13 +243,13 @@ export const Dropdown = component$((props: DropdownProps) => {
         {invalid && <WarningFilled class={`${prefix}--list-box__invalid-icon`} size={16} />}
         {showWarning && <WarningAltFilled class={`${prefix}--list-box__invalid-icon ${prefix}--list-box__invalid-icon--warning`} size={16} />}
         <div
-          class={`${prefix}--list-box__field`}
-          title={modifiedSelectedItem ? itemToString(modifiedSelectedItem) : label}
+          class={[`${prefix}--list-box__field`, readOnly ? `${prefix}--list-box__readonly` : undefined]}
+          title={!readOnly && modifiedSelectedItem ? itemToString(modifiedSelectedItem) : !readOnly ? label : undefined}
           {...comboBoxAttrs}
           ref={comboboxElement}
           tabIndex={0}
           onClick$={$(() => {
-            state.isOpen = !state.isOpen;
+            !readOnly && (state.isOpen = !state.isOpen);
           })}
           onKeyDown$={$((event: QwikKeyboardEvent<HTMLDivElement>) =>
             handleKeyDown(
@@ -276,7 +279,7 @@ export const Dropdown = component$((props: DropdownProps) => {
           <span class={`${prefix}--list-box__label`}>
             {(modifiedSelectedItem && (RenderSelectedItem ? <RenderSelectedItem item={modifiedSelectedItem} /> : itemToString(modifiedSelectedItem))) || label}
           </span>
-          <ListBoxMenuIcon isOpen={state.isOpen} />
+          {!readOnly && <ListBoxMenuIcon isOpen={state.isOpen} />}
         </div>
         <ListBoxMenu
           {...listBoxAttrs}

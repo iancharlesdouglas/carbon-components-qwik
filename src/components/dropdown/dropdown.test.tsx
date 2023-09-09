@@ -65,9 +65,9 @@ describe('Dropdown', () => {
             hideLabel={false}
             invalid
             invalidText="Invalid!"
-            label="Name"
+            placeholder="Name"
             size="md"
-            titleText="Name input"
+            label="Name input"
             type="default"
             warn
             warnText="Ugly name"
@@ -112,7 +112,7 @@ describe('Dropdown', () => {
     await render(
       <CarbonRoot>
         <Form>
-          <Dropdown id={dropdownIdTitle} titleText={titleText} disabled hideLabel />
+          <Dropdown id={dropdownIdTitle} label={titleText} disabled hideLabel />
           <Dropdown id={dropdownIdNoTitle} />
         </Form>
       </CarbonRoot>

@@ -45,9 +45,10 @@ const meta: Meta<DropdownProps> = {
     direction: 'bottom',
     disabled: false,
     hideLabel: false,
-    label: 'Select an option',
+    placeholder: 'Select a fruit',
+    readOnly: false,
     size: 'md',
-    titleText: 'Label',
+    label: 'Fruit',
     type: 'default',
   },
   argTypes: {
@@ -57,8 +58,9 @@ const meta: Meta<DropdownProps> = {
       description: 'Set the list popup location',
     },
     disabled: { description: 'Set whether disabled' },
-    hideLabel: { description: 'Hide the label (above/to the left of the control)' },
-    label: { description: 'Set the placeholder text' },
+    hideLabel: { description: 'Hide the label' },
+    placeholder: { description: 'Set the placeholder text' },
+    readOnly: { description: 'Set whether read-only' },
     selectedItem: {
       control: { type: 'select' },
       options: [
@@ -83,7 +85,7 @@ const meta: Meta<DropdownProps> = {
       options: ['sm', 'md', 'lg'],
       description: 'Set the control element size',
     },
-    titleText: { description: 'Set the label (above/to the left of the control)' },
+    label: { description: 'Set the label' },
     type: {
       control: { type: 'select' },
       options: ['default', 'inline'],
@@ -133,6 +135,17 @@ export const Disabled: Story = {
     placeholder: undefined,
     selectedItem: 'Banana',
     disabled: true,
+  },
+  argTypes: { ...Default.argTypes },
+};
+
+export const ReadOnly: Story = {
+  name: 'Read-only',
+  args: {
+    ...Default.args,
+    readOnly: true,
+    placeholder: undefined,
+    selectedItem: 'Banana',
   },
   argTypes: { ...Default.argTypes },
 };

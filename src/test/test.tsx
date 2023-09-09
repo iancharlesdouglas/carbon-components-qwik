@@ -66,8 +66,8 @@ const Test = component$(() => {
         <Grid>
           <Column lg={4}>
             <Dropdown
-              titleText="Fruit"
-              label="Select a fruit"
+              label="Fruit"
+              placeholder="Select a fruit"
               selectedItem={selectedItem.value}
               renderSelectedItem={SelectedItemRenderComp}
               items={itemOptions.value}
