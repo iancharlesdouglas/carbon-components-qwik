@@ -40,6 +40,7 @@ export const Default: Story = {
     hideLabel: false,
     indeterminate: false,
     labelText: 'Confirmed',
+    title: 'Purchase confirmed',
     onChange$: $((e: unknown) => {
       action('checked changed')(e);
     }),
