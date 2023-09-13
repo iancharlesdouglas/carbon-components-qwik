@@ -9,6 +9,8 @@ import { Grid } from '../components/grid/grid';
 import { Column } from '../components/grid/column';
 import { Checkbox } from '../components/checkbox/checkbox';
 import { Dropdown, Item, ItemProps, Labelled, defaultItemToString } from '../components/dropdown/dropdown';
+import { Section } from '../components/heading/section';
+import { Heading } from '../components/heading/heading';
 
 /**
  * Local test harness for dev. purposes
@@ -112,6 +114,12 @@ const Test = component$(() => {
           </Grid>
         </Column>
       </Grid>
+      <Section>
+        <Heading text="Heading 1" />
+        <Section>
+          <Heading text="Heading 2" />
+        </Section>
+      </Section>
     </CarbonRoot>
   );
 });
