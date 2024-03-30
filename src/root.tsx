@@ -10,7 +10,7 @@ export default () => {
     <>
       <head>
         <meta charSet="utf-8" />
-        <title>Qwik Blank App</title>
+        <title>Test Harness</title>
       </head>
       <body>
         <Test />
