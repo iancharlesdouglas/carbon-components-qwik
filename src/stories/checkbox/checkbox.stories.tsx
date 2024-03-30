@@ -8,7 +8,7 @@ import { Checkbox, CheckboxProps } from '../../components/checkbox/checkbox';
 import './checkbox.scss';
 import { action } from '@storybook/addon-actions';
 
-const CheckboxWrapper = component$<CheckboxProps>((props) => {
+const CheckboxWrapper = component$<CheckboxProps>(props => {
   return (
     <CarbonRoot>
       <Form>
@@ -27,7 +27,7 @@ const meta: Meta<CheckboxProps> = {
   component: Checkbox,
   args: {},
   tags: ['autodocs'],
-  render: (args) => <CheckboxWrapper {...args} />,
+  render: args => <CheckboxWrapper {...args} />,
 };
 
 export default meta;

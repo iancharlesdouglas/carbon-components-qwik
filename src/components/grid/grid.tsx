@@ -2,8 +2,8 @@ import { QwikIntrinsicElements, Slot, component$, useContext } from '@builder.io
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import classNames from 'classnames';
 import { GridScope } from './grid-scope';
-import _ from 'lodash';
 import { GridMode, gridContext } from '../../internal/contexts/grid-context';
+import { removeProps } from '../../internal/objects/remove-props';
 
 /**
  * Grid props
@@ -51,7 +51,7 @@ export const Grid = component$((props: GridProps) => {
     { [`${prefix}--css-grid--full-width`]: fullWidth }
   );
 
-  const sanitizedProps = _.omit(props, 'condensed', 'fullWidth', 'narrow', 'class');
+  const sanitizedProps = removeProps(props, 'condensed', 'fullWidth', 'narrow', 'class');
 
   return (
     <GridScope subGrid mode={mode}>
@@ -79,7 +79,7 @@ const SubGrid = component$((props: SubGridProps) => {
     { [`${prefix}--subgrid--wide`]: mode === 'wide' }
   );
 
-  const sanitizedProps = _.omit(props, 'mode', 'class');
+  const sanitizedProps = removeProps(props, 'mode', 'class');
 
   return (
     <div class={classes} {...sanitizedProps}>

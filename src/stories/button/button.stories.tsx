@@ -6,7 +6,7 @@ import { Button, ButtonProps } from '../../components/button/button';
 import './button.scss';
 import { UserAvatar } from 'carbon-icons-qwik';
 
-const ButtonWrapper = component$<ButtonProps>((props) => {
+const ButtonWrapper = component$<ButtonProps>(props => {
   const propsWithIcon = { ...props, renderIcon: UserAvatar };
   return (
     <CarbonRoot>
@@ -20,7 +20,7 @@ const meta: Meta<ButtonProps> = {
   component: Button,
   args: {},
   tags: ['autodocs'],
-  render: (args) => <ButtonWrapper {...args} />,
+  render: args => <ButtonWrapper {...args} />,
 };
 
 export default meta;
@@ -67,7 +67,16 @@ export const Default: Story = {
     },
     kind: {
       control: { type: 'select' },
-      options: ['primary', 'secondary', 'tertiary', 'danger', 'danger--primary', 'danger--secondary', 'danger--tertiary', 'ghost'],
+      options: [
+        'primary',
+        'secondary',
+        'tertiary',
+        'danger',
+        'danger--primary',
+        'danger--secondary',
+        'danger--tertiary',
+        'ghost',
+      ],
       description: 'Set the kind of button',
     },
     size: {

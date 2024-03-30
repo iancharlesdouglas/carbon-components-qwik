@@ -1,6 +1,10 @@
 import { Slot, component$, useContextProvider } from '@builder.io/qwik';
 import { CarbonContext, prefixContext } from '../../internal/contexts/carbon-context';
-import { TextDirection, TextDirectionContext, textDirectionContext } from '../../internal/contexts/text-direction-context';
+import {
+  TextDirection,
+  TextDirectionContext,
+  textDirectionContext,
+} from '../../internal/contexts/text-direction-context';
 import { HeadingContext, headingContext } from '../../internal/contexts/heading-context';
 
 /**

@@ -1,6 +1,7 @@
 import { PropFunction, QwikIntrinsicElements, Slot, component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { Item } from '../dropdown/dropdown';
+import { removeProps } from '../../internal/objects/remove-props';
 
 /**
  * Measured dimensions
@@ -33,6 +34,7 @@ export const ListBoxMenu = component$((props: ListBoxMenuProps) => {
   const prefix = usePrefix();
   const { id, items, highlightedItem, selectedItem, onMeasure$ } = props;
   const listBoxElement = useSignal<HTMLDivElement>();
+  // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(({ track }) => {
     track(props);
     const focusItem = highlightedItem ?? selectedItem;
@@ -50,13 +52,18 @@ export const ListBoxMenu = component$((props: ListBoxMenuProps) => {
       }
       if (listBoxElement.value.clientHeight && itemHeight) {
         onMeasure$ &&
-          onMeasure$({ height: listBoxElement.value.clientHeight, itemHeight, visibleRows: Math.floor(listBoxElement.value.clientHeight / itemHeight) });
+          onMeasure$({
+            height: listBoxElement.value.clientHeight,
+            itemHeight,
+            visibleRows: Math.floor(listBoxElement.value.clientHeight / itemHeight),
+          });
       }
     }
     listBoxElement.value?.focus();
   });
+  const sanitizedProps = removeProps(props, 'items', 'highlightedItem', 'selectedItem', 'onMeasure$');
   return (
-    <div id={id} class={`${prefix}--list-box__menu`} role="listbox" {...props} ref={listBoxElement}>
+    <div id={id} class={`${prefix}--list-box__menu`} role="listbox" {...sanitizedProps} ref={listBoxElement}>
       <Slot />
     </div>
   );

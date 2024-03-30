@@ -1,7 +1,7 @@
 import { QwikIntrinsicElements, Slot, component$ } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import classNames from 'classnames';
-import _ from 'lodash';
+import { removeProps } from '../../internal/objects/remove-props';
 
 /**
  * Row props
@@ -21,8 +21,11 @@ export type RowProps = QwikIntrinsicElements['div'] & {
 export const Row = component$((props: RowProps) => {
   const prefix = usePrefix();
   const { condensed = false, narrow = false, class: customClass } = props;
-  const classes = classNames(customClass, `${prefix}--row`, { [`${prefix}--row--condensed`]: condensed, [`${prefix}--row--narrow`]: narrow });
-  const sanitizedProps = _.omit(props, 'condensed', 'narrow', 'class');
+  const classes = classNames(customClass, `${prefix}--row`, {
+    [`${prefix}--row--condensed`]: condensed,
+    [`${prefix}--row--narrow`]: narrow,
+  });
+  const sanitizedProps = removeProps(props, 'condensed', 'narrow', 'class');
   return (
     <div class={classes} {...sanitizedProps}>
       <Slot />

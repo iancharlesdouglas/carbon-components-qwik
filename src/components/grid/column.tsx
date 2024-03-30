@@ -1,7 +1,6 @@
 import { QwikIntrinsicElements, Slot, component$ } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import classNames from 'classnames';
-// import _ from 'lodash';
 
 /**
  * Column span
@@ -11,7 +10,11 @@ export type ColumnSpan = number | string | { span: number; start: number; end: n
 /**
  * Breakpoint
  */
-export type Breakpoint = number | boolean | string | { span?: number | string; offset?: number; start?: number; end?: number };
+export type Breakpoint =
+  | number
+  | boolean
+  | string
+  | { span?: number | string; offset?: number; start?: number; end?: number };
 
 /**
  * Column props

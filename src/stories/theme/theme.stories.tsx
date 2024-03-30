@@ -9,7 +9,7 @@ import { component$ } from '@builder.io/qwik';
 import './theme.scss';
 import { Checkbox } from '../../components/checkbox/checkbox';
 
-const ThemeWrapper = component$<ThemeProps>((props) => {
+const ThemeWrapper = component$<ThemeProps>(props => {
   return (
     <CarbonRoot>
       <Theme {...props}>
@@ -33,7 +33,7 @@ const meta: Meta<ThemeProps> = {
     theme: 'white',
   },
   tags: ['autodocs'],
-  render: (args) => <ThemeWrapper {...args} />,
+  render: args => <ThemeWrapper {...args} />,
 };
 
 export default meta;

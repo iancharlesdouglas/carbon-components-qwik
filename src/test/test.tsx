@@ -34,14 +34,23 @@ const Test = component$(() => {
     'Huckleberry',
     'Ichigo',
     'Jackfruit',
-  ].map((label) => ({ label, key: label }));
-  const newItems = items.filter((item) => (item as Labelled).label !== 'Banana');
+  ].map(label => ({ label, key: label }));
+  const newItems = items.filter(item => (item as Labelled).label !== 'Banana');
   const itemOptions = useSignal(items);
-  const selectedItem = useSignal<Item | undefined>(items.find((item) => (item as { label: string }).label === 'Guava')!);
+  const selectedItem = useSignal<Item | undefined>(items.find(item => (item as { label: string }).label === 'Guava')!);
 
   return (
     <CarbonRoot>
-      <Link href="https://github.com" target="blank" data-x="test" id="link_id" size="lg" visited renderIcon={Edit} onClick$={() => alert('clicked')}>
+      <Link
+        href="https://github.com"
+        target="blank"
+        data-x="test"
+        id="link_id"
+        size="lg"
+        visited
+        renderIcon={Edit}
+        onClick$={() => alert('clicked')}
+      >
         GitHub
       </Link>
       <Button href="https://github.com">Link button</Button>

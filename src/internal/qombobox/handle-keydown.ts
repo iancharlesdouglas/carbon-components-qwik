@@ -151,12 +151,20 @@ export const handleKeyDown = async (
         state.isOpen = true;
         keys.reset = true;
         keys.typed.push(event.key);
-        const repeatedKey = keys.typed.every((key) => key === event.key);
+        const repeatedKey = keys.typed.every(key => key === event.key);
         const matchingItem = repeatedKey
-          ? items?.filter((item) => defaultItemToString(item).substring(0, 1).toLowerCase() === event.key)?.[keys.typed.length - 1]
-          : items?.find((item) => defaultItemToString(item).substring(0, keys.typed.length).toLowerCase() === keys.typed.join(''));
+          ? items?.filter(item => defaultItemToString(item).substring(0, 1).toLowerCase() === event.key)?.[
+              keys.typed.length - 1
+            ]
+          : items?.find(
+              item => defaultItemToString(item).substring(0, keys.typed.length).toLowerCase() === keys.typed.join('')
+            );
         highlightedOption.value = matchingItem;
-        if (repeatedKey && items?.filter((item) => defaultItemToString(item).substring(0, 1).toLowerCase() === event.key)?.length === keys.typed.length) {
+        if (
+          repeatedKey &&
+          items?.filter(item => defaultItemToString(item).substring(0, 1).toLowerCase() === event.key)?.length ===
+            keys.typed.length
+        ) {
           keys.typed = [];
         }
       }

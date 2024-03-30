@@ -8,7 +8,7 @@ import { Grid } from '../../components/grid/grid';
 import { Column } from '../../components/grid/column';
 import { action } from '@storybook/addon-actions';
 
-const TextInputWrapper = component$<TextInputProps>((props) => {
+const TextInputWrapper = component$<TextInputProps>(props => {
   return (
     <CarbonRoot>
       <Form>
@@ -30,7 +30,7 @@ const meta: Meta<TextInputProps> = {
     type: 'text',
   },
   tags: ['autodocs'],
-  render: (args) => <TextInputWrapper {...args} />,
+  render: args => <TextInputWrapper {...args} />,
 };
 
 export default meta;

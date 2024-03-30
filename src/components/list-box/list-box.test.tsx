@@ -94,7 +94,7 @@ describe('ListBox', () => {
 
     const divElement = screen.querySelector(`div#${listBoxId}`) as HTMLDivElement;
     const nonStdAttrs = ['disabled', 'invalid', 'invalidText', 'isOpen', 'size', 'type', 'warn', 'warnText'];
-    nonStdAttrs.forEach((attr) => expect(divElement.hasAttribute(attr)).toBeFalsy());
+    nonStdAttrs.forEach(attr => expect(divElement.hasAttribute(attr)).toBeFalsy());
   });
 
   it('triggers key-down', async () => {

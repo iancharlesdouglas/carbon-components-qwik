@@ -205,7 +205,14 @@ describe('Grid', () => {
     await render(
       <CarbonRoot>
         <Grid>
-          <Column sm={spanOffset} md={spanOffset} lg={spanOffset} xlg={spanOffset} max={spanOffset} id={columnId}></Column>
+          <Column
+            sm={spanOffset}
+            md={spanOffset}
+            lg={spanOffset}
+            xlg={spanOffset}
+            max={spanOffset}
+            id={columnId}
+          ></Column>
         </Grid>
       </CarbonRoot>
     );

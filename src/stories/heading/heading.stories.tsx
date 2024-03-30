@@ -5,7 +5,7 @@ import { Heading, HeadingProps } from '../../components/heading/heading';
 import { Section } from '../../components/heading/section';
 import './heading.scss';
 
-const HeadingWrapper = component$<HeadingProps>((props) => {
+const HeadingWrapper = component$<HeadingProps>(props => {
   return (
     <CarbonRoot>
       <Section>
@@ -35,7 +35,7 @@ const meta: Meta<HeadingProps> = {
   component: Heading,
   args: {},
   tags: ['autodocs'],
-  render: (args) => <HeadingWrapper {...args} />,
+  render: args => <HeadingWrapper {...args} />,
 };
 
 export default meta;

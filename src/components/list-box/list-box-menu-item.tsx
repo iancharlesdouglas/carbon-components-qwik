@@ -1,7 +1,7 @@
-import { QwikIntrinsicElements, Slot, component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
+import { QwikIntrinsicElements, Slot, component$, useSignal } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import classNames from 'classnames';
-import _ from 'lodash';
+import { removeProps } from '../../internal/objects/remove-props';
 
 /**
  * ListBoxMenuItem props
@@ -24,23 +24,21 @@ export const ListBoxMenuItem = component$((props: ListBoxMenuItemProps) => {
   const isTruncated = useSignal(false);
   const divElementRef = useSignal<Element>();
 
-  useVisibleTask$(({ track }) => {
-    track(divElementRef);
-    if (divElementRef.value) {
-      const divElement = divElementRef.value as HTMLDivElement;
-      const parentDivWidth = divElement.parentElement?.offsetWidth ?? divElement.offsetWidth;
-      isTruncated.value = parentDivWidth < divElement.offsetWidth;
-    }
-  });
-
   const classes = classNames(`${prefix}--list-box__menu-item`, {
     [`${prefix}--list-box__menu-item--active`]: isActive,
     [`${prefix}--list-box__menu-item--highlighted`]: isHighlighted,
   });
-  const sanitizedProps = _.omit(props, 'isActive', 'isHighlighted', 'title');
+  const sanitizedProps = removeProps(props, 'isActive', 'isHighlighted', 'title');
 
   return (
-    <div {...sanitizedProps} class={classes} title={isTruncated.value ? title : undefined} tabIndex={-1} ref={divElementRef} role="button">
+    <div
+      {...sanitizedProps}
+      class={classes}
+      title={isTruncated.value ? title : undefined}
+      tabIndex={-1}
+      ref={divElementRef}
+      role="button"
+    >
       <div class={`${prefix}--list-box__menu-item__option`}>
         <Slot />
       </div>

@@ -2,8 +2,8 @@ import { PropFunction, HTMLAttributes, Slot, component$, Component } from '@buil
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { IconProps } from 'carbon-icons-qwik';
 import { IconRenderProps } from '../../shared-props/icon-render-props';
-import _ from 'lodash';
 import classNames from 'classnames';
+import { removeProps } from '../../internal/objects/remove-props';
 
 /**
  * Anchor HTML element props
@@ -54,7 +54,12 @@ export const Link = component$((props: LinkProps) => {
     { [`${prefix}--link--${size}`]: size }
   );
   const rel = target === '_blank' ? 'noopener' : undefined;
-  const anchorProps: AnchorProps = _.omit({ ...props, 'aria-disabled': !!disabled }, 'size', 'renderIcon', 'inline');
+  const anchorProps: AnchorProps = removeProps(
+    { ...props, 'aria-disabled': !!disabled },
+    'size',
+    'renderIcon',
+    'inline'
+  );
 
   if (renderIcon && !inline) {
     const icon = renderIcon as Component<IconProps>;

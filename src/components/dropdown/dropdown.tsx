@@ -14,7 +14,6 @@ import {
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { formContext } from '../../internal/contexts/form-context';
 import classNames from 'classnames';
-import _ from 'lodash';
 import { ListBox } from '../list-box/list-box';
 import { ListBoxDimensions, ListBoxMenu } from '../list-box/list-box-menu';
 import { Checkmark, WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
@@ -23,6 +22,7 @@ import { ListBoxMenuItem } from '../list-box/list-box-menu-item';
 import { qombobox } from '../../internal/qombobox/qombobox';
 import { Keys, State, handleKeyDown } from '../../internal/qombobox/handle-keydown';
 import './dropdown.scss';
+import { removeProps } from '../../internal/objects/remove-props';
 
 /**
  * Item with a label property
@@ -182,7 +182,9 @@ export const Dropdown = component$((props: DropdownProps) => {
     [`${prefix}--visually-hidden`]: hideLabel,
   });
 
-  const helperTextClasses = classNames(`${prefix}--form__helper-text`, { [`${prefix}--form__helper-text--disabled`]: disabled });
+  const helperTextClasses = classNames(`${prefix}--form__helper-text`, {
+    [`${prefix}--form__helper-text--disabled`]: disabled,
+  });
 
   const wrapperClasses = classNames(`${prefix}--dropdown__wrapper`, `${prefix}--list-box__wrapper`, customClass, {
     [`${prefix}--dropdown__wrapper--inline`]: inline,
@@ -193,7 +195,7 @@ export const Dropdown = component$((props: DropdownProps) => {
     [`${prefix}--list-box__wrapper--fluid--focus`]: isFluid && isFocused && !state.isOpen,
   });
 
-  const sanitizedProps = _.omit(
+  const sanitizedProps = removeProps(
     props,
     'ariaLabel',
     'class',
@@ -241,7 +243,12 @@ export const Dropdown = component$((props: DropdownProps) => {
         id={id}
       >
         {invalid && <WarningFilled class={`${prefix}--list-box__invalid-icon`} size={16} />}
-        {showWarning && <WarningAltFilled class={`${prefix}--list-box__invalid-icon ${prefix}--list-box__invalid-icon--warning`} size={16} />}
+        {showWarning && (
+          <WarningAltFilled
+            class={`${prefix}--list-box__invalid-icon ${prefix}--list-box__invalid-icon--warning`}
+            size={16}
+          />
+        )}
         <div
           class={[`${prefix}--list-box__field`, readOnly ? `${prefix}--list-box__readonly` : undefined]}
           title={!readOnly && modifiedSelectedItem ? itemToString(modifiedSelectedItem) : !readOnly ? label : undefined}
@@ -277,7 +284,13 @@ export const Dropdown = component$((props: DropdownProps) => {
           })}
         >
           <span class={`${prefix}--list-box__label`}>
-            {(modifiedSelectedItem && (RenderSelectedItem ? <RenderSelectedItem item={modifiedSelectedItem} /> : itemToString(modifiedSelectedItem))) || label}
+            {(modifiedSelectedItem &&
+              (RenderSelectedItem ? (
+                <RenderSelectedItem item={modifiedSelectedItem} />
+              ) : (
+                itemToString(modifiedSelectedItem)
+              ))) ||
+              label}
           </span>
           {!readOnly && <ListBoxMenuIcon isOpen={state.isOpen} />}
         </div>
@@ -325,7 +338,9 @@ export const Dropdown = component$((props: DropdownProps) => {
                 >
                   {ItemToElement && <ItemToElement item={item} />}
                   {!ItemToElement && itemToString(item)}
-                  {itemSelected && !ItemToElement && <Checkmark class={`${prefix}--list-box__menu-item__selected-icon`} size={16} />}
+                  {itemSelected && !ItemToElement && (
+                    <Checkmark class={`${prefix}--list-box__menu-item__selected-icon`} size={16} />
+                  )}
                 </ListBoxMenuItem>
               );
             })}

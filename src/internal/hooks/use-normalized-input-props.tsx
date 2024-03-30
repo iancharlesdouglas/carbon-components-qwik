@@ -10,7 +10,13 @@ import { InputProps, NormalizedInputProps } from '../../shared-props/input-props
  * @param {boolean} Input.warn Component is in warning state
  * @returns {NormalizedInputProps} Normalized properties
  */
-export const useNormalizedInputProps = ({ id, readOnly, disabled, invalid, warn }: InputProps): NormalizedInputProps => ({
+export const useNormalizedInputProps = ({
+  id,
+  readOnly,
+  disabled,
+  invalid,
+  warn,
+}: InputProps): NormalizedInputProps => ({
   disabled: !readOnly && !!disabled,
   invalid: !readOnly && !!invalid!,
   invalidId: `${id}-error-msg`,

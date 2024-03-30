@@ -6,9 +6,9 @@ import { Button } from '../button/button';
 
 export const DropdownTestWrapper = component$(() => {
   const fruits: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
-  const newFruits = fruits.filter((fruit) => fruit !== 'Cherry');
+  const newFruits = fruits.filter(fruit => fruit !== 'Cherry');
   const fruitOptions = useSignal<Item[]>(fruits);
-  const selectedFruit = fruits.find((fruit) => fruit === 'Cherry');
+  const selectedFruit = fruits.find(fruit => fruit === 'Cherry');
   const selectedItem = useSignal<Item | undefined>(selectedFruit);
   return (
     <>

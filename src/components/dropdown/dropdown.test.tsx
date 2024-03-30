@@ -100,7 +100,7 @@ describe('Dropdown', () => {
       'warn',
       'warnText',
     ];
-    illegalAttrs.forEach((attr) => expect(listboxDiv.hasAttribute(attr), `Attribute: ${attr} unexpected`).toBeFalsy());
+    illegalAttrs.forEach(attr => expect(listboxDiv.hasAttribute(attr), `Attribute: ${attr} unexpected`).toBeFalsy());
   });
 
   it('renders a label with appropriate CSS classes if titleText is stipulated', async () => {
@@ -183,22 +183,36 @@ describe('Dropdown', () => {
     await render(
       <CarbonRoot>
         <Form>
-          <Dropdown id={objectItemsDropdown} selectedItem={selectedObjectItem} renderSelectedItem={SelectedItemRenderComp} items={[selectedObjectItem]} />
-          <Dropdown id={stringItemsDropdown} selectedItem={selectedStringItem} renderSelectedItem={SelectedItemRenderComp} items={[selectedStringItem]} />
+          <Dropdown
+            id={objectItemsDropdown}
+            selectedItem={selectedObjectItem}
+            renderSelectedItem={SelectedItemRenderComp}
+            items={[selectedObjectItem]}
+          />
+          <Dropdown
+            id={stringItemsDropdown}
+            selectedItem={selectedStringItem}
+            renderSelectedItem={SelectedItemRenderComp}
+            items={[selectedStringItem]}
+          />
         </Form>
       </CarbonRoot>
     );
 
-    const selectedObjectItemSpan = screen.querySelector(`div.cds--dropdown#${objectItemsDropdown} div.cds--list-box__field span`) as HTMLSpanElement;
+    const selectedObjectItemSpan = screen.querySelector(
+      `div.cds--dropdown#${objectItemsDropdown} div.cds--list-box__field span`
+    ) as HTMLSpanElement;
     expect(selectedObjectItemSpan.textContent).toEqual(label);
-    const selectedStringItemSpan = screen.querySelector(`div.cds--dropdown#${stringItemsDropdown} div.cds--list-box__field span`) as HTMLSpanElement;
+    const selectedStringItemSpan = screen.querySelector(
+      `div.cds--dropdown#${stringItemsDropdown} div.cds--list-box__field span`
+    ) as HTMLSpanElement;
     expect(selectedStringItemSpan.textContent).toEqual(label);
   });
 
   it('renders initially selected item', async () => {
     const { screen, render } = await createDOM();
     const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
-    const selectedItem = items.find((item) => item === 'Banana');
+    const selectedItem = items.find(item => item === 'Banana');
 
     await render(
       <CarbonRoot>
@@ -211,14 +225,16 @@ describe('Dropdown', () => {
 
     const selectedItemSpan = screen.querySelector('div.cds--dropdown div.cds--list-box__field span') as HTMLSpanElement;
     expect(selectedItemSpan.textContent).toEqual(selectedItem);
-    const invalidSelectedItemSpan = screen.querySelector('#invalid-selected-item div.cds--list-box__field span') as HTMLSpanElement;
+    const invalidSelectedItemSpan = screen.querySelector(
+      '#invalid-selected-item div.cds--list-box__field span'
+    ) as HTMLSpanElement;
     expect(invalidSelectedItemSpan.textContent).toEqual('');
   });
 
   it('renders first of a set of initially selected items', async () => {
     const { screen, render } = await createDOM();
     const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
-    const selectedItems = items.filter((item) => item === 'Banana' || item === 'Cherry');
+    const selectedItems = items.filter(item => item === 'Banana' || item === 'Cherry');
 
     await render(
       <CarbonRoot>
@@ -229,7 +245,7 @@ describe('Dropdown', () => {
     );
 
     const selectedItemSpan = screen.querySelector('div.cds--dropdown div.cds--list-box__field span') as HTMLSpanElement;
-    expect(selectedItemSpan.textContent).toEqual(selectedItems.find((item) => item === 'Banana'));
+    expect(selectedItemSpan.textContent).toEqual(selectedItems.find(item => item === 'Banana'));
   });
   it('renders helper text if supplied and the state allows it', async () => {
     const { screen, render } = await createDOM();
@@ -246,17 +262,23 @@ describe('Dropdown', () => {
       </CarbonRoot>
     );
 
-    const helperTextDiv = screen.querySelector(`div.cds--dropdown#${helperDropdownId} ~ div.cds--form__helper-text`) as HTMLDivElement;
+    const helperTextDiv = screen.querySelector(
+      `div.cds--dropdown#${helperDropdownId} ~ div.cds--form__helper-text`
+    ) as HTMLDivElement;
     expect(helperTextDiv.textContent).toEqual(helperText);
 
-    const noHelperTextDiv = screen.querySelector(`div.cds--dropdown#${noHelperDropdownId} ~ div.cds--form__helper-text`) as HTMLDivElement;
+    const noHelperTextDiv = screen.querySelector(
+      `div.cds--dropdown#${noHelperDropdownId} ~ div.cds--form__helper-text`
+    ) as HTMLDivElement;
     expect(noHelperTextDiv).toBeUndefined();
   });
 
   it('renders list box menu item objects as supplied', async () => {
     const { screen, render, userEvent } = await createDOM();
-    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'].map((label) => ({ label }));
-    const selectedItem = items.find((item) => (item as { label: string }).label === 'Banana');
+    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'].map(label => ({
+      label,
+    }));
+    const selectedItem = items.find(item => (item as { label: string }).label === 'Banana');
 
     await render(
       <CarbonRoot>
@@ -277,7 +299,7 @@ describe('Dropdown', () => {
   it('renders list box menu item strings as supplied', async () => {
     const { screen, render, userEvent } = await createDOM();
     const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
-    const selectedItem = items.find((item) => item === 'Banana');
+    const selectedItem = items.find(item => item === 'Banana');
 
     await render(
       <CarbonRoot>
@@ -298,7 +320,7 @@ describe('Dropdown', () => {
   it('invokes onChange callback when an item is selected with the mouse', async () => {
     const { screen, render, userEvent } = await createDOM();
     const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
-    const initialItem = items.find((item) => item === 'Banana');
+    const initialItem = items.find(item => item === 'Banana');
     type Selected = {
       item?: Item;
     };
@@ -341,7 +363,9 @@ describe('Dropdown', () => {
     const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
 
     const itemClass = 'item-component';
-    const ItemComponent = component$(({ item }: ItemProps) => <span class={itemClass}>{defaultItemToString(item)}</span>);
+    const ItemComponent = component$(({ item }: ItemProps) => (
+      <span class={itemClass}>{defaultItemToString(item)}</span>
+    ));
 
     await render(
       <CarbonRoot>
@@ -359,8 +383,12 @@ describe('Dropdown', () => {
 
   it('renders items with supplied IDs or keys', async () => {
     const { screen, render, userEvent } = await createDOM();
-    const itemsWithIds: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'].map((label) => ({ label, id: label }));
-    const itemsWithKeys: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'].map((label) => ({ label, key: label }));
+    const itemsWithIds: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'].map(
+      label => ({ label, id: label })
+    );
+    const itemsWithKeys: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'].map(
+      label => ({ label, key: label })
+    );
 
     await render(
       <CarbonRoot>
@@ -372,10 +400,18 @@ describe('Dropdown', () => {
     );
 
     await userEvent('div.cds--list-box__field', 'click');
-    const itemsWithIdsElements = Array.from(screen.querySelectorAll('#dropdown-with-ids div.cds--list-box__menu-item')) as HTMLDivElement[];
-    itemsWithIds.forEach((item, index) => expect(itemsWithIdsElements[index].getAttribute('id')).toEqual((item as unknown as { id: string }).id));
-    const itemsWithKeysElements = Array.from(screen.querySelectorAll('#dropdown-with-keys div.cds--list-box__menu-item')) as HTMLDivElement[];
-    itemsWithKeys.forEach((item, index) => expect(itemsWithKeysElements[index].getAttribute('id')).toEqual((item as unknown as { key: string }).key));
+    const itemsWithIdsElements = Array.from(
+      screen.querySelectorAll('#dropdown-with-ids div.cds--list-box__menu-item')
+    ) as HTMLDivElement[];
+    itemsWithIds.forEach((item, index) =>
+      expect(itemsWithIdsElements[index].getAttribute('id')).toEqual((item as unknown as { id: string }).id)
+    );
+    const itemsWithKeysElements = Array.from(
+      screen.querySelectorAll('#dropdown-with-keys div.cds--list-box__menu-item')
+    ) as HTMLDivElement[];
+    itemsWithKeys.forEach((item, index) =>
+      expect(itemsWithKeysElements[index].getAttribute('id')).toEqual((item as unknown as { key: string }).key)
+    );
   });
 
   it('opens the items menu when the Down Arrow key is pressed with the combobox having the focus', async () => {
@@ -423,7 +459,10 @@ describe('Dropdown', () => {
       </CarbonRoot>
     );
 
-    await userEvent('div.cds--list-box__field', 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => 'Alt' });
+    await userEvent('div.cds--list-box__field', 'keydown', {
+      keyCode: KeyCodes.UpArrow,
+      getModifierState: () => 'Alt',
+    });
     const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
     expect(listBoxDiv.childElementCount).toEqual(items.length);
   });
@@ -503,7 +542,10 @@ describe('Dropdown', () => {
       </CarbonRoot>
     );
 
-    await userEvent('div.cds--list-box__field', 'keydown', { keyCode: KeyCodes.DownArrow, getModifierState: () => false });
+    await userEvent('div.cds--list-box__field', 'keydown', {
+      keyCode: KeyCodes.DownArrow,
+      getModifierState: () => false,
+    });
     const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
     await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.DownArrow, getModifierState: () => false });
     const secondItem = screen.querySelectorAll('div.cds--list-box__menu-item')?.[1];
@@ -522,7 +564,10 @@ describe('Dropdown', () => {
       </CarbonRoot>
     );
 
-    await userEvent('div.cds--list-box__field', 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => false });
+    await userEvent('div.cds--list-box__field', 'keydown', {
+      keyCode: KeyCodes.UpArrow,
+      getModifierState: () => false,
+    });
     const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
     await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => false });
     const secondItem = screen.querySelectorAll('div.cds--list-box__menu-item')?.[0];
@@ -550,7 +595,10 @@ describe('Dropdown', () => {
       </CarbonRoot>
     );
 
-    await userEvent('div.cds--list-box__field', 'keydown', { keyCode: KeyCodes.DownArrow, getModifierState: () => false });
+    await userEvent('div.cds--list-box__field', 'keydown', {
+      keyCode: KeyCodes.DownArrow,
+      getModifierState: () => false,
+    });
     const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
     await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => true });
     await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => false }); // dummy event cycle to give handler a chance to run
@@ -574,12 +622,12 @@ describe('Dropdown', () => {
       'Huckleberry',
       'Ichigo',
       'Jackfruit',
-    ].map((item) => ({ label: item }));
+    ].map(item => ({ label: item }));
 
     await render(
       <CarbonRoot>
         <Form>
-          <Dropdown items={items} selectedItem={items.find((item) => (item as Labelled).label === 'Guava')} />
+          <Dropdown items={items} selectedItem={items.find(item => (item as Labelled).label === 'Guava')} />
         </Form>
       </CarbonRoot>
     );
@@ -621,7 +669,10 @@ describe('Dropdown', () => {
       </CarbonRoot>
     );
 
-    await userEvent('div.cds--list-box__field', 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => false });
+    await userEvent('div.cds--list-box__field', 'keydown', {
+      keyCode: KeyCodes.UpArrow,
+      getModifierState: () => false,
+    });
     const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
     await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => false });
     await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.Enter });

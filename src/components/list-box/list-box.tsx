@@ -2,7 +2,7 @@ import { QwikIntrinsicElements, QwikKeyboardEvent, component$, useContext, $, Sl
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { formContext } from '../../internal/contexts/form-context';
 import classNames from 'classnames';
-import _ from 'lodash';
+import { removeProps } from '../../internal/objects/remove-props';
 
 /**
  * ListBox props
@@ -34,7 +34,17 @@ export type ListBoxProps = QwikIntrinsicElements['div'] & {
 export const ListBox = component$((props: ListBoxProps) => {
   const prefix = usePrefix();
   const { isFluid } = useContext(formContext);
-  const { class: customClassName, size, type = 'default', disabled = false, isOpen = false, invalid = false, invalidText, warn, warnText } = props;
+  const {
+    class: customClassName,
+    size,
+    type = 'default',
+    disabled = false,
+    isOpen = false,
+    invalid = false,
+    invalidText,
+    warn,
+    warnText,
+  } = props;
   const showWarning = !invalid && warn;
   const classes = classNames(
     customClassName,
@@ -46,7 +56,18 @@ export const ListBox = component$((props: ListBoxProps) => {
     { [`${prefix}--list-box--invalid`]: invalid },
     { [`${prefix}--list-box--warning`]: showWarning }
   );
-  const sanitizedProps = _.omit(props, 'class', 'disabled', 'invalid', 'invalidText', 'isOpen', 'size', 'type', 'warn', 'warnText');
+  const sanitizedProps = removeProps(
+    props,
+    'class',
+    'disabled',
+    'invalid',
+    'invalidText',
+    'isOpen',
+    'size',
+    'type',
+    'warn',
+    'warnText'
+  );
   return (
     <>
       <div

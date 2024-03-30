@@ -20,8 +20,13 @@ describe('TextInput', () => {
     );
 
     const inputElement = screen.querySelectorAll('input')[0] as HTMLInputElement;
-    const expectedClasses = ['cds--text-input', 'cds--text-input--md', 'cds--text-input--invalid', 'cds--text-input--warning'];
-    expectedClasses.forEach((className) => expect(inputElement.classList.contains(className)));
+    const expectedClasses = [
+      'cds--text-input',
+      'cds--text-input--md',
+      'cds--text-input--invalid',
+      'cds--text-input--warning',
+    ];
+    expectedClasses.forEach(className => expect(inputElement.classList.contains(className)));
   });
 
   it('removes non-standard properties from rendered input element if supplied', async () => {
@@ -63,7 +68,7 @@ describe('TextInput', () => {
     );
 
     const inputElement = screen.querySelector('input') as HTMLInputElement;
-    nonStdProps.forEach((propName) => expect(!inputElement.hasAttribute(propName)));
+    nonStdProps.forEach(propName => expect(!inputElement.hasAttribute(propName)));
   });
 
   it('renders invalid text, an appropriate CSS class, and an error icon when state is "invalid"', async () => {

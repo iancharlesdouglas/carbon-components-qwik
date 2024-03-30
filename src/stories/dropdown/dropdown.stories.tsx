@@ -8,7 +8,7 @@ import { action } from '@storybook/addon-actions';
 import './dropdown.scss';
 import { Dropdown, DropdownProps, Item } from '../../components/dropdown/dropdown';
 
-const DropdownWrapper = component$<DropdownProps>((props) => {
+const DropdownWrapper = component$<DropdownProps>(props => {
   const items: Item[] | undefined = [
     'Apple',
     'Banana',
@@ -94,7 +94,7 @@ const meta: Meta<DropdownProps> = {
     onSelect$: { description: 'onSelect handler' },
   },
   tags: ['autodocs'],
-  render: (args) => <DropdownWrapper {...args} />,
+  render: args => <DropdownWrapper {...args} />,
 };
 
 export default meta;
@@ -104,7 +104,7 @@ type Story = StoryObj<DropdownProps>;
 export const Default: Story = {
   args: {
     helperText: 'Optional',
-    onSelect$: $((e: Item) => {
+    onSelect$: $((e: unknown) => {
       action('selected')(e);
     }),
   },

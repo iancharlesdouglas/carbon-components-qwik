@@ -1,8 +1,8 @@
 import { QwikIntrinsicElements, Slot, component$, useContextProvider } from '@builder.io/qwik';
 import classNames from 'classnames';
-import _ from 'lodash';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { FormContext, formContext } from '../../internal/contexts/form-context';
+import { removeProps } from '../../internal/objects/remove-props';
 
 /**
  * Form props
@@ -19,7 +19,7 @@ export const Form = component$((props: FormProps) => {
   const prefix = usePrefix();
   const classes = classNames(`${prefix}--form`, customClass);
   useContextProvider<FormContext>(formContext, { isFluid: false });
-  const propsWithoutClass = _.omit(props, 'class');
+  const propsWithoutClass = removeProps(props, 'class');
   return (
     <form class={classes} {...propsWithoutClass}>
       <Slot />

@@ -53,16 +53,16 @@ export const qombobox = (
   const listBoxId = `listbox-${actualId}`;
   const labelId = titleText ? `${actualId}--label` : undefined;
   const hasPopup: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog' | undefined = 'listbox';
-  const itemIds = items ? items.map((item) => getItemId(item)) : undefined;
+  const itemIds = items ? items.map(item => getItemId(item)) : undefined;
   let selectedIndex: number | undefined;
   let selectedId: string | undefined;
   let selectedOption: Item | undefined;
   if (items && selectedItem) {
-    selectedIndex = items.findIndex((item) => itemsEqual(item, selectedItem));
+    selectedIndex = items.findIndex(item => itemsEqual(item, selectedItem));
     selectedOption = selectedItem;
   } else if (items && initialSelectedItem) {
     const initialItems = Array.isArray(initialSelectedItem) ? initialSelectedItem : [initialSelectedItem];
-    selectedIndex = items.findIndex((item) => item === initialItems[0]);
+    selectedIndex = items.findIndex(item => item === initialItems[0]);
     selectedOption = initialItems[0];
   }
   if (selectedIndex !== undefined) {
@@ -86,7 +86,7 @@ export const qombobox = (
       disabled,
       tabIndex: 0,
     },
-    items: itemIds?.map((itemId) => ({ id: itemId, role: 'option', 'aria-selected': itemId === selectedId })),
+    items: itemIds?.map(itemId => ({ id: itemId, role: 'option', 'aria-selected': itemId === selectedId })),
     selectedOption,
   };
 };

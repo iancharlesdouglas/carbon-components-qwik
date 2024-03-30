@@ -19,7 +19,7 @@ describe('Button', () => {
     const btnElement = screen.querySelector('button') as HTMLButtonElement;
     expect(btnElement.textContent).toEqual(content);
     const expectedClasses = ['cds--btn', 'cds--btn--md', 'cds--btn--primary'];
-    expectedClasses.forEach((className) => expect(btnElement.classList.contains(className)));
+    expectedClasses.forEach(className => expect(btnElement.classList.contains(className)));
   });
 
   it('supports a custom CSS class', async () => {
@@ -50,7 +50,7 @@ describe('Button', () => {
   });
 
   it('sets the appropriate CSS class for the stipulated size', async () => {
-    const sizes = ['sm', 'md', 'lg', 'xl', '2xl'].map((size) => size as ButtonSize);
+    const sizes = ['sm', 'md', 'lg', 'xl', '2xl'].map(size => size as ButtonSize);
 
     sizes.forEach(async (size: ButtonSize) => {
       const { screen, render } = await createDOM();
@@ -67,9 +67,16 @@ describe('Button', () => {
   });
 
   it('sets the appropriate CSS class for the stipulated kind', async () => {
-    const kinds = ['primary', 'secondary', 'tertiary', 'danger', 'danger--primary', 'danger--secondary', 'danger--tertiary', 'ghost'].map(
-      (kind) => kind as ButtonKind
-    );
+    const kinds = [
+      'primary',
+      'secondary',
+      'tertiary',
+      'danger',
+      'danger--primary',
+      'danger--secondary',
+      'danger--tertiary',
+      'ghost',
+    ].map(kind => kind as ButtonKind);
 
     kinds.forEach(async (kind: ButtonKind) => {
       const { screen, render } = await createDOM();
@@ -185,6 +192,6 @@ describe('Button', () => {
 
     const btnElement = screen.querySelector('button') as HTMLButtonElement;
 
-    nonStdAttrs.forEach((attr) => expect(!btnElement.hasAttribute(attr)));
+    nonStdAttrs.forEach(attr => expect(!btnElement.hasAttribute(attr)));
   });
 });

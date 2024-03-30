@@ -2,8 +2,8 @@ import { Component, HTMLAttributes, PropFunction, Slot, component$, useId } from
 import { IconProps } from 'carbon-icons-qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { IconRenderProps } from '../../shared-props/icon-render-props';
-import _ from 'lodash';
 import classNames from 'classnames';
+import { removeProps } from '../../internal/objects/remove-props';
 
 /**
  * Props common to both button and anchor elements
@@ -30,7 +30,15 @@ export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 /**
  * Button kinds
  */
-export type ButtonKind = 'primary' | 'secondary' | 'tertiary' | 'danger' | 'danger--primary' | 'danger--secondary' | 'danger--tertiary' | 'ghost';
+export type ButtonKind =
+  | 'primary'
+  | 'secondary'
+  | 'tertiary'
+  | 'danger'
+  | 'danger--primary'
+  | 'danger--secondary'
+  | 'danger--tertiary'
+  | 'ghost';
 
 /**
  * Button HTML element props (passed to an element)
@@ -88,7 +96,18 @@ export type ButtonProps = ButtonElementProps & {
 export const Button = component$((props: ButtonProps) => {
   const prefix = usePrefix();
 
-  const { class: className, size = 'md', isExpressive, kind = 'primary', disabled, hasIconOnly, renderIcon, isSelected, dangerDescription, href } = props;
+  const {
+    class: className,
+    size = 'md',
+    isExpressive,
+    kind = 'primary',
+    disabled,
+    hasIconOnly,
+    renderIcon,
+    isSelected,
+    dangerDescription,
+    href,
+  } = props;
 
   const classes = classNames(
     `${prefix}--btn`,
@@ -111,7 +130,7 @@ export const Button = component$((props: ButtonProps) => {
 
   const commonProps = props as ButtonOrAnchorElementProps;
 
-  const buttonElementProps = _.omit(
+  const buttonElementProps = removeProps(
     {
       ...props,
       'aria-describedby': dangerButtonKinds.includes(kind) ? assistiveId : undefined,
