@@ -1,6 +1,6 @@
 {
   "name": "carbon-components-qwik",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Carbon Design System components implemented as Qwik components",
   "license": "Apache-2.0",
   "main": "./lib/index.qwik.mjs",
@@ -48,6 +48,7 @@
     "@storybook/addon-interactions": "^8.0.5",
     "@storybook/addon-links": "^8.0.5",
     "@storybook/blocks": "^8.0.5",
+    "@storybook/test": "^8.0.5",
     "@types/eslint": "8.37.0",
     "@types/jsdom": "^21.1.6",
     "@types/lodash": "^4.17.0",
@@ -65,7 +66,7 @@
     "eslint-plugin-spellcheck": "^0.0.20",
     "eslint-plugin-storybook": "^0.8.0",
     "immutable": "^4.3.5",
-    "np": "7.6.1",
+    "np": "10.0.2",
     "prettier": "3.2.5",
     "sass": "^1.72.0",
     "short-unique-id": "^4.4.4",
@@ -92,8 +93,5 @@
   ],
   "contributors": [
     "Ian Douglas (https://github.com/iancharlesdouglas"
-  ],
-  "dependencies": {
-    "@storybook/test": "^8.0.5"
-  }
+  ]
 }
