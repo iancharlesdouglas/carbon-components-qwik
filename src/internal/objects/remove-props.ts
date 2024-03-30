@@ -1,5 +1,5 @@
 /**
- * Returns a new object without listed properties from the entity
+ * Returns a new object copied from the entity but without the listed properties
  * @param entity Entity
  * @param props Properties to remove
  * @returns New object
