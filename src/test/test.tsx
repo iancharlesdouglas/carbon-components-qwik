@@ -34,7 +34,11 @@ const Test = component$(() => {
     'Huckleberry',
     'Ichigo',
     'Jackfruit',
-  ].map(label => ({ label, key: label }));
+  ].map(label => ({
+    label,
+    key: label,
+    disabled: label === 'Huckleberry' || label === 'Apple' || label === 'Jackfruit' || label === 'Banana',
+  }));
   const newItems = items.filter(item => (item as Labelled).label !== 'Banana');
   const itemOptions = useSignal(items);
   const selectedItem = useSignal<Item | undefined>(items.find(item => (item as { label: string }).label === 'Guava')!);

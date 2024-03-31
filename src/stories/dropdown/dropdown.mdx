@@ -1,0 +1,52 @@
+import { Canvas, Meta } from '@storybook/blocks';
+import * as DropdownStories from './dropdown.stories.tsx';
+
+<Meta of={DropdownStories} />
+
+# Dropdown
+
+Shows a list of options from which to select.  A popup appears when the user clicks or uses the keyboard to open the listbox.
+
+The currently selected item is shown in the combobox field when the listbox is closed.
+
+## Features
+- Single option selection 
+- Listbox may be navigated using a pointing device or the keyboard -- including arrow, PageUp/PageDown and Home/End keys
+- User can type ahead to select a listbox item (typing e.g. `ba` for Banana) per WAI specifications
+- Listbox popup may be positioned at `bottom` or `top` of field (`direction` property)
+- Placeholder can be rendered if no option is selected
+- Warning and error states with appropriate icons and borders, and state messages
+- Label and helper text 
+- Label may be displayed above field or to its left (`type`  property: `inline`)
+- Different sizes (`sm`, `md` and `lg`)
+- Full [WAI Combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/) accessibility compliance.
+
+## How To
+
+### Define Items
+You can define listbox items as strings or objects.  
+
+#### Defining Items as Objects
+If you define items as objects, each object must have a `label` property that contains the item's name.
+E.g.
+```
+const fruits = [{ label: 'Apple '}, { label: 'Pear' }];
+```
+
+#### Disabling Items in the List
+Each item can be defined with a `disabled` property.  E.g. to disable the second option:
+```
+const fruits = [{ label: 'Apple '}, { label: 'Pear', disabled: true }];
+```
+While it is not possible for the user to select a disabled item, it is possible to set the `selectedItem` programatically to a disabled item.
+You may wish to do this if you want to show an item previously selected in error.
+
+### Set or Clear the Current Selection
+
+#### Set current selection
+Set the `selectedItem` property to the required item.
+
+#### Clear current selection
+Set the `selectedItem` property to `undefined`.
+
+<Canvas of={DropdownStories.Default} />

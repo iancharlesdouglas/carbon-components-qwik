@@ -2,6 +2,7 @@ import { PropFunction, QwikIntrinsicElements, Slot, component$, useSignal, useVi
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { Item } from '../dropdown/dropdown';
 import { removeProps } from '../../internal/objects/remove-props';
+import { itemsEqual } from '../../internal/qombobox/items-equal';
 
 /**
  * Measured dimensions
@@ -41,7 +42,7 @@ export const ListBoxMenu = component$((props: ListBoxMenuProps) => {
     if (items && focusItem && listBoxElement.value) {
       const children = Array.from(listBoxElement.value.children);
       const itemHeight = children[0]?.clientHeight;
-      const highlightedIndex = items.indexOf(focusItem);
+      const highlightedIndex = items.findIndex(item => itemsEqual(item, focusItem));
       if (highlightedIndex > -1) {
         const itemTop = highlightedIndex * itemHeight;
         if (itemTop < listBoxElement.value.scrollTop) {

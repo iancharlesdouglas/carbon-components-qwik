@@ -217,8 +217,8 @@ describe('Dropdown', () => {
     await render(
       <CarbonRoot>
         <Form>
-          <Dropdown initialSelectedItem={selectedItem} items={items} />
-          <Dropdown initialSelectedItem={'Nonesuch'} items={items} id="invalid-selected-item" />
+          <Dropdown selectedItem={selectedItem} items={items} />
+          <Dropdown selectedItem={'Nonesuch'} items={items} id="invalid-selected-item" />
         </Form>
       </CarbonRoot>
     );
@@ -231,22 +231,6 @@ describe('Dropdown', () => {
     expect(invalidSelectedItemSpan.textContent).toEqual('');
   });
 
-  it('renders first of a set of initially selected items', async () => {
-    const { screen, render } = await createDOM();
-    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
-    const selectedItems = items.filter(item => item === 'Banana' || item === 'Cherry');
-
-    await render(
-      <CarbonRoot>
-        <Form>
-          <Dropdown initialSelectedItem={selectedItems} items={items} />
-        </Form>
-      </CarbonRoot>
-    );
-
-    const selectedItemSpan = screen.querySelector('div.cds--dropdown div.cds--list-box__field span') as HTMLSpanElement;
-    expect(selectedItemSpan.textContent).toEqual(selectedItems.find(item => item === 'Banana'));
-  });
   it('renders helper text if supplied and the state allows it', async () => {
     const { screen, render } = await createDOM();
     const helperText = 'Optional';
@@ -430,6 +414,7 @@ describe('Dropdown', () => {
     const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
     expect(listBoxDiv.childElementCount).toEqual(items.length);
   });
+
   it('opens the items menu when the Up Arrow key is pressed with the combobox having the focus', async () => {
     const { screen, render, userEvent } = await createDOM();
     const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];

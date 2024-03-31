@@ -5,14 +5,16 @@ import { removeProps } from '../../internal/objects/remove-props';
 
 /**
  * ListBoxMenuItem props
- * @property {boolean} isActive - Whether the menu item is active (selected)
- * @property {boolean} isHighlighted - Whether the menu item is highlighted
- * @property {string} title - Title to show in tooltip
+ * @property isActive - Whether the menu item is active (selected)
+ * @property isHighlighted - Whether the menu item is highlighted
+ * @property title - Title to show in tooltip
+ * @property disabled - Whether item is disabled
  */
 export type ListBoxMenuItemProps = QwikIntrinsicElements['div'] & {
   isActive: boolean;
   isHighlighted: boolean;
   title?: string;
+  disabled?: boolean;
 };
 
 /**

@@ -19,47 +19,47 @@ import { ListBoxDimensions, ListBoxMenu } from '../list-box/list-box-menu';
 import { Checkmark, WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
 import { ListBoxMenuIcon } from '../list-box/list-box-menu-icon';
 import { ListBoxMenuItem } from '../list-box/list-box-menu-item';
-import { qombobox } from '../../internal/qombobox/qombobox';
-import { Keys, State, handleKeyDown } from '../../internal/qombobox/handle-keydown';
+import { ComboboxState, qombobox } from '../../internal/qombobox/qombobox';
+import { Keys, handleKeyDown } from '../../internal/qombobox/handle-keydown';
 import './dropdown.scss';
 import { removeProps } from '../../internal/objects/remove-props';
+import { itemsEqual } from '../../internal/qombobox/items-equal';
+import { itemDisabled } from '../../internal/qombobox/item-disabled';
 
 /**
- * Item with a label property
+ * Listbox item that contains a label
+ * @property label - Item label
  */
 export type Labelled = {
   label: string;
 };
 
 /**
- * List item type
+ * Listbox item that is an object
+ * @property disabled - Whether disabled
  */
-export type Item = string | Labelled;
+export type ObjectItem = Labelled & { disabled?: boolean };
+
+/**
+ * Listbox item
+ */
+export type Item = string | ObjectItem;
 
 /**
  * Function that takes an item and returns a string representation of it
  */
-export type ItemToString = (item: Item) => string;
+export type ItemToString = (item: Item | undefined) => string | undefined;
 
 /**
  * Returns the string representation of an item (either the label or the item itself if it is a string)
  * @param {Item} item - Item to render
  * @returns {string} String representation
  */
-export const defaultItemToString: ItemToString = (item: Item) => {
+export const defaultItemToString: ItemToString = (item: Item | undefined) => {
   if (typeof item === 'string') {
     return item;
   }
   return item?.label;
-};
-
-const itemsEqual = (item1: Item, item2: Item) => {
-  if (typeof item1 === 'string' && typeof item2 === 'string') {
-    return item1 === item2;
-  }
-  const labelledItem1 = item1 as Labelled;
-  const labelledItem2 = item2 as Labelled;
-  return labelledItem1.label === labelledItem2.label;
 };
 
 /**
@@ -81,19 +81,18 @@ export type DropdownProps = QwikIntrinsicElements['div'] & {
   helperText?: string;
   hideLabel?: boolean;
   id?: string;
-  initialSelectedItem?: Item | Item[];
   invalid?: boolean;
   invalidText?: string;
+  items?: Item[];
   itemToElement?: Component<ItemProps>;
   itemToString?: ItemToString;
-  items?: Item[];
-  placeholder?: string;
+  label?: string;
   onSelect$?: PropFunction<(item: Item) => void>;
+  placeholder?: string;
   readOnly?: boolean;
   renderSelectedItem?: Component<ItemProps>;
-  size?: 'sm' | 'md' | 'lg';
   selectedItem?: Item;
-  label?: string;
+  size?: 'sm' | 'md' | 'lg';
   translateWithId?: () => string;
   type?: 'default' | 'inline';
   warn?: boolean;
@@ -107,18 +106,19 @@ export const Dropdown = component$((props: DropdownProps) => {
   const prefix = usePrefix();
   const { isFluid } = useContext(formContext);
   const isFocused = useSignal(false);
-  const stateObj: State = { isOpen: false };
+  const { disabled = false, id: stipulatedId, label: titleText, items, selectedItem: declaredSelectedItem } = props;
+  const stateObj: ComboboxState = {
+    isOpen: false,
+    selectedItem: declaredSelectedItem,
+    highlightedItem: declaredSelectedItem,
+  };
   const state = useStore(stateObj);
-  const { disabled = false, id: stipulatedId, label: titleText, items, initialSelectedItem, selectedItem } = props;
   const {
     id: modifiedId,
     comboBox: comboBoxAttrs,
     items: itemAttrs,
     listBox: listBoxAttrs,
-    selectedOption: modifiedSelectedItem,
-  } = qombobox(state.isOpen, disabled, stipulatedId, titleText, items, initialSelectedItem, selectedItem);
-  const selectedOption = useSignal(modifiedSelectedItem);
-  const highlightedOption = useSignal<Item>();
+  } = qombobox(state, disabled, stipulatedId, titleText, items);
   const listBoxElement = useSignal<Element>();
   const listBoxDimensions = useStore<ListBoxDimensions>({ height: 0, itemHeight: 0, visibleRows: 0 });
   const comboboxElement = useSignal<Element>();
@@ -133,7 +133,7 @@ export const Dropdown = component$((props: DropdownProps) => {
     invalidText,
     itemToElement: ItemToElement,
     itemToString = defaultItemToString,
-    placeholder: label,
+    placeholder,
     onSelect$,
     readOnly,
     renderSelectedItem: RenderSelectedItem,
@@ -142,6 +142,25 @@ export const Dropdown = component$((props: DropdownProps) => {
     warn = false,
     warnText,
   } = props;
+
+  useTask$(({ track }) => {
+    track(() => declaredSelectedItem);
+    state.selectedItem = declaredSelectedItem;
+    if (!declaredSelectedItem) {
+      state.highlightedItem = undefined;
+    } else if (items && !items.some(item => itemsEqual(item, declaredSelectedItem))) {
+      state.selectedItem = undefined;
+      state.highlightedItem = undefined;
+    }
+  });
+
+  useTask$(({ track }) => {
+    track(() => items);
+    if (state.selectedItem && !items?.some(item => itemsEqual(item, state.selectedItem))) {
+      state.selectedItem = undefined;
+      state.highlightedItem = undefined;
+    }
+  });
 
   const keysObj: Keys = { typed: [], reset: false };
   const keys = useStore(keysObj);
@@ -251,7 +270,9 @@ export const Dropdown = component$((props: DropdownProps) => {
         )}
         <div
           class={[`${prefix}--list-box__field`, readOnly ? `${prefix}--list-box__readonly` : undefined]}
-          title={!readOnly && modifiedSelectedItem ? itemToString(modifiedSelectedItem) : !readOnly ? label : undefined}
+          title={
+            !readOnly && state.selectedItem ? itemToString(state.selectedItem) : !readOnly ? placeholder : undefined
+          }
           {...comboBoxAttrs}
           ref={comboboxElement}
           tabIndex={0}
@@ -259,18 +280,7 @@ export const Dropdown = component$((props: DropdownProps) => {
             !readOnly && (state.isOpen = !state.isOpen);
           })}
           onKeyDown$={$((event: QwikKeyboardEvent<HTMLDivElement>) =>
-            handleKeyDown(
-              event,
-              keys,
-              highlightedOption,
-              items,
-              state,
-              modifiedSelectedItem,
-              onSelect$,
-              listBoxDimensions,
-              defaultItemToString,
-              comboboxElement
-            )
+            handleKeyDown(event, keys, items, state, onSelect$, listBoxDimensions, defaultItemToString, comboboxElement)
           )}
           document:onClick$={$((event: QwikMouseEvent) => {
             const element = event.target as HTMLElement;
@@ -284,13 +294,13 @@ export const Dropdown = component$((props: DropdownProps) => {
           })}
         >
           <span class={`${prefix}--list-box__label`}>
-            {(modifiedSelectedItem &&
+            {(state.selectedItem &&
               (RenderSelectedItem ? (
-                <RenderSelectedItem item={modifiedSelectedItem} />
+                <RenderSelectedItem item={state.selectedItem} />
               ) : (
-                itemToString(modifiedSelectedItem)
+                itemToString(state.selectedItem)
               ))) ||
-              label}
+              placeholder}
           </span>
           {!readOnly && <ListBoxMenuIcon isOpen={state.isOpen} />}
         </div>
@@ -298,21 +308,10 @@ export const Dropdown = component$((props: DropdownProps) => {
           {...listBoxAttrs}
           ref={listBoxElement}
           items={items}
-          highlightedItem={highlightedOption.value}
-          selectedItem={modifiedSelectedItem}
+          highlightedItem={state.highlightedItem}
+          selectedItem={state.selectedItem}
           onKeyDown$={$((event: QwikKeyboardEvent<HTMLDivElement>) =>
-            handleKeyDown(
-              event,
-              keys,
-              highlightedOption,
-              items,
-              state,
-              modifiedSelectedItem,
-              onSelect$,
-              listBoxDimensions,
-              defaultItemToString,
-              comboboxElement
-            )
+            handleKeyDown(event, keys, items, state, onSelect$, listBoxDimensions, defaultItemToString, comboboxElement)
           )}
           onMeasure$={$((dimensions: ListBoxDimensions) => {
             listBoxDimensions.visibleRows = dimensions.visibleRows;
@@ -322,18 +321,21 @@ export const Dropdown = component$((props: DropdownProps) => {
           {state.isOpen &&
             items?.map((item: Item, index: number) => {
               const title = itemToString(item);
-              const itemSelected = modifiedSelectedItem ? itemsEqual(modifiedSelectedItem, item) : undefined;
+              const itemSelected = state.selectedItem ? itemsEqual(state.selectedItem, item) : undefined;
               return (
                 <ListBoxMenuItem
                   key={itemAttrs?.[index].id}
                   isActive={!!itemSelected}
-                  isHighlighted={highlightedOption.value ? itemsEqual(highlightedOption.value, item) : false}
+                  isHighlighted={state.highlightedItem ? itemsEqual(state.highlightedItem, item) : false}
                   title={title}
+                  disabled={itemDisabled(item)}
                   {...itemAttrs?.[index]}
                   onClick$={$(() => {
-                    selectedOption.value = item;
-                    state.isOpen = false;
-                    onSelect$ && onSelect$(item);
+                    if (!itemDisabled(item)) {
+                      state.selectedItem = item;
+                      state.isOpen = false;
+                      onSelect$ && onSelect$(item);
+                    }
                   })}
                 >
                   {ItemToElement && <ItemToElement item={item} />}

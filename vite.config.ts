@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import { qwikVite } from '@builder.io/qwik/optimizer';
+import path from 'path';
 
 export default defineConfig(() => {
   return {
@@ -8,7 +9,7 @@ export default defineConfig(() => {
       lib: {
         entry: './src/index.ts',
         formats: ['es', 'cjs'],
-        fileName: (format) => `index.qwik.${format === 'es' ? 'mjs' : 'cjs'}`,
+        fileName: format => `index.qwik.${format === 'es' ? 'mjs' : 'cjs'}`,
       },
     },
     test: {
@@ -22,5 +23,10 @@ export default defineConfig(() => {
     },
     plugins: [qwikVite()],
     publicDir: './public',
+    resolve: {
+      alias: {
+        '~': path.resolve(__dirname, './node_modules'),
+      },
+    },
   };
 });

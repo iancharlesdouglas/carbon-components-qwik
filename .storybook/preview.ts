@@ -1,4 +1,4 @@
-const preview: Preview = {
+const preview = {
   parameters: {
     controls: {
       matchers: {
@@ -6,6 +6,7 @@ const preview: Preview = {
         date: /Date$/,
       },
     },
+    layout: 'padded',
   },
 };
 

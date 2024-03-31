@@ -1,5 +1,15 @@
-import { Item, Labelled } from '../../components/dropdown/dropdown';
+import { Signal } from '@builder.io/qwik';
+import { Item } from '../../components/dropdown/dropdown';
 import { uniqueId } from '../unique/unique-id';
+
+/**
+ * Combobox listbox popup state
+ */
+export type ComboboxState = {
+  isOpen: boolean;
+  highlightedItem: Item | undefined;
+  selectedItem: Item | undefined;
+};
 
 /**
  * Return value of qombobox function
@@ -26,51 +36,31 @@ export type QomboboxReturn = {
     tabIndex: number;
   };
   items?: { id: string; role: string; 'aria-selected': boolean }[];
-  selectedOption?: Item;
+  selectedItem?: Signal<Item | undefined>;
 };
 
 /**
  * Derives combobox ARIA attributes
- * @param isOpen - Whether the combobox listbox popup is currently open
- * @param disabled - Whether the combobox control is disabled
- * @param id - ID of the control
- * @param titleText - Title text for label
- * @param items - Items in the listbox
- * @param initialSelectedItem - Initially selected item/s
- * @param selectedItem - Currently selected item
+ * @param state State (whether open, selected item)
+ * @param disabled Whether the combobox control is disabled
+ * @param id ID of the control
+ * @param titleText Title text for label
+ * @param items Items in the listbox
  * @returns Aria information
  */
 export const qombobox = (
-  isOpen: boolean,
+  state: ComboboxState,
   disabled: boolean,
   id?: string,
   titleText?: string,
-  items?: Item[],
-  initialSelectedItem?: Item | Item[],
-  selectedItem?: Item
+  items?: Item[]
 ): QomboboxReturn => {
   const actualId = id ?? `combobox-${uniqueId()}`;
   const listBoxId = `listbox-${actualId}`;
   const labelId = titleText ? `${actualId}--label` : undefined;
   const hasPopup: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog' | undefined = 'listbox';
   const itemIds = items ? items.map(item => getItemId(item)) : undefined;
-  let selectedIndex: number | undefined;
   let selectedId: string | undefined;
-  let selectedOption: Item | undefined;
-  if (items && selectedItem) {
-    selectedIndex = items.findIndex(item => itemsEqual(item, selectedItem));
-    selectedOption = selectedItem;
-  } else if (items && initialSelectedItem) {
-    const initialItems = Array.isArray(initialSelectedItem) ? initialSelectedItem : [initialSelectedItem];
-    selectedIndex = items.findIndex(item => item === initialItems[0]);
-    selectedOption = initialItems[0];
-  }
-  if (selectedIndex !== undefined) {
-    selectedId = selectedIndex > -1 ? itemIds?.[selectedIndex] : undefined;
-    if (selectedIndex == -1) {
-      selectedOption = undefined;
-    }
-  }
   return {
     id: actualId,
     label: { id: labelId },
@@ -78,16 +68,15 @@ export const qombobox = (
     comboBox: {
       role: 'combobox',
       'aria-controls': listBoxId,
-      'aria-expanded': isOpen,
+      'aria-expanded': state.isOpen,
       'aria-haspopup': hasPopup,
       'aria-label': 'Open menu',
       'aria-disabled': disabled,
-      'aria-activedescendant': isOpen ? selectedId : undefined,
+      'aria-activedescendant': state.isOpen ? selectedId : undefined,
       disabled,
       tabIndex: 0,
     },
     items: itemIds?.map(itemId => ({ id: itemId, role: 'option', 'aria-selected': itemId === selectedId })),
-    selectedOption,
   };
 };
 
@@ -100,13 +89,4 @@ const getItemId = (item: Item) => {
     return (item as unknown as { key: string }).key;
   }
   return uniqueId();
-};
-
-const itemsEqual = (item1: Item, item2: Item) => {
-  if (typeof item1 === 'string' && typeof item2 === 'string') {
-    return item1 === item2;
-  }
-  const labelledItem1 = item1 as Labelled;
-  const labelledItem2 = item2 as Labelled;
-  return labelledItem1.label === labelledItem2.label;
 };

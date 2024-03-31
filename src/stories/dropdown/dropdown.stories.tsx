@@ -8,28 +8,36 @@ import { action } from '@storybook/addon-actions';
 import './dropdown.scss';
 import { Dropdown, DropdownProps, Item } from '../../components/dropdown/dropdown';
 
-const DropdownWrapper = component$<DropdownProps>(props => {
-  const items: Item[] | undefined = [
-    'Apple',
-    'Banana',
-    'Blackberry',
-    'Blueberry',
-    'Cherry',
-    'Dragonfruit',
-    'Durian',
-    'Elderberry',
-    'Fig',
-    'Guava',
-    'Huckleberry',
-    'Ichigo',
-    'Jackfruit',
-  ];
+const fruits = [
+  'Apple',
+  'Banana',
+  'Blackberry',
+  'Blueberry',
+  'Cherry',
+  'Dragonfruit',
+  'Durian',
+  'Elderberry',
+  'Fig',
+  'Guava',
+  'Huckleberry',
+  'Ichigo',
+  'Jackfruit',
+];
+
+/**
+ * Dropdown containing complex (object) list items, some of which are disabled
+ */
+const ComplexDropdown = component$<DropdownProps>(props => {
+  const items: Item[] | undefined = fruits.map(fruit => ({
+    label: fruit,
+    disabled: fruit === 'Jackfruit' || fruit === 'Huckleberry',
+  }));
   const propsWithItems = { ...props, items };
   return (
     <CarbonRoot>
       <Form>
         <Grid>
-          <Column lg={4} md={3} sm={2} style="margin: 13rem 0">
+          <Column lg={4} md={3} sm={2} style="margin: 11rem 0">
             <Dropdown {...propsWithItems}></Dropdown>
           </Column>
         </Grid>
@@ -63,21 +71,7 @@ const meta: Meta<DropdownProps> = {
     readOnly: { description: 'Set whether read-only' },
     selectedItem: {
       control: { type: 'select' },
-      options: [
-        'Apple',
-        'Banana',
-        'Blackberry',
-        'Blueberry',
-        'Cherry',
-        'Dragonfruit',
-        'Durian',
-        'Elderberry',
-        'Fig',
-        'Guava',
-        'Huckleberry',
-        'Ichigo',
-        'Jackfruit',
-      ],
+      options: fruits,
       description: 'Set initially selected item',
     },
     size: {
@@ -93,8 +87,7 @@ const meta: Meta<DropdownProps> = {
     },
     onSelect$: { description: 'onSelect handler' },
   },
-  tags: ['autodocs'],
-  render: args => <DropdownWrapper {...args} />,
+  render: args => <ComplexDropdown {...args} />,
 };
 
 export default meta;
@@ -125,6 +118,7 @@ export const Invalid: Story = {
   args: {
     invalid: true,
     invalidText: 'Error message',
+    selectedItem: { label: 'Huckleberry' },
     ...Default.args,
   },
   argTypes: { ...Default.argTypes },
@@ -134,7 +128,7 @@ export const Disabled: Story = {
   args: {
     ...Default.args,
     placeholder: undefined,
-    selectedItem: 'Banana',
+    selectedItem: { label: 'Banana' },
     disabled: true,
   },
   argTypes: { ...Default.argTypes },
@@ -147,7 +141,7 @@ export const ReadOnly: Story = {
     readOnly: true,
     placeholder: undefined,
     helperText: '',
-    selectedItem: 'Banana',
+    selectedItem: { label: 'Banana' },
   },
   argTypes: { ...Default.argTypes },
 };
