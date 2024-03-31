@@ -6,10 +6,8 @@ import {
   useContext,
   useSignal,
   $,
-  QwikKeyboardEvent,
   useStore,
   useTask$,
-  QwikMouseEvent,
 } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { formContext } from '../../internal/contexts/form-context';
@@ -279,10 +277,10 @@ export const Dropdown = component$((props: DropdownProps) => {
           onClick$={$(() => {
             !readOnly && (state.isOpen = !state.isOpen);
           })}
-          onKeyDown$={$((event: QwikKeyboardEvent<HTMLDivElement>) =>
+          onKeyDown$={$((event: KeyboardEvent) =>
             handleKeyDown(event, keys, items, state, onSelect$, listBoxDimensions, defaultItemToString, comboboxElement)
           )}
-          document:onClick$={$((event: QwikMouseEvent) => {
+          document:onClick$={$((event: MouseEvent) => {
             const element = event.target as HTMLElement;
             if (
               element.getAttribute('aria-controls') !== listBoxAttrs.id &&
@@ -310,7 +308,7 @@ export const Dropdown = component$((props: DropdownProps) => {
           items={items}
           highlightedItem={state.highlightedItem}
           selectedItem={state.selectedItem}
-          onKeyDown$={$((event: QwikKeyboardEvent<HTMLDivElement>) =>
+          onKeyDown$={$((event: KeyboardEvent) =>
             handleKeyDown(event, keys, items, state, onSelect$, listBoxDimensions, defaultItemToString, comboboxElement)
           )}
           onMeasure$={$((dimensions: ListBoxDimensions) => {

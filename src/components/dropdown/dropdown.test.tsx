@@ -559,6 +559,29 @@ describe('Dropdown', () => {
     expect(secondItem?.classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
   });
 
+  it('selects the second item from the menu if the down arrow is pressed twice and the up arrow key is pressed once', async () => {
+    const { screen, render, userEvent } = await createDOM();
+    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
+
+    await render(
+      <CarbonRoot>
+        <Form>
+          <Dropdown items={items} />
+        </Form>
+      </CarbonRoot>
+    );
+
+    await userEvent('div.cds--list-box__field', 'keydown', {
+      keyCode: KeyCodes.DownArrow,
+      getModifierState: () => false,
+    });
+    const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
+    await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.DownArrow, getModifierState: () => false });
+    await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => false });
+    const secondItem = screen.querySelectorAll('div.cds--list-box__menu-item')?.[0];
+    expect(secondItem?.classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
+  });
+
   it('selects the current option if [Alt]+[Up Arrow] is selected', async () => {
     const { screen, render, userEvent } = await createDOM();
     const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];

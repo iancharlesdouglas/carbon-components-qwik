@@ -108,7 +108,7 @@ export const Default: Story = {
 export const Warning: Story = {
   args: {
     warn: true,
-    warnText: 'Warning message',
+    warnText: "You haven't selected a fruit",
     ...Default.args,
   },
   argTypes: { ...Default.argTypes },
@@ -117,7 +117,7 @@ export const Warning: Story = {
 export const Invalid: Story = {
   args: {
     invalid: true,
-    invalidText: 'Error message',
+    invalidText: 'Huckleberry is unavailable',
     selectedItem: { label: 'Huckleberry' },
     ...Default.args,
   },

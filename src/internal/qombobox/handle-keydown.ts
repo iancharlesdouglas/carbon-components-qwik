@@ -71,13 +71,12 @@ export const handleKeyDown = async (
           if (state.highlightedItem && items) {
             let currentIndex = items.findIndex(item => itemsEqual(item, state.highlightedItem));
             while (currentIndex > 0) {
-              if (itemDisabled(items[currentIndex - 1])) {
-                currentIndex--;
-              } else {
+              currentIndex--;
+              if (!itemDisabled(items[currentIndex])) {
                 break;
               }
             }
-            state.highlightedItem = items[currentIndex - 1];
+            state.highlightedItem = items[currentIndex];
           }
         }
       } else if (items) {

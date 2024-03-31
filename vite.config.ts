@@ -19,6 +19,7 @@ export default defineConfig(() => {
         functions: 90,
         branches: 80,
         statements: 90,
+        exclude: ['src/stories/**', 'src/test/test.tsx', 'lib/**', 'src/entry*.tsx', '.storybook/**'],
       },
     },
     plugins: [qwikVite()],

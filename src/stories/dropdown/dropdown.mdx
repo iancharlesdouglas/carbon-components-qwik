@@ -5,7 +5,7 @@ import * as DropdownStories from './dropdown.stories.tsx';
 
 # Dropdown
 
-Shows a list of options from which to select.  A popup appears when the user clicks or uses the keyboard to open the listbox.
+Shows a list of options from which to select.  A popup listbox appears when the user clicks or uses the keyboard to open it.
 
 The currently selected item is shown in the combobox field when the listbox is closed.
 
@@ -13,24 +13,69 @@ The currently selected item is shown in the combobox field when the listbox is c
 - Single option selection 
 - Listbox may be navigated using a pointing device or the keyboard -- including arrow, PageUp/PageDown and Home/End keys
 - User can type ahead to select a listbox item (typing e.g. `ba` for Banana) per WAI specifications
+- Listbox items may be disabled for user selection
 - Listbox popup may be positioned at `bottom` or `top` of field (`direction` property)
 - Placeholder can be rendered if no option is selected
-- Warning and error states with appropriate icons and borders, and state messages
+- Warning and error states with appropriate icons, borders, and state messages
 - Label and helper text 
-- Label may be displayed above field or to its left (`type`  property: `inline`)
-- Different sizes (`sm`, `md` and `lg`)
-- Full [WAI Combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/) accessibility compliance.
+- Label may be placed above field or to its left (`type`  property: `inline`)
+- Different sizes of elements (`sm`, `md` and `lg`)
+- Full [WAI Combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/) accessibility compliance for select-only combobox.
 
 ## How To
+
+### Define a Dropdown Component
+A `Dropdown` component must be enclosed within the following components:
+- `Form`
+- `CarbonRoot`
+
+For example:
+```
+<CarbonRoot>
+  <Form>
+    <Dropdown items={['Apple', 'Orange']}>
+  </Form>
+</CarbonRoot>
+```
 
 ### Define Items
 You can define listbox items as strings or objects.  
 
 #### Defining Items as Objects
-If you define items as objects, each object must have a `label` property that contains the item's name.
+If you define items as objects, each object must have a `label` property that contains the item's name, or you should define a render function to render its name or to render the component (see below).
 E.g.
 ```
 const fruits = [{ label: 'Apple '}, { label: 'Pear' }];
+```
+
+#### Defining a String Render Function
+To define a render function to render the item's name:
+```
+type MyItem = Item & { name: string };
+
+const renderFn = (item: MyItem) => item.name;
+
+<Dropdown itemToString={renderFn}>
+```
+
+#### Defining a Custom Renderer Component
+To define a custom component to render an item:
+```
+const SelectedItemRenderComp = component$((props: ItemProps) => (
+  <span>{item.name}</span>
+));
+
+await render(
+  <CarbonRoot>
+    <Form>
+      <Dropdown
+        selectedItem={myItem}
+        renderSelectedItem={SelectedItemRenderComp}
+        items={[myItem]}
+      />
+    </Form>
+  </CarbonRoot>
+);
 ```
 
 #### Disabling Items in the List
