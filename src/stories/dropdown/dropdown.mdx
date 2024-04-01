@@ -9,7 +9,12 @@ Shows a list of options from which to select.  A popup listbox appears when the 
 
 The currently selected item is shown in the combobox field when the listbox is closed.
 
-## Features
+## Variants
+There are several variants of the dropdown component:
+- `Dropdown` - this component
+- `MultiSelect` - dropdown with ability to select multiple items using checkboxes
+
+## `Dropdown` Features
 - Single option selection 
 - Listbox may be navigated using a pointing device or the keyboard -- including arrow, PageUp/PageDown and Home/End keys
 - User can type ahead to select a listbox item (typing e.g. `ba` for Banana) per WAI specifications
@@ -24,7 +29,7 @@ The currently selected item is shown in the combobox field when the listbox is c
 
 ## How To
 
-### Define a Dropdown Component
+### Define a `Dropdown` Component
 A `Dropdown` component must be enclosed within the following components:
 - `Form`
 - `CarbonRoot`
@@ -42,8 +47,9 @@ For example:
 You can define listbox items as strings or objects.  
 
 #### Defining Items as Objects
-If you define items as objects, each object must have a `label` property that contains the item's name, or you should define a render function to render its name or to render the component (see below).
-E.g.
+If you define items as objects, each object must have a `label` property that contains the item's name, or you should define a render function (see below).
+
+To supply a label for example:
 ```
 const fruits = [{ label: 'Apple '}, { label: 'Pear' }];
 ```

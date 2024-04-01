@@ -23,55 +23,12 @@ import './dropdown.scss';
 import { removeProps } from '../../internal/objects/remove-props';
 import { itemsEqual } from '../../internal/qombobox/items-equal';
 import { itemDisabled } from '../../internal/qombobox/item-disabled';
+import { Item, ItemProps, ItemToString, defaultItemToString } from '../dropdown/dropdown';
 
 /**
- * Listbox item that has a label
- * @property label - Item label
+ * Multi-select props
  */
-export type Labelled = {
-  label: string;
-};
-
-/**
- * Listbox item that is an object and could be disabled if necessary
- * @property disabled - Whether disabled
- */
-export type ObjectItem = Labelled & { disabled?: boolean };
-
-/**
- * Listbox item
- */
-export type Item = string | ObjectItem;
-
-/**
- * Function that takes an item and returns a string representation of it
- */
-export type ItemToString = (item: Item | undefined) => string | undefined;
-
-/**
- * Returns the string representation of an item (either the label or the item itself if it is a string)
- * @param {Item} item - Item to render
- * @returns {string} String representation
- */
-export const defaultItemToString: ItemToString = (item: Item | undefined) => {
-  if (typeof item === 'string') {
-    return item;
-  }
-  return item?.label;
-};
-
-/**
- * Props for a component to render an item
- * @property {Item} item - Item to render
- */
-export type ItemProps = {
-  item: Item;
-};
-
-/**
- * Dropdown props
- */
-export type DropdownProps = QwikIntrinsicElements['div'] & {
+export type MultiSelectProps = QwikIntrinsicElements['div'] & {
   ariaLabel?: string;
   class?: string;
   direction?: 'top' | 'bottom';
@@ -98,9 +55,9 @@ export type DropdownProps = QwikIntrinsicElements['div'] & {
 };
 
 /**
- * Dropdown, a select-only combobox
+ * Multi-select, a select-only combobox with multiple selection
  */
-export const Dropdown = component$((props: DropdownProps) => {
+export const MultiSelect = component$((props: MultiSelectProps) => {
   const prefix = usePrefix();
   const { isFluid } = useContext(formContext);
   const isFocused = useSignal(false);
