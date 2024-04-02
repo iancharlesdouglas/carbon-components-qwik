@@ -18,7 +18,7 @@ import { Checkmark, WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
 import { ListBoxMenuIcon } from '../list-box/list-box-menu-icon';
 import { ListBoxMenuItem } from '../list-box/list-box-menu-item';
 import { ComboboxState, qombobox } from '../../internal/qombobox/qombobox';
-import { Keys, handleKeyDown } from '../../internal/qombobox/handle-keydown';
+import { Keys, Selector, handleKeyDown } from '../../internal/qombobox/handle-keydown';
 import './dropdown.scss';
 import { removeProps } from '../../internal/objects/remove-props';
 import { itemsEqual } from '../../internal/qombobox/items-equal';
@@ -69,6 +69,13 @@ export type ItemProps = {
 };
 
 /**
+ * Dropdown listbox popup state
+ */
+export type DropdownState = ComboboxState & {
+  selectedItem: Item | undefined;
+};
+
+/**
  * Dropdown props
  */
 export type DropdownProps = QwikIntrinsicElements['div'] & {
@@ -105,7 +112,7 @@ export const Dropdown = component$((props: DropdownProps) => {
   const { isFluid } = useContext(formContext);
   const isFocused = useSignal(false);
   const { disabled = false, id: stipulatedId, label: titleText, items, selectedItem: declaredSelectedItem } = props;
-  const stateObj: ComboboxState = {
+  const stateObj: DropdownState = {
     isOpen: false,
     selectedItem: declaredSelectedItem,
     highlightedItem: declaredSelectedItem,
@@ -240,6 +247,12 @@ export const Dropdown = component$((props: DropdownProps) => {
   );
 
   const labelId = titleText ? `${id}--label` : undefined;
+  const selector$: Selector = $((state: ComboboxState, onSelect$) => {
+    const dropdownState = state as unknown as DropdownState;
+    dropdownState.selectedItem = state.highlightedItem;
+    onSelect$ && onSelect$(dropdownState.selectedItem!);
+    state.isOpen = false;
+  });
 
   return (
     <div class={wrapperClasses} {...sanitizedProps}>
@@ -278,7 +291,17 @@ export const Dropdown = component$((props: DropdownProps) => {
             !readOnly && (state.isOpen = !state.isOpen);
           })}
           onKeyDown$={$((event: KeyboardEvent) =>
-            handleKeyDown(event, keys, items, state, onSelect$, listBoxDimensions, defaultItemToString, comboboxElement)
+            handleKeyDown(
+              event,
+              keys,
+              items,
+              state,
+              onSelect$,
+              selector$,
+              listBoxDimensions,
+              defaultItemToString,
+              comboboxElement
+            )
           )}
           document:onClick$={$((event: MouseEvent) => {
             const element = event.target as HTMLElement;
@@ -307,9 +330,19 @@ export const Dropdown = component$((props: DropdownProps) => {
           ref={listBoxElement}
           items={items}
           highlightedItem={state.highlightedItem}
-          selectedItem={state.selectedItem}
+          selectedItems={state.selectedItem ? [state.selectedItem] : undefined}
           onKeyDown$={$((event: KeyboardEvent) =>
-            handleKeyDown(event, keys, items, state, onSelect$, listBoxDimensions, defaultItemToString, comboboxElement)
+            handleKeyDown(
+              event,
+              keys,
+              items,
+              state,
+              onSelect$,
+              selector$,
+              listBoxDimensions,
+              defaultItemToString,
+              comboboxElement
+            )
           )}
           onMeasure$={$((dimensions: ListBoxDimensions) => {
             listBoxDimensions.visibleRows = dimensions.visibleRows;

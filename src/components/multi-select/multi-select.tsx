@@ -1,6 +1,5 @@
 import {
   Component,
-  PropFunction,
   QwikIntrinsicElements,
   component$,
   useContext,
@@ -8,22 +7,25 @@ import {
   $,
   useStore,
   useTask$,
+  QRL,
 } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { formContext } from '../../internal/contexts/form-context';
 import classNames from 'classnames';
 import { ListBox } from '../list-box/list-box';
 import { ListBoxDimensions, ListBoxMenu } from '../list-box/list-box-menu';
-import { Checkmark, WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
+import { WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
 import { ListBoxMenuIcon } from '../list-box/list-box-menu-icon';
 import { ListBoxMenuItem } from '../list-box/list-box-menu-item';
 import { ComboboxState, qombobox } from '../../internal/qombobox/qombobox';
-import { Keys, handleKeyDown } from '../../internal/qombobox/handle-keydown';
-import './dropdown.scss';
+import { Keys, Selector, handleKeyDown } from '../../internal/qombobox/handle-keydown';
+import './multi-select.scss';
 import { removeProps } from '../../internal/objects/remove-props';
 import { itemsEqual } from '../../internal/qombobox/items-equal';
 import { itemDisabled } from '../../internal/qombobox/item-disabled';
 import { Item, ItemProps, ItemToString, defaultItemToString } from '../dropdown/dropdown';
+import { CompareItems, SortItems, SortOptions, defaultCompareItems, defaultSortItems } from './sorting';
+import { ListBoxSelection } from '../list-box/list-box-selection';
 
 /**
  * Multi-select props
@@ -31,6 +33,9 @@ import { Item, ItemProps, ItemToString, defaultItemToString } from '../dropdown/
 export type MultiSelectProps = QwikIntrinsicElements['div'] & {
   ariaLabel?: string;
   class?: string;
+  clearSelectionDescription?: string;
+  clearSelectionText?: string;
+  compareItems?: CompareItems;
   direction?: 'top' | 'bottom';
   disabled?: boolean;
   helperText?: string;
@@ -42,30 +47,47 @@ export type MultiSelectProps = QwikIntrinsicElements['div'] & {
   itemToElement?: Component<ItemProps>;
   itemToString?: ItemToString;
   label?: string;
-  onSelect$?: PropFunction<(item: Item) => void>;
+  onSelect$?: QRL<(item: Item) => void>;
   placeholder?: string;
   readOnly?: boolean;
   renderSelectedItem?: Component<ItemProps>;
-  selectedItem?: Item;
+  selectedItems?: Item[];
   size?: 'sm' | 'md' | 'lg';
+  sortItems?: SortItems;
   translateWithId?: () => string;
   type?: 'default' | 'inline';
+  useTitleInItem?: boolean;
   warn?: boolean;
   warnText?: string;
 };
 
 /**
- * Multi-select, a select-only combobox with multiple selection
+ * Multi-select listbox popup state
+ */
+export type MultiSelectState = ComboboxState & {
+  selectedItems: Item[] | undefined;
+};
+
+/**
+ * Multi-select, a select-only combobox with multiple selection via checkboxes
  */
 export const MultiSelect = component$((props: MultiSelectProps) => {
   const prefix = usePrefix();
   const { isFluid } = useContext(formContext);
   const isFocused = useSignal(false);
-  const { disabled = false, id: stipulatedId, label: titleText, items, selectedItem: declaredSelectedItem } = props;
-  const stateObj: ComboboxState = {
+  const {
+    disabled = false,
+    id: stipulatedId,
+    label: titleText,
+    items,
+    selectedItems: declaredSelectedItems,
+    sortItems = defaultSortItems,
+    compareItems = defaultCompareItems,
+  } = props;
+  const stateObj: MultiSelectState = {
     isOpen: false,
-    selectedItem: declaredSelectedItem,
-    highlightedItem: declaredSelectedItem,
+    selectedItems: declaredSelectedItems,
+    highlightedItem: declaredSelectedItems?.[0],
   };
   const state = useStore(stateObj);
   const {
@@ -80,6 +102,8 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
   const {
     ariaLabel,
     class: customClass,
+    clearSelectionDescription,
+    clearSelectionText,
     direction = 'bottom',
     helperText,
     hideLabel = false,
@@ -91,28 +115,37 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
     placeholder,
     onSelect$,
     readOnly,
-    renderSelectedItem: RenderSelectedItem,
+    // renderSelectedItem: RenderSelectedItem,
     size = 'md',
     type = 'default',
+    useTitleInItem,
     warn = false,
     warnText,
   } = props;
 
+  const sortOptions: SortOptions = { selectedItems: declaredSelectedItems, itemToString, compareItems, locale: 'en' };
+
   useTask$(({ track }) => {
-    track(() => declaredSelectedItem);
-    state.selectedItem = declaredSelectedItem;
-    if (!declaredSelectedItem) {
+    track(() => declaredSelectedItems);
+    state.selectedItems = declaredSelectedItems;
+    if (!declaredSelectedItems) {
       state.highlightedItem = undefined;
-    } else if (items && !items.some(item => itemsEqual(item, declaredSelectedItem))) {
-      state.selectedItem = undefined;
+    } else if (
+      items &&
+      !items.some(item => declaredSelectedItems.some(selectedItem => itemsEqual(item, selectedItem)))
+    ) {
+      state.selectedItems = undefined;
       state.highlightedItem = undefined;
     }
   });
 
   useTask$(({ track }) => {
     track(() => items);
-    if (state.selectedItem && !items?.some(item => itemsEqual(item, state.selectedItem))) {
-      state.selectedItem = undefined;
+    if (
+      state.selectedItems &&
+      !items?.some(item => state.selectedItems?.some(selectedItem => itemsEqual(item, selectedItem)))
+    ) {
+      state.selectedItems = undefined;
       state.highlightedItem = undefined;
     }
   });
@@ -141,14 +174,13 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
   const inline = type === 'inline';
   const showWarning = !invalid && warn;
 
-  const classes = classNames(`${prefix}--dropdown`, {
-    [`${prefix}--dropdown--invalid`]: invalid,
-    [`${prefix}--dropdown--warning`]: showWarning,
-    [`${prefix}--dropdown--open`]: state.isOpen,
-    [`${prefix}--dropdown--inline`]: inline,
-    [`${prefix}--dropdown--disabled`]: disabled,
-    [`${prefix}--dropdown--${size}`]: size,
+  const classes = classNames(`${prefix}--multi-select`, [!disabled ? customClass : null], {
+    [`${prefix}--multi-select--invalid`]: invalid,
+    [`${prefix}--multi-select--warning`]: showWarning,
+    [`${prefix}--multi-select--inline`]: inline,
+    [`${prefix}--multi-select--selected`]: state.selectedItems && state.selectedItems.length > 0,
     [`${prefix}--list-box--up`]: direction === 'top',
+    [`${prefix}--multi-select--readonly`]: readOnly,
   });
 
   const titleClasses = classNames(`${prefix}--label`, {
@@ -160,19 +192,27 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
     [`${prefix}--form__helper-text--disabled`]: disabled,
   });
 
-  const wrapperClasses = classNames(`${prefix}--dropdown__wrapper`, `${prefix}--list-box__wrapper`, customClass, {
-    [`${prefix}--dropdown__wrapper--inline`]: inline,
-    [`${prefix}--list-box__wrapper--inline`]: inline,
-    [`${prefix}--dropdown__wrapper--inline--invalid`]: inline && invalid,
-    [`${prefix}--list-box__wrapper--inline--invalid`]: inline && invalid,
-    [`${prefix}--list-box__wrapper--fluid--invalid`]: isFluid && invalid,
-    [`${prefix}--list-box__wrapper--fluid--focus`]: isFluid && isFocused && !state.isOpen,
-  });
+  const wrapperClasses = classNames(
+    `${prefix}--multi-select__wrapper`,
+    `${prefix}--list-box__wrapper`,
+    [!disabled ? customClass : null],
+    {
+      [`${prefix}--multi-select--inline`]: inline,
+      [`${prefix}--list-box__wrapper--inline`]: inline,
+      [`${prefix}--multi-select--inline--invalid`]: inline && invalid,
+      [`${prefix}--list-box__wrapper--inline--invalid`]: inline && invalid,
+      [`${prefix}--list-box__wrapper--fluid--invalid`]: isFluid && invalid,
+      [`${prefix}--list-box__wrapper--fluid--focus`]: isFluid && isFocused && !state.isOpen,
+    }
+  );
 
   const sanitizedProps = removeProps(
     props,
     'ariaLabel',
     'class',
+    'clearSelectionDescription',
+    'clearSelectionText',
+    'compareItems',
     'direction',
     'disabled',
     'helperText',
@@ -189,6 +229,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
     'renderSelectedItem',
     'selectedItem',
     'size',
+    'sortItems',
     'titleText',
     'translateWithId',
     'type',
@@ -198,13 +239,45 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
 
   const labelId = titleText ? `${id}--label` : undefined;
 
+  const toggleItemSelected$ = $(
+    (state: MultiSelectState, item: Item | undefined, onSelect$?: QRL<(item: Item) => void>) => {
+      const selectedItemIndex = state.selectedItems?.findIndex(selectedItem => itemsEqual(selectedItem, item));
+      if (selectedItemIndex && selectedItemIndex > -1) {
+        state.selectedItems = state.selectedItems?.splice(selectedItemIndex, 1);
+      } else if (item) {
+        const selection = state.selectedItems ?? [];
+        selection.push(item);
+        state.selectedItems = selection;
+      }
+      if (item) {
+        onSelect$ && onSelect$(item);
+      }
+    }
+  );
+
+  const selector$: Selector = $((state: ComboboxState, onSelect$?: QRL<(item: Item) => void>) => {
+    const multiSelectState = state as unknown as MultiSelectState;
+    toggleItemSelected$(multiSelectState, state.highlightedItem, onSelect$);
+  });
+
+  const clearSelection$ = $(() => {
+    if (disabled || readOnly) {
+      return;
+    }
+    state.selectedItems = [];
+  });
+
   return (
     <div class={wrapperClasses} {...sanitizedProps}>
-      {titleText && (
-        <label id={labelId} class={titleClasses}>
-          {titleText}
-        </label>
-      )}
+      <label class={titleClasses} id={labelId}>
+        {titleText && titleText}
+        {state.selectedItems?.length && state.selectedItems.length > 0 && (
+          <span class={`${prefix}--visually-hidden`}>
+            {clearSelectionDescription} {state.selectedItems!.length}
+            {clearSelectionText}
+          </span>
+        )}
+      </label>
       <ListBox
         aria-label={ariaLabel}
         size={size}
@@ -225,9 +298,6 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
         )}
         <div
           class={[`${prefix}--list-box__field`, readOnly ? `${prefix}--list-box__readonly` : undefined]}
-          title={
-            !readOnly && state.selectedItem ? itemToString(state.selectedItem) : !readOnly ? placeholder : undefined
-          }
           {...comboBoxAttrs}
           ref={comboboxElement}
           tabIndex={0}
@@ -235,7 +305,17 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
             !readOnly && (state.isOpen = !state.isOpen);
           })}
           onKeyDown$={$((event: KeyboardEvent) =>
-            handleKeyDown(event, keys, items, state, onSelect$, listBoxDimensions, defaultItemToString, comboboxElement)
+            handleKeyDown(
+              event,
+              keys,
+              items,
+              state,
+              onSelect$,
+              selector$,
+              listBoxDimensions,
+              defaultItemToString,
+              comboboxElement
+            )
           )}
           document:onClick$={$((event: MouseEvent) => {
             const element = event.target as HTMLElement;
@@ -248,15 +328,16 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
             }
           })}
         >
-          <span class={`${prefix}--list-box__label`}>
-            {(state.selectedItem &&
-              (RenderSelectedItem ? (
-                <RenderSelectedItem item={state.selectedItem} />
-              ) : (
-                itemToString(state.selectedItem)
-              ))) ||
-              placeholder}
-          </span>
+          {state.selectedItems && state.selectedItems.length > 0 && (
+            <ListBoxSelection
+              readOnly={readOnly}
+              clearSelection$={clearSelection$}
+              clearSelectionDescription={clearSelectionDescription}
+              selectionCount={state.selectedItems?.length}
+              disabled={disabled}
+            />
+          )}
+          <span class={`${prefix}--list-box__label`}>{placeholder}</span>
           {!readOnly && <ListBoxMenuIcon isOpen={state.isOpen} />}
         </div>
         <ListBoxMenu
@@ -264,9 +345,20 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
           ref={listBoxElement}
           items={items}
           highlightedItem={state.highlightedItem}
-          selectedItem={state.selectedItem}
+          selectedItems={state.selectedItems}
+          style="width: 200px"
           onKeyDown$={$((event: KeyboardEvent) =>
-            handleKeyDown(event, keys, items, state, onSelect$, listBoxDimensions, defaultItemToString, comboboxElement)
+            handleKeyDown(
+              event,
+              keys,
+              items,
+              state,
+              onSelect$,
+              selector$,
+              listBoxDimensions,
+              defaultItemToString,
+              comboboxElement
+            )
           )}
           onMeasure$={$((dimensions: ListBoxDimensions) => {
             listBoxDimensions.visibleRows = dimensions.visibleRows;
@@ -274,30 +366,31 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
           preventdefault:keydown
         >
           {state.isOpen &&
-            items?.map((item: Item, index: number) => {
+            sortItems(items, sortOptions)?.map((item: Item, index: number) => {
               const title = itemToString(item);
-              const itemSelected = state.selectedItem ? itemsEqual(state.selectedItem, item) : undefined;
+              const itemSelected = state.selectedItems?.some(selectedItem => itemsEqual(item, selectedItem));
               return (
                 <ListBoxMenuItem
                   key={itemAttrs?.[index].id}
                   isActive={!!itemSelected}
+                  aria-label={title}
                   isHighlighted={state.highlightedItem ? itemsEqual(state.highlightedItem, item) : false}
                   title={title}
                   disabled={itemDisabled(item)}
                   {...itemAttrs?.[index]}
-                  onClick$={$(() => {
-                    if (!itemDisabled(item)) {
-                      state.selectedItem = item;
-                      state.isOpen = false;
-                      onSelect$ && onSelect$(item);
-                    }
-                  })}
+                  onClick$={$(() => toggleItemSelected$(state, item, onSelect$))}
                 >
-                  {ItemToElement && <ItemToElement item={item} />}
-                  {!ItemToElement && itemToString(item)}
-                  {itemSelected && !ItemToElement && (
-                    <Checkmark class={`${prefix}--list-box__menu-item__selected-icon`} size={16} />
-                  )}
+                  <div class={`${prefix}--checkbox-wrapper`}>
+                    <span
+                      title={useTitleInItem ? title : undefined}
+                      class={`${prefix}--checkbox-label`}
+                      data-contained-checkbox-state={itemSelected}
+                      id={`${itemAttrs?.[index].id}__checkbox`}
+                    >
+                      {ItemToElement && <ItemToElement item={item} />}
+                      {!ItemToElement && itemToString(item)}
+                    </span>
+                  </div>
                 </ListBoxMenuItem>
               );
             })}

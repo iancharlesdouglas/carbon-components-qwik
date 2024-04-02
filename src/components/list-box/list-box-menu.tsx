@@ -1,11 +1,11 @@
-import { PropFunction, QwikIntrinsicElements, Slot, component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
+import { QRL, QwikIntrinsicElements, Slot, component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { Item } from '../dropdown/dropdown';
 import { removeProps } from '../../internal/objects/remove-props';
 import { itemsEqual } from '../../internal/qombobox/items-equal';
 
 /**
- * Measured dimensions
+ * Measured dimensions of a listbox
  */
 export type ListBoxDimensions = {
   height: number;
@@ -18,14 +18,14 @@ export type ListBoxDimensions = {
  * @property {string} id - ID
  * @property {Item[]} items - Items
  * @property {Item} highlightedItem - Highlighted item
- * @property {Item} selectedItem - Selected item
+ * @property {Item} selectedItems - Selected items
  */
 export type ListBoxMenuProps = QwikIntrinsicElements['div'] & {
   id?: string;
   items?: Item[];
   highlightedItem?: Item;
-  selectedItem?: Item;
-  onMeasure$?: PropFunction<(dimensions: ListBoxDimensions) => void>;
+  selectedItems?: Item[];
+  onMeasure$?: QRL<(dimensions: ListBoxDimensions) => void>;
 };
 
 /**
@@ -33,12 +33,12 @@ export type ListBoxMenuProps = QwikIntrinsicElements['div'] & {
  */
 export const ListBoxMenu = component$((props: ListBoxMenuProps) => {
   const prefix = usePrefix();
-  const { id, items, highlightedItem, selectedItem, onMeasure$ } = props;
+  const { id, items, highlightedItem, selectedItems: selectedItem, onMeasure$ } = props;
   const listBoxElement = useSignal<HTMLDivElement>();
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(({ track }) => {
     track(props);
-    const focusItem = highlightedItem ?? selectedItem;
+    const focusItem = highlightedItem ?? selectedItem?.[0];
     if (items && focusItem && listBoxElement.value) {
       const children = Array.from(listBoxElement.value.children);
       const itemHeight = children[0]?.clientHeight;

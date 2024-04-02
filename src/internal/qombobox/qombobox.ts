@@ -3,12 +3,11 @@ import { Item } from '../../components/dropdown/dropdown';
 import { uniqueId } from '../unique/unique-id';
 
 /**
- * Combobox listbox popup state
+ * Combobox listbox popup open and highlighted item state
  */
 export type ComboboxState = {
   isOpen: boolean;
   highlightedItem: Item | undefined;
-  selectedItem: Item | undefined;
 };
 
 /**
@@ -41,7 +40,7 @@ export type QomboboxReturn = {
 
 /**
  * Derives combobox ARIA attributes
- * @param state State (whether open, selected item)
+ * @param state State (whether open; highlighted item)
  * @param disabled Whether the combobox control is disabled
  * @param id ID of the control
  * @param titleText Title text for label

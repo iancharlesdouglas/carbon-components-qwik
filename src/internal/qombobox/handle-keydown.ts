@@ -1,11 +1,11 @@
 import { ItemToString } from './../../components/dropdown/dropdown';
-import { QwikKeyboardEvent, Signal, PropFunction } from '@builder.io/qwik';
-import { KeyCodes } from '../key-codes';
+import { Signal, QRL } from '@builder.io/qwik';
 import { Item } from '../../components/dropdown/dropdown';
 import { ListBoxDimensions } from '../../components/list-box/list-box-menu';
 import { ComboboxState } from './qombobox';
 import { itemsEqual } from './items-equal';
 import { itemDisabled } from './item-disabled';
+import { Key } from '../key';
 
 /**
  * Keys state
@@ -17,28 +17,35 @@ export type Keys = {
 };
 
 /**
+ * Function that handles selection of an item
+ */
+export type Selector = QRL<(state: ComboboxState, onSelect$?: QRL<(item: Item) => void>) => void>;
+
+/**
  * Keydown handler for combobox
  * @param event Key event
  * @param keys Keys state
  * @param items Items in the list
  * @param state State of the listbox
  * @param onSelect$ Select handler
+ * @param selector$ Selector function that handles selection of an item
  * @param listBoxDimensions Listbox dimensions as measured
  * @param defaultItemToString Default item to string converter
  * @param triggerElement Triggering element
  */
 export const handleKeyDown = async (
-  event: QwikKeyboardEvent<HTMLDivElement>,
+  event: KeyboardEvent,
   keys: Keys,
   items: Item[] | undefined,
   state: ComboboxState,
-  onSelect$: PropFunction<(item: Item) => void> | undefined,
+  onSelect$: QRL<(item: Item) => void> | undefined,
+  selector$: Selector,
   listBoxDimensions: ListBoxDimensions,
   defaultItemToString: ItemToString,
   triggerElement: Signal<Element | undefined>
 ) => {
-  switch (event.keyCode) {
-    case KeyCodes.DownArrow: {
+  switch (event.key) {
+    case Key.DownArrow: {
       keys.typed = [];
       keys.reset = true;
       if (state.highlightedItem && items) {
@@ -59,14 +66,12 @@ export const handleKeyDown = async (
       }
       break;
     }
-    case KeyCodes.UpArrow: {
+    case Key.UpArrow: {
       keys.typed = [];
       keys.reset = true;
       if (state.isOpen) {
         if (event.getModifierState && event.getModifierState('Alt')) {
-          state.selectedItem = state.highlightedItem;
-          state.isOpen = false;
-          onSelect$ && onSelect$(state.selectedItem!);
+          selector$(state, onSelect$);
         } else {
           if (state.highlightedItem && items) {
             let currentIndex = items.findIndex(item => itemsEqual(item, state.highlightedItem));
@@ -87,20 +92,18 @@ export const handleKeyDown = async (
       }
       break;
     }
-    case KeyCodes.Enter:
-    case KeyCodes.Space:
-    case KeyCodes.Tab: {
+    case Key.Enter:
+    case Key.Space:
+    case Key.Tab: {
       if (state.isOpen) {
-        state.selectedItem = state.highlightedItem;
-        onSelect$ && onSelect$(state.selectedItem!);
-        state.isOpen = false;
-      } else if (event.keyCode !== KeyCodes.Tab) {
+        selector$(state, onSelect$);
+      } else if (event.key !== Key.Tab) {
         state.isOpen = true;
         event.stopPropagation();
       }
       break;
     }
-    case KeyCodes.Home: {
+    case Key.Home: {
       state.isOpen = true;
       keys.typed = [];
       keys.reset = true;
@@ -115,7 +118,7 @@ export const handleKeyDown = async (
       }
       break;
     }
-    case KeyCodes.End: {
+    case Key.End: {
       state.isOpen = true;
       keys.typed = [];
       keys.reset = true;
@@ -128,7 +131,7 @@ export const handleKeyDown = async (
       }
       break;
     }
-    case KeyCodes.PageDown: {
+    case Key.PageDown: {
       if (listBoxDimensions.visibleRows) {
         if (state.highlightedItem && items) {
           let currentIndex = items.findIndex(item => itemsEqual(item, state.highlightedItem));
@@ -143,7 +146,7 @@ export const handleKeyDown = async (
       }
       break;
     }
-    case KeyCodes.PageUp: {
+    case Key.PageUp: {
       if (listBoxDimensions.visibleRows) {
         if (state.highlightedItem && items) {
           let currentIndex = items.findIndex(item => itemsEqual(item, state.highlightedItem));
@@ -158,13 +161,13 @@ export const handleKeyDown = async (
       }
       break;
     }
-    case KeyCodes.Escape: {
+    case Key.Escape: {
       state.isOpen = false;
       (triggerElement.value as HTMLButtonElement).focus();
       break;
     }
     default: {
-      if (event.keyCode >= 65 && event.keyCode <= 90 && items) {
+      if (/[A-Za-z]/.test(event.key)) {
         state.isOpen = true;
         keys.reset = true;
         keys.typed.push(event.key);

@@ -11,6 +11,8 @@ import { Checkbox } from '../components/checkbox/checkbox';
 import { Dropdown, Item, ItemProps, Labelled, defaultItemToString } from '../components/dropdown/dropdown';
 import { Section } from '../components/heading/section';
 import { Heading } from '../components/heading/heading';
+import { Row } from '../components/grid/row';
+import { MultiSelect } from '../components/multi-select/multi-select';
 
 /**
  * Local test harness for dev. purposes
@@ -93,9 +95,19 @@ const Test = component$(() => {
               // itemToElement={ItemComponent}
             />
           </Column>
-          <Column lg={1}>
-            <span>{defaultItemToString(selectedItem.value!)}</span>
+          <Column lg={2}>
+            <span>Selected: {defaultItemToString(selectedItem.value!)}</span>
           </Column>
+          <Row>
+            <Column lg={4}>
+              <MultiSelect
+                label="Fruits"
+                placeholder="Select fruits"
+                selectedItems={['Apple', 'Banana']}
+                items={itemOptions.value}
+              />
+            </Column>
+          </Row>
         </Grid>
       </Form>
       <Grid class="test-class" id="main-grid" fullWidth>
