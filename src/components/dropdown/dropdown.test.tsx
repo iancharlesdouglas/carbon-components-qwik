@@ -4,7 +4,7 @@ import { CarbonRoot } from '../carbon-root/carbon-root';
 import { Form } from '../form/form';
 import { Dropdown, Item, ItemProps, Labelled, defaultItemToString } from './dropdown';
 import { component$, $, useSignal } from '@builder.io/qwik';
-import { KeyCodes } from '../../internal/key-codes';
+import { Key } from '../../internal/key';
 import { DropdownTestWrapper } from './test-wrapper';
 
 describe('Dropdown', () => {
@@ -410,7 +410,7 @@ describe('Dropdown', () => {
       </CarbonRoot>
     );
 
-    await userEvent('div.cds--list-box__field', 'keydown', { keyCode: KeyCodes.DownArrow, getModifierState: () => '' });
+    await userEvent('div.cds--list-box__field', 'keydown', { key: Key.DownArrow, getModifierState: () => '' });
     const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
     expect(listBoxDiv.childElementCount).toEqual(items.length);
   });
@@ -427,7 +427,7 @@ describe('Dropdown', () => {
       </CarbonRoot>
     );
 
-    await userEvent('div.cds--list-box__field', 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => '' });
+    await userEvent('div.cds--list-box__field', 'keydown', { key: Key.UpArrow, getModifierState: () => '' });
     const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
     expect(listBoxDiv.childElementCount).toEqual(items.length);
   });
@@ -445,7 +445,7 @@ describe('Dropdown', () => {
     );
 
     await userEvent('div.cds--list-box__field', 'keydown', {
-      keyCode: KeyCodes.UpArrow,
+      key: Key.UpArrow,
       getModifierState: () => 'Alt',
     });
     const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
@@ -464,7 +464,7 @@ describe('Dropdown', () => {
       </CarbonRoot>
     );
 
-    await userEvent('div.cds--list-box__field', 'keydown', { keyCode: KeyCodes.Home, getModifierState: () => '' });
+    await userEvent('div.cds--list-box__field', 'keydown', { key: Key.Home, getModifierState: () => '' });
     const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
     const first = listBoxDiv.children.item(0);
     expect(first?.classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
@@ -482,7 +482,7 @@ describe('Dropdown', () => {
       </CarbonRoot>
     );
 
-    await userEvent('div.cds--list-box__field', 'keydown', { keyCode: KeyCodes.End });
+    await userEvent('div.cds--list-box__field', 'keydown', { key: Key.End });
     const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
     const last = listBoxDiv.children.item(listBoxDiv.childElementCount - 1);
     expect(last?.classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
@@ -504,8 +504,8 @@ describe('Dropdown', () => {
     //@ts-ignore
     // eslint-disable-next-line no-global-assign
     setTimeout = () => {};
-    await userEvent('div.cds--list-box__field', 'keydown', { key: 'b', keyCode: 66 });
-    await userEvent('div.cds--list-box__field', 'keydown', { key: 'a', keyCode: 65 });
+    await userEvent('div.cds--list-box__field', 'keydown', { key: 'b' });
+    await userEvent('div.cds--list-box__field', 'keydown', { key: 'a' });
     const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
     const expectedItem = listBoxDiv.children.item(1);
     expect(expectedItem?.classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
@@ -528,11 +528,11 @@ describe('Dropdown', () => {
     );
 
     await userEvent('div.cds--list-box__field', 'keydown', {
-      keyCode: KeyCodes.DownArrow,
+      key: Key.DownArrow,
       getModifierState: () => false,
     });
     const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
-    await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.DownArrow, getModifierState: () => false });
+    await userEvent(listBoxDiv, 'keydown', { key: Key.DownArrow, getModifierState: () => false });
     const secondItem = screen.querySelectorAll('div.cds--list-box__menu-item')?.[1];
     expect(secondItem?.classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
   });
@@ -550,11 +550,11 @@ describe('Dropdown', () => {
     );
 
     await userEvent('div.cds--list-box__field', 'keydown', {
-      keyCode: KeyCodes.UpArrow,
+      key: Key.UpArrow,
       getModifierState: () => false,
     });
     const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
-    await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => false });
+    await userEvent(listBoxDiv, 'keydown', { key: Key.UpArrow, getModifierState: () => false });
     const secondItem = screen.querySelectorAll('div.cds--list-box__menu-item')?.[0];
     expect(secondItem?.classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
   });
@@ -572,12 +572,12 @@ describe('Dropdown', () => {
     );
 
     await userEvent('div.cds--list-box__field', 'keydown', {
-      keyCode: KeyCodes.DownArrow,
+      key: Key.DownArrow,
       getModifierState: () => false,
     });
     const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
-    await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.DownArrow, getModifierState: () => false });
-    await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => false });
+    await userEvent(listBoxDiv, 'keydown', { key: Key.DownArrow, getModifierState: () => false });
+    await userEvent(listBoxDiv, 'keydown', { key: Key.UpArrow, getModifierState: () => false });
     const secondItem = screen.querySelectorAll('div.cds--list-box__menu-item')?.[0];
     expect(secondItem?.classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
   });
@@ -604,12 +604,12 @@ describe('Dropdown', () => {
     );
 
     await userEvent('div.cds--list-box__field', 'keydown', {
-      keyCode: KeyCodes.DownArrow,
+      key: Key.DownArrow,
       getModifierState: () => false,
     });
     const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
-    await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => true });
-    await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => false }); // dummy event cycle to give handler a chance to run
+    await userEvent(listBoxDiv, 'keydown', { key: Key.UpArrow, getModifierState: () => true });
+    await userEvent(listBoxDiv, 'keydown', { key: Key.UpArrow, getModifierState: () => false }); // dummy event cycle to give handler a chance to run
     const secondItem = screen.querySelectorAll('div.cds--list-box__menu-item')?.[0];
     expect(secondItem?.classList.contains('cds--list-box__menu-item--highlighted')).toBeTruthy();
   });
@@ -641,8 +641,8 @@ describe('Dropdown', () => {
     );
 
     await userEvent('div.cds--list-box__field', 'keydown', { key: 'a', keyCode: 66 });
-    await userEvent('div.cds--list-box__field', 'keydown', { keyCode: KeyCodes.PageDown });
-    await userEvent('div.cds--list-box__field', 'keydown', { keyCode: KeyCodes.PageUp });
+    await userEvent('div.cds--list-box__field', 'keydown', { key: Key.PageDown });
+    await userEvent('div.cds--list-box__field', 'keydown', { key: Key.PageUp });
     const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
     expect(listBoxDiv.childElementCount).toEqual(items.length);
   });
@@ -660,7 +660,7 @@ describe('Dropdown', () => {
     );
 
     await userEvent('div.cds--list-box__field', 'keydown', { key: 'a', keyCode: 66 });
-    await userEvent('div.cds--list-box__field', 'keydown', { keyCode: KeyCodes.Escape });
+    await userEvent('div.cds--list-box__field', 'keydown', { key: Key.Escape });
     const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
     expect(listBoxDiv.childElementCount).toEqual(0);
   });
@@ -678,12 +678,12 @@ describe('Dropdown', () => {
     );
 
     await userEvent('div.cds--list-box__field', 'keydown', {
-      keyCode: KeyCodes.UpArrow,
+      key: Key.UpArrow,
       getModifierState: () => false,
     });
     const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
-    await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.UpArrow, getModifierState: () => false });
-    await userEvent(listBoxDiv, 'keydown', { keyCode: KeyCodes.Enter });
+    await userEvent(listBoxDiv, 'keydown', { key: Key.UpArrow, getModifierState: () => false });
+    await userEvent(listBoxDiv, 'keydown', { key: Key.Enter });
     expect(listBoxDiv.childElementCount).toEqual(0);
   });
 

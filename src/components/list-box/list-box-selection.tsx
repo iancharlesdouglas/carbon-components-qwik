@@ -62,7 +62,7 @@ export const ListBoxSelection = component$((props: ListBoxSelectionProps) => {
         aria-label={clearAllDescription}
         title={description}
       >
-        <Close />
+        <Close size={16} />
       </div>
     </div>
   ) : (
@@ -76,7 +76,7 @@ export const ListBoxSelection = component$((props: ListBoxSelectionProps) => {
       title={description}
     >
       {selectionCount}
-      <Close />
+      <Close size={16} />
     </div>
   );
 });

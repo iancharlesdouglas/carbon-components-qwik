@@ -102,8 +102,8 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
   const {
     ariaLabel,
     class: customClass,
-    clearSelectionDescription,
-    clearSelectionText,
+    clearSelectionDescription = 'Total items selected:',
+    clearSelectionText = 'To clear selection, press Delete or Backspace',
     direction = 'bottom',
     helperText,
     hideLabel = false,
@@ -296,38 +296,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
             size={16}
           />
         )}
-        <div
-          class={[`${prefix}--list-box__field`, readOnly ? `${prefix}--list-box__readonly` : undefined]}
-          {...comboBoxAttrs}
-          ref={comboboxElement}
-          tabIndex={0}
-          onClick$={$(() => {
-            !readOnly && (state.isOpen = !state.isOpen);
-          })}
-          onKeyDown$={$((event: KeyboardEvent) =>
-            handleKeyDown(
-              event,
-              keys,
-              items,
-              state,
-              onSelect$,
-              selector$,
-              listBoxDimensions,
-              defaultItemToString,
-              comboboxElement
-            )
-          )}
-          document:onClick$={$((event: MouseEvent) => {
-            const element = event.target as HTMLElement;
-            if (
-              element.getAttribute('aria-controls') !== listBoxAttrs.id &&
-              !element.classList.contains(`${prefix}--list-box__menu-item__option`) &&
-              state.isOpen
-            ) {
-              state.isOpen = false;
-            }
-          })}
-        >
+        <div class={`${prefix}--list-box__field--wrapper`}>
           {state.selectedItems && state.selectedItems.length > 0 && (
             <ListBoxSelection
               readOnly={readOnly}
@@ -337,8 +306,41 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
               disabled={disabled}
             />
           )}
-          <span class={`${prefix}--list-box__label`}>{placeholder}</span>
-          {!readOnly && <ListBoxMenuIcon isOpen={state.isOpen} />}
+          <div
+            class={[`${prefix}--list-box__field`, readOnly ? `${prefix}--list-box__readonly` : undefined]}
+            {...comboBoxAttrs}
+            ref={comboboxElement}
+            tabIndex={0}
+            onClick$={$(() => {
+              !readOnly && (state.isOpen = !state.isOpen);
+            })}
+            onKeyDown$={$((event: KeyboardEvent) =>
+              handleKeyDown(
+                event,
+                keys,
+                items,
+                state,
+                onSelect$,
+                selector$,
+                listBoxDimensions,
+                defaultItemToString,
+                comboboxElement
+              )
+            )}
+            document:onClick$={$((event: MouseEvent) => {
+              const element = event.target as HTMLElement;
+              if (
+                element.getAttribute('aria-controls') !== listBoxAttrs.id &&
+                !element.classList.contains(`${prefix}--list-box__menu-item__option`) &&
+                state.isOpen
+              ) {
+                state.isOpen = false;
+              }
+            })}
+          >
+            <span class={`${prefix}--list-box__label`}>{placeholder}</span>
+            {!readOnly && <ListBoxMenuIcon isOpen={state.isOpen} />}
+          </div>
         </div>
         <ListBoxMenu
           {...listBoxAttrs}

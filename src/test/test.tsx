@@ -44,6 +44,7 @@ const Test = component$(() => {
   const newItems = items.filter(item => (item as Labelled).label !== 'Banana');
   const itemOptions = useSignal(items);
   const selectedItem = useSignal<Item | undefined>(items.find(item => (item as { label: string }).label === 'Guava')!);
+  const selectedItems = items.filter(item => (item as any).label === 'Blueberry' || (item as any).label === 'Cherry');
 
   return (
     <CarbonRoot>
@@ -103,7 +104,7 @@ const Test = component$(() => {
               <MultiSelect
                 label="Fruits"
                 placeholder="Select fruits"
-                selectedItems={['Apple', 'Banana']}
+                selectedItems={selectedItems}
                 items={itemOptions.value}
               />
             </Column>
