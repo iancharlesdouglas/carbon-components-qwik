@@ -36,6 +36,7 @@ const Test = component$(() => {
     'Huckleberry',
     'Ichigo',
     'Jackfruit',
+    'Kiwi fruit and related fruits from the kiwi family',
   ].map(label => ({
     label,
     key: label,
@@ -99,16 +100,14 @@ const Test = component$(() => {
           <Column lg={2}>
             <span>Selected: {defaultItemToString(selectedItem.value!)}</span>
           </Column>
-          <Row>
-            <Column lg={4}>
-              <MultiSelect
-                label="Fruits"
-                placeholder="Select fruits"
-                selectedItems={selectedItems}
-                items={itemOptions.value}
-              />
-            </Column>
-          </Row>
+          <Column lg={4}>
+            <MultiSelect
+              label="Fruits"
+              placeholder="Select fruits"
+              selectedItems={selectedItems}
+              items={itemOptions.value}
+            />
+          </Column>
         </Grid>
       </Form>
       <Grid class="test-class" id="main-grid" fullWidth>

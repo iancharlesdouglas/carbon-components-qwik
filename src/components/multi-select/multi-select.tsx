@@ -348,7 +348,6 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
           items={items}
           highlightedItem={state.highlightedItem}
           selectedItems={state.selectedItems}
-          style="width: 200px"
           onKeyDown$={$((event: KeyboardEvent) =>
             handleKeyDown(
               event,
@@ -370,11 +369,11 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
           {state.isOpen &&
             sortItems(items, sortOptions)?.map((item: Item, index: number) => {
               const title = itemToString(item);
-              const itemSelected = state.selectedItems?.some(selectedItem => itemsEqual(item, selectedItem));
+              const itemSelected = !!state.selectedItems?.some(selectedItem => itemsEqual(item, selectedItem));
               return (
                 <ListBoxMenuItem
                   key={itemAttrs?.[index].id}
-                  isActive={!!itemSelected}
+                  isActive={itemSelected}
                   aria-label={title}
                   isHighlighted={state.highlightedItem ? itemsEqual(state.highlightedItem, item) : false}
                   title={title}
@@ -386,7 +385,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
                     <span
                       title={useTitleInItem ? title : undefined}
                       class={`${prefix}--checkbox-label`}
-                      data-contained-checkbox-state={itemSelected}
+                      data-contained-checkbox-state={itemSelected ? 'true' : 'false'}
                       id={`${itemAttrs?.[index].id}__checkbox`}
                     >
                       {ItemToElement && <ItemToElement item={item} />}

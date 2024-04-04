@@ -33,7 +33,7 @@ export const ListBoxMenuItem = component$((props: ListBoxMenuItemProps) => {
   const sanitizedProps = removeProps(props, 'isActive', 'isHighlighted', 'title');
 
   return (
-    <div
+    <li
       {...sanitizedProps}
       class={classes}
       title={isTruncated.value ? title : undefined}
@@ -44,6 +44,6 @@ export const ListBoxMenuItem = component$((props: ListBoxMenuItemProps) => {
       <div class={`${prefix}--list-box__menu-item__option`}>
         <Slot />
       </div>
-    </div>
+    </li>
   );
 });

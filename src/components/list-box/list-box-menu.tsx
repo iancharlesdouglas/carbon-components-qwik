@@ -64,8 +64,8 @@ export const ListBoxMenu = component$((props: ListBoxMenuProps) => {
   });
   const sanitizedProps = removeProps(props, 'items', 'highlightedItem', 'selectedItem', 'onMeasure$');
   return (
-    <div id={id} class={`${prefix}--list-box__menu`} role="listbox" {...sanitizedProps} ref={listBoxElement}>
+    <ul id={id} class={`${prefix}--list-box__menu`} role="listbox" {...sanitizedProps} ref={listBoxElement}>
       <Slot />
-    </div>
+    </ul>
   );
 });
