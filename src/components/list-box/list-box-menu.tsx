@@ -34,7 +34,7 @@ export type ListBoxMenuProps = QwikIntrinsicElements['div'] & {
 export const ListBoxMenu = component$((props: ListBoxMenuProps) => {
   const prefix = usePrefix();
   const { id, items, highlightedItem, selectedItems: selectedItem, onMeasure$ } = props;
-  const listBoxElement = useSignal<HTMLDivElement>();
+  const listBoxElement = useSignal<HTMLUListElement>();
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(({ track }) => {
     track(props);
