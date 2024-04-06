@@ -16,57 +16,16 @@ import { ListBox } from '../list-box/list-box';
 import { ListBoxDimensions, ListBoxMenu } from '../list-box/list-box-menu';
 import { WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
 import { ListBoxMenuIcon } from '../list-box/list-box-menu-icon';
-import { ListBoxMenuItem } from '../list-box/list-box-menu-item';
 import { ComboboxState, qombobox } from '../../internal/qombobox/qombobox';
-import { Keys, Selector, handleKeyDown } from '../../internal/qombobox/handle-keydown';
+import { Keys, handleKeyDown } from '../../internal/qombobox/handle-keydown';
 import './multi-select.scss';
 import { removeProps } from '../../internal/objects/remove-props';
 import { itemsEqual } from '../../internal/qombobox/items-equal';
-import { itemDisabled } from '../../internal/qombobox/item-disabled';
 import { Item, ItemProps, ItemToString, defaultItemToString } from '../dropdown/dropdown';
 import { CompareItems, SortItems, SortOptions, defaultCompareItems, defaultSortItems } from './sorting';
 import { ListBoxSelection } from '../list-box/list-box-selection';
-
-/**
- * Multi-select props
- */
-export type MultiSelectProps = QwikIntrinsicElements['div'] & {
-  ariaLabel?: string;
-  class?: string;
-  clearSelectionDescription?: string;
-  clearSelectionText?: string;
-  compareItems?: CompareItems;
-  direction?: 'top' | 'bottom';
-  disabled?: boolean;
-  helperText?: string;
-  hideLabel?: boolean;
-  id?: string;
-  invalid?: boolean;
-  invalidText?: string;
-  items?: Item[];
-  itemToElement?: Component<ItemProps>;
-  itemToString?: ItemToString;
-  label?: string;
-  onSelect$?: QRL<(item: Item) => void>;
-  placeholder?: string;
-  readOnly?: boolean;
-  renderSelectedItem?: Component<ItemProps>;
-  selectedItems?: Item[];
-  size?: 'sm' | 'md' | 'lg';
-  sortItems?: SortItems;
-  translateWithId?: () => string;
-  type?: 'default' | 'inline';
-  useTitleInItem?: boolean;
-  warn?: boolean;
-  warnText?: string;
-};
-
-/**
- * Multi-select listbox popup state
- */
-export type MultiSelectState = ComboboxState & {
-  selectedItems: Item[] | undefined;
-};
+import { MultiSelectMenuItem } from './multi-select-menu-item';
+import { toggleItemSelected$ } from './toggle-item-selected';
 
 /**
  * Multi-select, a select-only combobox with multiple selection via checkboxes
@@ -84,7 +43,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
     sortItems = defaultSortItems,
     compareItems = defaultCompareItems,
   } = props;
-  const stateObj: MultiSelectState = {
+  const stateObj: ComboboxState = {
     isOpen: false,
     selectedItems: declaredSelectedItems,
     highlightedItem: declaredSelectedItems?.[0],
@@ -239,27 +198,6 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
 
   const labelId = titleText ? `${id}--label` : undefined;
 
-  const toggleItemSelected$ = $(
-    (state: MultiSelectState, item: Item | undefined, onSelect$?: QRL<(item: Item) => void>) => {
-      const selectedItemIndex = state.selectedItems?.findIndex(selectedItem => itemsEqual(selectedItem, item));
-      if (selectedItemIndex && selectedItemIndex > -1) {
-        state.selectedItems = state.selectedItems?.splice(selectedItemIndex, 1);
-      } else if (item) {
-        const selection = state.selectedItems ?? [];
-        selection.push(item);
-        state.selectedItems = selection;
-      }
-      if (item) {
-        onSelect$ && onSelect$(item);
-      }
-    }
-  );
-
-  const selector$: Selector = $((state: ComboboxState, onSelect$?: QRL<(item: Item) => void>) => {
-    const multiSelectState = state as unknown as MultiSelectState;
-    toggleItemSelected$(multiSelectState, state.highlightedItem, onSelect$);
-  });
-
   const clearSelection$ = $(() => {
     if (disabled || readOnly) {
       return;
@@ -321,7 +259,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
                 items,
                 state,
                 onSelect$,
-                selector$,
+                toggleItemSelected$,
                 listBoxDimensions,
                 defaultItemToString,
                 comboboxElement
@@ -330,6 +268,8 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
             document:onClick$={$((event: MouseEvent) => {
               const element = event.target as HTMLElement;
               if (
+                !element.className?.endsWith('--checkbox-label') &&
+                !element.className?.endsWith('--checkbox-wrapper') &&
                 element.getAttribute('aria-controls') !== listBoxAttrs.id &&
                 !element.classList.contains(`${prefix}--list-box__menu-item__option`) &&
                 state.isOpen
@@ -355,7 +295,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
               items,
               state,
               onSelect$,
-              selector$,
+              toggleItemSelected$,
               listBoxDimensions,
               defaultItemToString,
               comboboxElement
@@ -368,31 +308,35 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
         >
           {state.isOpen &&
             sortItems(items, sortOptions)?.map((item: Item, index: number) => {
-              const title = itemToString(item);
               const itemSelected = !!state.selectedItems?.some(selectedItem => itemsEqual(item, selectedItem));
               return (
-                <ListBoxMenuItem
+                <MultiSelectMenuItem
+                  title={itemToString(item)}
+                  item={item}
+                  state={state}
+                  itemSelected={itemSelected}
+                  itemAttrs={itemAttrs}
+                  useTitleInItem={useTitleInItem}
                   key={itemAttrs?.[index].id}
-                  isActive={itemSelected}
-                  aria-label={title}
-                  isHighlighted={state.highlightedItem ? itemsEqual(state.highlightedItem, item) : false}
-                  title={title}
-                  disabled={itemDisabled(item)}
-                  {...itemAttrs?.[index]}
-                  onClick$={$(() => toggleItemSelected$(state, item, onSelect$))}
-                >
-                  <div class={`${prefix}--checkbox-wrapper`}>
-                    <span
-                      title={useTitleInItem ? title : undefined}
-                      class={`${prefix}--checkbox-label`}
-                      data-contained-checkbox-state={itemSelected ? 'true' : 'false'}
-                      id={`${itemAttrs?.[index].id}__checkbox`}
-                    >
-                      {ItemToElement && <ItemToElement item={item} />}
-                      {!ItemToElement && itemToString(item)}
-                    </span>
-                  </div>
-                </ListBoxMenuItem>
+                  itemToElement={ItemToElement}
+                  index={index}
+                  onToggle$={$(() => {
+                    const selectedItemIndex = state.selectedItems?.findIndex(selectedItem =>
+                      itemsEqual(selectedItem, item)
+                    );
+                    if (selectedItemIndex !== undefined && selectedItemIndex > -1) {
+                      state.selectedItems = state.selectedItems?.filter(
+                        selectedItem => !itemsEqual(selectedItem, item)
+                      );
+                    } else {
+                      const selection = state.selectedItems ?? [];
+                      selection.push(item);
+                      state.selectedItems = selection;
+                    }
+                    onSelect$ && onSelect$(item);
+                  })}
+                  prefix={prefix}
+                />
               );
             })}
         </ListBoxMenu>
@@ -401,3 +345,37 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
     </div>
   );
 });
+
+/**
+ * Multi-select props
+ */
+export type MultiSelectProps = QwikIntrinsicElements['div'] & {
+  ariaLabel?: string;
+  class?: string;
+  clearSelectionDescription?: string;
+  clearSelectionText?: string;
+  compareItems?: CompareItems;
+  direction?: 'top' | 'bottom';
+  disabled?: boolean;
+  helperText?: string;
+  hideLabel?: boolean;
+  id?: string;
+  invalid?: boolean;
+  invalidText?: string;
+  items?: Item[];
+  itemToElement?: Component<ItemProps>;
+  itemToString?: ItemToString;
+  label?: string;
+  onSelect$?: QRL<(item: Item) => void>;
+  placeholder?: string;
+  readOnly?: boolean;
+  renderSelectedItem?: Component<ItemProps>;
+  selectedItems?: Item[];
+  size?: 'sm' | 'md' | 'lg';
+  sortItems?: SortItems;
+  translateWithId?: () => string;
+  type?: 'default' | 'inline';
+  useTitleInItem?: boolean;
+  warn?: boolean;
+  warnText?: string;
+};

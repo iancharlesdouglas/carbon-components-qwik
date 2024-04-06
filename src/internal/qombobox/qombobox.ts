@@ -3,42 +3,6 @@ import { Item } from '../../components/dropdown/dropdown';
 import { uniqueId } from '../unique/unique-id';
 
 /**
- * Combobox listbox popup open and highlighted item state
- */
-export type ComboboxState = {
-  isOpen: boolean;
-  highlightedItem: Item | undefined;
-};
-
-/**
- * Return value of qombobox function
- * @property id - ID passed in or computed
- * @property label - Label sub-object containing its id attribute, if a label is present (determined by titleText)
- * @property listBox - Listbox sub-object containing attributes: id, role, tabIndex, 'aria-labelled-by' (if titleText present)
- * @property comboBox - Combobox sub-object containing attributes: role, 'aria-controls', 'aria-expanded', 'aria-haspopup', 'aria-label', 'aria-disabled', 'aria-activedescendant', disabled and tabIndex
- * @property items - List of item attributes (if items are available) containing attributes: id, role and 'aria-selected'
- * @property selectedOption - Selected item if one is selected
- */
-export type QomboboxReturn = {
-  id: string;
-  label: { id?: string };
-  listBox: { id: string; role: string; tabIndex: number; 'aria-labelled-by'?: string };
-  comboBox: {
-    role: string;
-    'aria-controls': string;
-    'aria-expanded': boolean;
-    'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog';
-    'aria-label': string;
-    'aria-disabled': boolean;
-    'aria-activedescendant'?: string;
-    disabled: boolean;
-    tabIndex: number;
-  };
-  items?: { id: string; role: string; 'aria-selected': boolean }[];
-  selectedItem?: Signal<Item | undefined>;
-};
-
-/**
  * Derives combobox ARIA attributes
  * @param state State (whether open; highlighted item)
  * @param disabled Whether the combobox control is disabled
@@ -89,3 +53,46 @@ const getItemId = (item: Item) => {
   }
   return uniqueId();
 };
+
+/**
+ * Combobox listbox popup open and highlighted item state
+ */
+export type ComboboxState = {
+  isOpen: boolean;
+  highlightedItem: Item | undefined;
+  selectedItem?: Item | undefined;
+  selectedItems?: Item[] | undefined;
+};
+
+/**
+ * Return value of qombobox function
+ * @property id - ID passed in or computed
+ * @property label - Label sub-object containing its id attribute, if a label is present (determined by titleText)
+ * @property listBox - Listbox sub-object containing attributes: id, role, tabIndex, 'aria-labelled-by' (if titleText present)
+ * @property comboBox - Combobox sub-object containing attributes: role, 'aria-controls', 'aria-expanded', 'aria-haspopup', 'aria-label', 'aria-disabled', 'aria-activedescendant', disabled and tabIndex
+ * @property items - List of item attributes (if items are available) containing attributes: id, role and 'aria-selected'
+ * @property selectedOption - Selected item if one is selected
+ */
+export type QomboboxReturn = {
+  id: string;
+  label: { id?: string };
+  listBox: { id: string; role: string; tabIndex: number; 'aria-labelled-by'?: string };
+  comboBox: {
+    role: string;
+    'aria-controls': string;
+    'aria-expanded': boolean;
+    'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog';
+    'aria-label': string;
+    'aria-disabled': boolean;
+    'aria-activedescendant'?: string;
+    disabled: boolean;
+    tabIndex: number;
+  };
+  items?: ItemAttributes[];
+  selectedItem?: Signal<Item | undefined>;
+};
+
+/**
+ * Item attributes determined by qombobox function
+ */
+export type ItemAttributes = { id: string; role: 'option'; 'aria-selected': boolean };

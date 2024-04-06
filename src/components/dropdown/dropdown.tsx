@@ -69,13 +69,6 @@ export type ItemProps = {
 };
 
 /**
- * Dropdown listbox popup state
- */
-export type DropdownState = ComboboxState & {
-  selectedItem: Item | undefined;
-};
-
-/**
  * Dropdown props
  */
 export type DropdownProps = QwikIntrinsicElements['div'] & {
@@ -112,7 +105,7 @@ export const Dropdown = component$((props: DropdownProps) => {
   const { isFluid } = useContext(formContext);
   const isFocused = useSignal(false);
   const { disabled = false, id: stipulatedId, label: titleText, items, selectedItem: declaredSelectedItem } = props;
-  const stateObj: DropdownState = {
+  const stateObj: ComboboxState = {
     isOpen: false,
     selectedItem: declaredSelectedItem,
     highlightedItem: declaredSelectedItem,
@@ -248,9 +241,8 @@ export const Dropdown = component$((props: DropdownProps) => {
 
   const labelId = titleText ? `${id}--label` : undefined;
   const selector$: Selector = $((state: ComboboxState, onSelect$) => {
-    const dropdownState = state as unknown as DropdownState;
-    dropdownState.selectedItem = state.highlightedItem;
-    onSelect$ && onSelect$(dropdownState.selectedItem!);
+    state.selectedItem = state.highlightedItem;
+    onSelect$ && onSelect$(state.selectedItem!);
     state.isOpen = false;
   });
 
@@ -317,7 +309,7 @@ export const Dropdown = component$((props: DropdownProps) => {
           <span class={`${prefix}--list-box__label`}>
             {(state.selectedItem &&
               (RenderSelectedItem ? (
-                <RenderSelectedItem item={state.selectedItem} />
+                <RenderSelectedItem item={state.selectedItem!} />
               ) : (
                 itemToString(state.selectedItem)
               ))) ||
@@ -364,6 +356,7 @@ export const Dropdown = component$((props: DropdownProps) => {
                   onClick$={$(() => {
                     if (!itemDisabled(item)) {
                       state.selectedItem = item;
+                      state.highlightedItem = item;
                       state.isOpen = false;
                       onSelect$ && onSelect$(item);
                     }
