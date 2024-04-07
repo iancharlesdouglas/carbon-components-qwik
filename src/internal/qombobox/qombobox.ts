@@ -56,6 +56,10 @@ const getItemId = (item: Item) => {
 
 /**
  * Combobox listbox popup open and highlighted item state
+ * @property isOpen - Whether the popup is open
+ * @property highlightedItem - Currently highlighted item
+ * @property selectedItem - Currently selected item (single item selection)
+ * @property selectedItems - Currently selected item/s (multiple item selection)
  */
 export type ComboboxState = {
   isOpen: boolean;

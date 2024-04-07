@@ -8,6 +8,7 @@ import {
   $,
   useStore,
   useTask$,
+  QRL,
 } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { formContext } from '../../internal/contexts/form-context';
@@ -48,6 +49,8 @@ export type Item = string | ObjectItem;
  */
 export type ItemToString = (item: Item | undefined) => string | undefined;
 
+export type ItemAsString = QRL<(item: Item | undefined) => string | undefined>;
+
 /**
  * Returns the string representation of an item (either the label or the item itself if it is a string)
  * @param {Item} item - Item to render
@@ -59,6 +62,13 @@ export const defaultItemToString: ItemToString = (item: Item | undefined) => {
   }
   return item?.label;
 };
+
+export const defaultItemToString$ = $((item: Item | undefined) => {
+  if (typeof item === 'string') {
+    return item;
+  }
+  return item?.label;
+});
 
 /**
  * Props for a component to render an item

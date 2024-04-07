@@ -21,8 +21,8 @@ import { Keys, handleKeyDown } from '../../internal/qombobox/handle-keydown';
 import './multi-select.scss';
 import { removeProps } from '../../internal/objects/remove-props';
 import { itemsEqual } from '../../internal/qombobox/items-equal';
-import { Item, ItemProps, ItemToString, defaultItemToString } from '../dropdown/dropdown';
-import { CompareItems, SortItems, SortOptions, defaultCompareItems, defaultSortItems } from './sorting';
+import { Item, ItemAsString, ItemProps, defaultItemToString, defaultItemToString$ } from '../dropdown/dropdown';
+import { CompareItems, SortItems, SortOptions, defaultCompareItems$, defaultSortItems$ } from './sorting';
 import { ListBoxSelection } from '../list-box/list-box-selection';
 import { MultiSelectMenuItem } from './multi-select-menu-item';
 import { toggleItemSelected$ } from './toggle-item-selected';
@@ -40,15 +40,17 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
     label: titleText,
     items,
     selectedItems: declaredSelectedItems,
-    sortItems = defaultSortItems,
-    compareItems = defaultCompareItems,
+    sortItems$ = defaultSortItems$,
+    compareItems$ = defaultCompareItems$,
   } = props;
+
   const stateObj: ComboboxState = {
     isOpen: false,
     selectedItems: declaredSelectedItems,
     highlightedItem: declaredSelectedItems?.[0],
   };
   const state = useStore(stateObj);
+
   const {
     id: modifiedId,
     comboBox: comboBoxAttrs,
@@ -70,11 +72,10 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
     invalid = false,
     invalidText,
     itemToElement: ItemToElement,
-    itemToString = defaultItemToString,
+    itemToString$ = defaultItemToString$,
     placeholder,
     onSelect$,
     readOnly,
-    // renderSelectedItem: RenderSelectedItem,
     size = 'md',
     type = 'default',
     useTitleInItem,
@@ -82,7 +83,23 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
     warnText,
   } = props;
 
-  const sortOptions: SortOptions = { selectedItems: declaredSelectedItems, itemToString, compareItems, locale: 'en' };
+  const sortOptions: SortOptions = { selectedItems: declaredSelectedItems, itemToString$, compareItems$, locale: 'en' };
+
+  const sortedObj = { items, changed: false };
+  const sorted = useStore(sortedObj);
+
+  // const sortChangedObj = { changed: false };
+  // const sortChanged = useStore(sortChangedObj);
+
+  // const sortedItems = sortItems$(items, sortOptions);
+
+  // const sortedItemsStore = useStore<{ value: Item[] | undefined }>({ value: [] });
+
+  useTask$(async ({ track }) => {
+    track(sorted);
+    sorted.items = await sortItems$(items, sortOptions);
+    sorted.changed = false;
+  });
 
   useTask$(({ track }) => {
     track(() => declaredSelectedItems);
@@ -127,6 +144,9 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
     track(() => state.isOpen);
     if (!state.isOpen && comboboxElement.value) {
       (comboboxElement.value as HTMLButtonElement).focus();
+    } else if (state.isOpen) {
+      sorted.changed = true;
+      // sortedItemsStore.value = sortedItems;
     }
   });
 
@@ -307,11 +327,11 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
           preventdefault:keydown
         >
           {state.isOpen &&
-            sortItems(items, sortOptions)?.map((item: Item, index: number) => {
+            sorted.items?.map(async (item: Item, index: number) => {
               const itemSelected = !!state.selectedItems?.some(selectedItem => itemsEqual(item, selectedItem));
               return (
                 <MultiSelectMenuItem
-                  title={itemToString(item)}
+                  title={await itemToString$(item)}
                   item={item}
                   state={state}
                   itemSelected={itemSelected}
@@ -334,6 +354,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
                       state.selectedItems = selection;
                     }
                     onSelect$ && onSelect$(item);
+                    sorted.changed = true;
                   })}
                   prefix={prefix}
                 />
@@ -354,7 +375,7 @@ export type MultiSelectProps = QwikIntrinsicElements['div'] & {
   class?: string;
   clearSelectionDescription?: string;
   clearSelectionText?: string;
-  compareItems?: CompareItems;
+  compareItems$?: CompareItems;
   direction?: 'top' | 'bottom';
   disabled?: boolean;
   helperText?: string;
@@ -364,7 +385,7 @@ export type MultiSelectProps = QwikIntrinsicElements['div'] & {
   invalidText?: string;
   items?: Item[];
   itemToElement?: Component<ItemProps>;
-  itemToString?: ItemToString;
+  itemToString$?: ItemAsString;
   label?: string;
   onSelect$?: QRL<(item: Item) => void>;
   placeholder?: string;
@@ -372,7 +393,7 @@ export type MultiSelectProps = QwikIntrinsicElements['div'] & {
   renderSelectedItem?: Component<ItemProps>;
   selectedItems?: Item[];
   size?: 'sm' | 'md' | 'lg';
-  sortItems?: SortItems;
+  sortItems$?: SortItems;
   translateWithId?: () => string;
   type?: 'default' | 'inline';
   useTitleInItem?: boolean;
