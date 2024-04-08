@@ -83,22 +83,31 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
     warnText,
   } = props;
 
-  const sortOptions: SortOptions = { selectedItems: declaredSelectedItems, itemToString$, compareItems$, locale: 'en' };
+  const sortOptions: SortOptions = { itemToString$, compareItems$, locale: 'en' };
 
-  const sortedObj = { items, changed: false };
+  const sortedObj = {
+    items,
+    changed: false,
+    initialized: false,
+  };
   const sorted = useStore(sortedObj);
 
-  // const sortChangedObj = { changed: false };
-  // const sortChanged = useStore(sortChangedObj);
-
-  // const sortedItems = sortItems$(items, sortOptions);
-
-  // const sortedItemsStore = useStore<{ value: Item[] | undefined }>({ value: [] });
+  useTask$(async () => {
+    if (!sorted.initialized) {
+      sorted.initialized = true;
+      console.log('initialising, selected items', state.selectedItems);
+      sorted.items = await sortItems$(items, state.selectedItems, sortOptions);
+      console.log('initing sorted items', sorted.items);
+    }
+  });
 
   useTask$(async ({ track }) => {
     track(sorted);
-    sorted.items = await sortItems$(items, sortOptions);
-    sorted.changed = false;
+    if (!sorted.initialized) {
+      console.log('resorting items');
+      sorted.items = await sortItems$(items, state.selectedItems, sortOptions);
+      sorted.initialized = true;
+    }
   });
 
   useTask$(({ track }) => {
@@ -140,13 +149,11 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
     }
   });
 
-  useTask$(({ track }) => {
+  useTask$(async ({ track }) => {
     track(() => state.isOpen);
     if (!state.isOpen && comboboxElement.value) {
+      sorted.items = await sortItems$(items, state.selectedItems, sortOptions);
       (comboboxElement.value as HTMLButtonElement).focus();
-    } else if (state.isOpen) {
-      sorted.changed = true;
-      // sortedItemsStore.value = sortedItems;
     }
   });
 
@@ -270,7 +277,10 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
             ref={comboboxElement}
             tabIndex={0}
             onClick$={$(() => {
-              !readOnly && (state.isOpen = !state.isOpen);
+              if (!readOnly) {
+                state.isOpen = !state.isOpen;
+                sorted.changed = true;
+              }
             })}
             onKeyDown$={$((event: KeyboardEvent) =>
               handleKeyDown(
@@ -295,6 +305,8 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
                 state.isOpen
               ) {
                 state.isOpen = false;
+                // TODO - reinitialise if selectionFeedback is set to top
+                // sorted.initialized = false;
               }
             })}
           >
@@ -355,6 +367,9 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
                     }
                     onSelect$ && onSelect$(item);
                     sorted.changed = true;
+                    // TODO - reinitialise if selectionFeedback is set to top
+                    // sorted.initialized = false;
+                    console.log('selected items', state.selectedItems);
                   })}
                   prefix={prefix}
                 />

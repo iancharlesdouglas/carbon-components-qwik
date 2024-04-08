@@ -1,8 +1,9 @@
-import { QwikIntrinsicElements, QwikKeyboardEvent, component$, useContext, $, Slot } from '@builder.io/qwik';
+import { QwikIntrinsicElements, component$, useContext, $, Slot } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import { formContext } from '../../internal/contexts/form-context';
 import classNames from 'classnames';
 import { removeProps } from '../../internal/objects/remove-props';
+import { Key } from '../../internal/key';
 
 /**
  * ListBox props
@@ -73,8 +74,8 @@ export const ListBox = component$((props: ListBoxProps) => {
       <div
         {...sanitizedProps}
         class={classes}
-        onKeyDown$={$((event: QwikKeyboardEvent<HTMLDivElement>) => {
-          if (event.keyCode === 27) {
+        onKeyDown$={$((event: KeyboardEvent) => {
+          if (event.key === Key.Escape) {
             event?.stopPropagation && event.stopPropagation();
           }
         })}
