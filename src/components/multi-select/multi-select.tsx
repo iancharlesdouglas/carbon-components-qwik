@@ -76,6 +76,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
     placeholder,
     onSelect$,
     readOnly,
+    selectionFeedback = 'top-after-reopen',
     size = 'md',
     type = 'default',
     useTitleInItem,
@@ -95,17 +96,14 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
   useTask$(async () => {
     if (!sorted.initialized) {
       sorted.initialized = true;
-      console.log('initialising, selected items', state.selectedItems);
-      sorted.items = await sortItems$(items, state.selectedItems, sortOptions);
-      console.log('initing sorted items', sorted.items);
+      sorted.items = await sortItems$(items, state.selectedItems, selectionFeedback === 'fixed', sortOptions);
     }
   });
 
   useTask$(async ({ track }) => {
     track(sorted);
     if (!sorted.initialized) {
-      console.log('resorting items');
-      sorted.items = await sortItems$(items, state.selectedItems, sortOptions);
+      sorted.items = await sortItems$(items, state.selectedItems, selectionFeedback === 'fixed', sortOptions);
       sorted.initialized = true;
     }
   });
@@ -152,7 +150,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
   useTask$(async ({ track }) => {
     track(() => state.isOpen);
     if (!state.isOpen && comboboxElement.value) {
-      sorted.items = await sortItems$(items, state.selectedItems, sortOptions);
+      sorted.items = await sortItems$(items, state.selectedItems, selectionFeedback === 'fixed', sortOptions);
       (comboboxElement.value as HTMLButtonElement).focus();
     }
   });
@@ -305,8 +303,9 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
                 state.isOpen
               ) {
                 state.isOpen = false;
-                // TODO - reinitialise if selectionFeedback is set to top
-                // sorted.initialized = false;
+                if (selectionFeedback === 'top') {
+                  sorted.initialized = false;
+                }
               }
             })}
           >
@@ -367,9 +366,9 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
                     }
                     onSelect$ && onSelect$(item);
                     sorted.changed = true;
-                    // TODO - reinitialise if selectionFeedback is set to top
-                    // sorted.initialized = false;
-                    console.log('selected items', state.selectedItems);
+                    if (selectionFeedback === 'top') {
+                      sorted.initialized = false;
+                    }
                   })}
                   prefix={prefix}
                 />
@@ -407,6 +406,7 @@ export type MultiSelectProps = QwikIntrinsicElements['div'] & {
   readOnly?: boolean;
   renderSelectedItem?: Component<ItemProps>;
   selectedItems?: Item[];
+  selectionFeedback?: 'top' | 'fixed' | 'top-after-reopen';
   size?: 'sm' | 'md' | 'lg';
   sortItems$?: SortItems;
   translateWithId?: () => string;

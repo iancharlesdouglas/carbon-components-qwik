@@ -37,7 +37,7 @@ export const ListBoxMenu = component$((props: ListBoxMenuProps) => {
   const listBoxElement = useSignal<HTMLUListElement>();
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(({ track }) => {
-    track(props);
+    track(() => highlightedItem);
     const focusItem = highlightedItem ?? selectedItem?.[0];
     if (items && focusItem && listBoxElement.value) {
       const children = Array.from(listBoxElement.value.children);
@@ -62,7 +62,7 @@ export const ListBoxMenu = component$((props: ListBoxMenuProps) => {
     }
     listBoxElement.value?.focus();
   });
-  const sanitizedProps = removeProps(props, 'items', 'highlightedItem', 'selectedItem', 'onMeasure$');
+  const sanitizedProps = removeProps(props, 'items', 'highlightedItem', 'selectedItems', 'onMeasure$');
   return (
     <ul id={id} class={`${prefix}--list-box__menu`} role="listbox" {...sanitizedProps} ref={listBoxElement}>
       <Slot />

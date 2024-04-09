@@ -34,24 +34,30 @@ export type SortOptions = {
  * Sort items function for multi-select -- can handle selected vs non-selected items
  */
 export type SortItems = QRL<
-  (items: Item[] | undefined, selectedItems: Item[] | undefined, options: SortOptions) => Item[] | undefined
+  (
+    items: Item[] | undefined,
+    selectedItems: Item[] | undefined,
+    fixed: boolean,
+    options: SortOptions
+  ) => Item[] | undefined
 >;
 
 /**
  * Default sort items implementation
  * @param items Items
  * @param selectedItems Selected items
+ * @param fixed Whether items remain fixed or selected items move to the top
  * @param param1 Options
  * @param param1.itemToString Item to string function
  * @param param1.compareItems Comparator function
  * @param param1.locale Locale code
  * @returns Sorted items
  */
-// TODO - we would not sort regarding selecteditems if selectionFeedback were set to fixed
 export const defaultSortItems$ = $(
   (
     items: Item[] | undefined,
     selectedItems: Item[] | undefined,
+    fixed: boolean,
     {
       itemToString$,
       compareItems$,
@@ -59,19 +65,20 @@ export const defaultSortItems$ = $(
     }: { itemToString$: ItemAsString; compareItems$: CompareItems; locale: string }
   ) => {
     const comparator = async (itemA: Item, itemB: Item) => {
-      const hasItemA = selectedItems?.some(item => itemsEqual(item, itemA));
-      const hasItemB = selectedItems?.some(item => itemsEqual(item, itemB));
-      if (hasItemA && !hasItemB) {
-        return -1;
-      }
-      if (hasItemB && !hasItemA) {
-        return 1;
+      if (!fixed) {
+        const hasItemA = selectedItems?.some(item => itemsEqual(item, itemA));
+        const hasItemB = selectedItems?.some(item => itemsEqual(item, itemB));
+        if (hasItemA && !hasItemB) {
+          return -1;
+        }
+        if (hasItemB && !hasItemA) {
+          return 1;
+        }
       }
       const itemAString = await itemToString$(itemA);
       const itemBString = await itemToString$(itemB);
       return compareItems$(itemAString, itemBString, { locale });
     };
-    console.log('sorting; selectedItems', selectedItems);
     if (items) {
       return quickSort(items, comparator);
     } else {
