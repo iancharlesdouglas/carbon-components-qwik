@@ -159,6 +159,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
   const showWarning = !invalid && warn;
 
   const classes = classNames(`${prefix}--multi-select`, [!disabled ? customClass : null], {
+    [`${prefix}--multi-select--disabled`]: disabled,
     [`${prefix}--multi-select--invalid`]: invalid,
     [`${prefix}--multi-select--warning`]: showWarning,
     [`${prefix}--multi-select--inline`]: inline,
@@ -196,17 +197,16 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
     'class',
     'clearSelectionDescription',
     'clearSelectionText',
-    'compareItems',
+    'compareItems$',
     'direction',
     'disabled',
     'helperText',
     'hideLabel',
-    'initialSelectedItem',
     'invalid',
     'invalidText',
     'id',
     'itemToElement',
-    'itemToString',
+    'itemToString$',
     'items',
     'label',
     'onChange$',
@@ -220,6 +220,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
     'warn',
     'warnText'
   );
+  console.log('san. props', sanitizedProps);
 
   const labelId = titleText ? `${id}--label` : undefined;
 

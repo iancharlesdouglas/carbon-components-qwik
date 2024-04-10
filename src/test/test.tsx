@@ -105,6 +105,7 @@ const Test = component$(() => {
               placeholder="Select fruits"
               selectedItems={selectedItems}
               items={itemOptions.value}
+              itemToString$={$((item: Item | undefined) => `Item ${item.label}`)}
             />
           </Column>
         </Grid>
