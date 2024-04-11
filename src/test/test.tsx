@@ -87,7 +87,7 @@ const Test = component$(() => {
               label="Fruit"
               placeholder="Select a fruit"
               selectedItem={selectedItem.value}
-              renderItem={SelectedItemRenderComp}
+              renderSelectedItem={SelectedItemRenderComp}
               items={itemOptions.value}
               helperText="Optional"
               onSelect$={$((item: Item) => {
@@ -105,7 +105,7 @@ const Test = component$(() => {
               placeholder="Select fruits"
               selectedItems={selectedItems}
               items={itemOptions.value}
-              itemToString$={$((item: Item | undefined) => `Item ${item.label}`)}
+              itemToString$={$((item: Item | undefined) => `Item ${(item as any).label}`)}
             />
           </Column>
         </Grid>

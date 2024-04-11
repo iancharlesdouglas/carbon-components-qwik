@@ -3,7 +3,6 @@ import { createDOM } from '@builder.io/qwik/testing';
 import { CarbonRoot } from '../carbon-root/carbon-root';
 import { Form } from '../form/form';
 import { component$, $, useSignal } from '@builder.io/qwik';
-import { Key } from '../../internal/key';
 import { MultiSelect } from './multi-select';
 import { defaultCompareItems$ } from './sorting';
 import { Item, ItemProps, defaultItemToString, defaultItemToString$ } from '../dropdown/dropdown';
@@ -96,7 +95,7 @@ describe('Dropdown', () => {
             selectedItems={['One']}
             selectionFeedback="top"
             size="md"
-            sortItems$={$((a, b) => a)}
+            sortItems$={$(items => items)}
             translateWithId$={$((id: string) => id)}
             type="default"
             useTitleInItem={false}
@@ -665,7 +664,7 @@ describe('Dropdown', () => {
   //   expect(listBoxDiv.childElementCount).toEqual(items.length);
   // });
 
-  // it('closes the items menu when Esc is pressed', async () => {
+  // it('closes the items menu when Escape is pressed', async () => {
   //   const { screen, render, userEvent } = await createDOM();
   //   const items: Item[] = ['Apple', 'Banana', 'Blackberry'];
 

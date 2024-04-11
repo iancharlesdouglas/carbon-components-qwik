@@ -1,4 +1,4 @@
-import { QwikIntrinsicElements, Slot, component$, useSignal, useVisibleTask$, $ } from '@builder.io/qwik';
+import { QwikIntrinsicElements, Slot, component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import classNames from 'classnames';
 import { removeProps } from '../../internal/objects/remove-props';
