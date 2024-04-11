@@ -186,13 +186,13 @@ describe('Dropdown', () => {
           <Dropdown
             id={objectItemsDropdown}
             selectedItem={selectedObjectItem}
-            renderItem={SelectedItemRenderComp}
+            renderSelectedItem={SelectedItemRenderComp}
             items={[selectedObjectItem]}
           />
           <Dropdown
             id={stringItemsDropdown}
             selectedItem={selectedStringItem}
-            renderItem={SelectedItemRenderComp}
+            renderSelectedItem={SelectedItemRenderComp}
             items={[selectedStringItem]}
           />
         </Form>

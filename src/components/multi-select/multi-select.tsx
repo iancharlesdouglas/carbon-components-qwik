@@ -74,9 +74,10 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
     itemToElement: ItemToElement,
     itemToString$ = defaultItemToString$,
     placeholder,
-    onSelect$,
+    onChange$,
+    onMenuChange$,
     readOnly,
-    renderItem: RenderItem,
+    renderSelectedItem: RenderSelectedItem,
     selectionFeedback = 'top-after-reopen',
     size = 'md',
     type = 'default',
@@ -203,21 +204,25 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
     'disabled',
     'helperText',
     'hideLabel',
+    'id',
     'invalid',
     'invalidText',
-    'id',
+    'items',
     'itemToElement',
     'itemToString$',
-    'items',
     'label',
     'onChange$',
+    'onMenuChange$',
+    'placeholder',
+    'readOnly',
     'renderSelectedItem',
-    'selectedItem',
+    'selectedItems',
+    'selectionFeedback',
     'size',
-    'sortItems',
-    'titleText',
-    'translateWithId',
+    'sortItems$',
+    'translateWithId$',
     'type',
+    'useTitleInItem',
     'warn',
     'warnText'
   );
@@ -279,6 +284,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
               if (!readOnly) {
                 state.isOpen = !state.isOpen;
                 sorted.changed = true;
+                onMenuChange$ && onMenuChange$(state.isOpen);
               }
             })}
             onKeyDown$={$((event: KeyboardEvent) =>
@@ -287,7 +293,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
                 keys,
                 items,
                 state,
-                onSelect$,
+                onChange$,
                 toggleItemSelected$,
                 listBoxDimensions,
                 defaultItemToString,
@@ -310,7 +316,13 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
               }
             })}
           >
-            <span class={`${prefix}--list-box__label`}>{placeholder}</span>
+            <span class={`${prefix}--list-box__label`}>
+              {state.selectedItems?.length && state.selectedItems?.length > 0 && RenderSelectedItem ? (
+                <RenderSelectedItem item={state.selectedItems[0]} />
+              ) : (
+                placeholder
+              )}
+            </span>
             {!readOnly && <ListBoxMenuIcon isOpen={state.isOpen} />}
           </div>
         </div>
@@ -326,7 +338,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
               keys,
               items,
               state,
-              onSelect$,
+              onChange$,
               toggleItemSelected$,
               listBoxDimensions,
               defaultItemToString,
@@ -365,7 +377,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
                       selection.push(item);
                       state.selectedItems = selection;
                     }
-                    onSelect$ && onSelect$(item);
+                    onChange$ && onChange$(item);
                     sorted.changed = true;
                     if (selectionFeedback === 'top') {
                       sorted.initialized = false;
@@ -402,15 +414,16 @@ export type MultiSelectProps = QwikIntrinsicElements['div'] & {
   itemToElement?: Component<ItemProps>;
   itemToString$?: ItemAsString;
   label?: string;
-  onSelect$?: QRL<(item: Item) => void>;
+  onChange$?: QRL<(item: Item) => void>;
+  onMenuChange$?: QRL<(open: boolean) => void>;
   placeholder?: string;
   readOnly?: boolean;
-  renderItem?: Component<ItemProps>;
+  renderSelectedItem?: Component<ItemProps>;
   selectedItems?: Item[];
   selectionFeedback?: 'top' | 'fixed' | 'top-after-reopen';
   size?: 'sm' | 'md' | 'lg';
   sortItems$?: SortItems;
-  translateWithId?: () => string;
+  translateWithId$?: QRL<(id: string) => string>;
   type?: 'default' | 'inline';
   useTitleInItem?: boolean;
   warn?: boolean;

@@ -6,7 +6,7 @@ import { component$, $, useSignal } from '@builder.io/qwik';
 import { Key } from '../../internal/key';
 import { MultiSelect } from './multi-select';
 import { defaultCompareItems$ } from './sorting';
-import { defaultItemToString$ } from '../dropdown/dropdown';
+import { Item, ItemProps, defaultItemToString, defaultItemToString$ } from '../dropdown/dropdown';
 
 describe('Dropdown', () => {
   it('renders expected CSS classes per attributes', async () => {
@@ -65,6 +65,8 @@ describe('Dropdown', () => {
   it('omits non-standard properties from the rendered div element', async () => {
     const { screen, render } = await createDOM();
     const multiSelectId = 'multi-select-id';
+    const SelectedItemRenderComp = component$(() => <></>);
+    const ItemToElementComp = component$(() => <></>);
 
     await render(
       <CarbonRoot>
@@ -82,14 +84,25 @@ describe('Dropdown', () => {
             id={multiSelectId}
             invalid
             invalidText="Invalid!"
+            items={['One', 'Two']}
+            itemToElement={ItemToElementComp}
             itemToString$={defaultItemToString$}
             label="Name input"
             onChange$={$(() => {})}
+            onMenuChange$={$(() => {})}
             placeholder="Name"
+            readOnly={false}
+            renderSelectedItem={SelectedItemRenderComp}
+            selectedItems={['One']}
+            selectionFeedback="top"
             size="md"
+            sortItems$={$((a, b) => a)}
+            translateWithId$={$((id: string) => id)}
             type="default"
+            useTitleInItem={false}
             warn
             warnText="Ugly name"
+            data-something="some data"
           />
         </Form>
       </CarbonRoot>
@@ -107,316 +120,301 @@ describe('Dropdown', () => {
       'hideLabel',
       'invalid',
       'invalidText',
-      'itemToString$',
       'items',
+      'itemToElement',
+      'itemToString$',
       'label',
       'onChange$',
+      'onMenuChange$',
+      'placeholder',
+      'readOnly',
       'renderSelectedItem$',
-      'selectedItem',
+      'selectedItems',
+      'selectionFeedback',
       'size',
-      'titleText',
-      'translateWithId',
+      'translateWithId$',
       'type',
+      'useTitleInItem',
       'warn',
       'warnText',
     ];
     illegalAttrs.forEach(attr => expect(listboxDiv.hasAttribute(attr), `Attribute: ${attr} unexpected`).toBeFalsy());
   });
 
-  // it('renders a label with appropriate CSS classes if titleText is stipulated', async () => {
-  //   const { screen, render } = await createDOM();
-  //   const dropdownIdTitle = 'labelled-dropdown-id';
-  //   const dropdownIdNoTitle = 'unlabelled-dropdown-id';
-  //   const titleText = 'Title';
+  it('renders a label with appropriate CSS classes if titleText is stipulated', async () => {
+    const { screen, render } = await createDOM();
+    const comboIdTitle = 'labelled-combo-id';
+    const comboIdNoTitle = 'unlabelled-combo-id';
+    const titleText = 'Title';
 
-  //   await render(
-  //     <CarbonRoot>
-  //       <Form>
-  //         <Dropdown id={dropdownIdTitle} label={titleText} disabled hideLabel />
-  //         <Dropdown id={dropdownIdNoTitle} />
-  //       </Form>
-  //     </CarbonRoot>
-  //   );
+    await render(
+      <CarbonRoot>
+        <Form>
+          <MultiSelect id={comboIdTitle} label={titleText} disabled hideLabel />
+          <MultiSelect id={comboIdNoTitle} />
+        </Form>
+      </CarbonRoot>
+    );
 
-  //   const labelledDropdownLabel = screen.querySelector('div.cds--dropdown__wrapper label') as HTMLLabelElement;
-  //   expect(labelledDropdownLabel).toBeTruthy();
-  //   expect(labelledDropdownLabel.classList.contains('cds--label')).toBeTruthy();
-  //   expect(labelledDropdownLabel.classList.contains('cds--label--disabled')).toBeTruthy();
-  //   expect(labelledDropdownLabel.classList.contains('cds--visually-hidden')).toBeTruthy();
+    const labelledDropdownLabel = screen.querySelector('div.cds--multi-select__wrapper label') as HTMLLabelElement;
+    expect(labelledDropdownLabel).toBeTruthy();
+    expect(labelledDropdownLabel.classList.contains('cds--label')).toBeTruthy();
+    expect(labelledDropdownLabel.classList.contains('cds--label--disabled')).toBeTruthy();
+    expect(labelledDropdownLabel.classList.contains('cds--visually-hidden')).toBeTruthy();
 
-  //   const unlabelledDropdownLabel = screen.querySelector(`div#${dropdownIdNoTitle} label`) as HTMLLabelElement;
-  //   expect(unlabelledDropdownLabel).toBeFalsy();
-  // });
+    const unlabelledDropdownLabel = screen.querySelector(`div#${comboIdNoTitle} label`) as HTMLLabelElement;
+    expect(unlabelledDropdownLabel).toBeFalsy();
+  });
 
-  // it('renders a ListBox with appropriate attributes', async () => {
-  //   const { screen, render } = await createDOM();
-  //   const dropdownId = 'dropdown-id';
-  //   const ariaLabel = 'Aria label';
-  //   const size = 'sm';
+  it('renders a ListBox with appropriate attributes', async () => {
+    const { screen, render } = await createDOM();
+    const comboId = 'combo-id';
+    const ariaLabel = 'Aria label';
+    const size = 'sm';
 
-  //   await render(
-  //     <CarbonRoot>
-  //       <Form>
-  //         <Dropdown id={dropdownId} ariaLabel={ariaLabel} size={size} invalid warn disabled />
-  //       </Form>
-  //     </CarbonRoot>
-  //   );
+    await render(
+      <CarbonRoot>
+        <Form>
+          <MultiSelect id={comboId} ariaLabel={ariaLabel} size={size} invalid warn disabled />
+        </Form>
+      </CarbonRoot>
+    );
 
-  //   const listboxDiv = screen.querySelector('div.cds--dropdown.cds--list-box') as HTMLDivElement;
-  //   expect(listboxDiv.getAttribute('aria-label')).toEqual(ariaLabel);
-  //   expect(listboxDiv.classList.contains(`cds--list-box--${size}`)).toBeTruthy();
-  //   expect(listboxDiv.classList.contains('cds--list-box--invalid')).toBeTruthy();
-  //   expect(listboxDiv.classList.contains('cds--list-box--warning')).toBeFalsy();
-  //   expect(listboxDiv.getAttribute('id')).toEqual(dropdownId);
-  // });
+    const listboxDiv = screen.querySelector('div.cds--multi-select.cds--list-box') as HTMLDivElement;
+    expect(listboxDiv.getAttribute('aria-label')).toEqual(ariaLabel);
+    expect(listboxDiv.classList.contains(`cds--list-box--${size}`)).toBeTruthy();
+    expect(listboxDiv.classList.contains('cds--list-box--invalid')).toBeTruthy();
+    expect(listboxDiv.classList.contains('cds--list-box--warning')).toBeFalsy();
+    expect(listboxDiv.getAttribute('id')).toEqual(comboId);
+  });
 
-  // it('renders selected item label', async () => {
-  //   const { screen, render } = await createDOM();
-  //   const label = 'Selected item';
-  //   const selectedItem = { label };
+  it('renders count of selected items badge', async () => {
+    const { screen, render } = await createDOM();
+    const items = ['Selected item 1', 'Selected item 2', 'Item 3'].map(label => ({ label }));
+    const selectedItems = [items[0], items[1]];
 
-  //   await render(
-  //     <CarbonRoot>
-  //       <Form>
-  //         <Dropdown selectedItem={selectedItem} items={[selectedItem]} />
-  //       </Form>
-  //     </CarbonRoot>
-  //   );
+    await render(
+      <CarbonRoot>
+        <Form>
+          <MultiSelect selectedItems={selectedItems} items={items} />
+        </Form>
+      </CarbonRoot>
+    );
 
-  //   const selectedItemSpan = screen.querySelector('div.cds--dropdown div.cds--list-box__field span') as HTMLSpanElement;
-  //   expect(selectedItemSpan.textContent).toEqual(label);
-  // });
+    const selectedItemSpan = screen.querySelector(
+      'div.cds--multi-select div.cds--list-box__field--wrapper div.cds--tag--filter span.cds--tag__label'
+    ) as HTMLSpanElement;
+    expect(selectedItemSpan.textContent).toEqual(selectedItems.length.toString());
+  });
 
-  // it('renders selected item label using a custom component function', async () => {
-  //   const { screen, render } = await createDOM();
-  //   const label = 'Selected item';
-  //   const selectedObjectItem = { label };
-  //   const selectedStringItem = label;
-  //   const selectedItemClass = 'selected-item';
-  //   const objectItemsDropdown = 'dropdown-object-items';
-  //   const stringItemsDropdown = 'dropdown-string-items';
+  it('renders selected item label using a custom component function', async () => {
+    const { screen, render } = await createDOM();
+    const label = 'Selected item';
+    const selectedObjectItem = { label };
+    const selectedStringItem = label;
+    const selectedItemClass = 'selected-item';
+    const objectItemsCombo = 'combo-object-items';
+    const stringItemsCombo = 'combo-string-items';
 
-  //   const SelectedItemRenderComp = component$((props: ItemProps) => (
-  //     <span class={selectedItemClass}>{typeof props.item === 'string' ? props.item : props.item.label}</span>
-  //   ));
+    const SelectedItemRenderComp = component$((props: ItemProps) => (
+      <span class={selectedItemClass}>{typeof props.item === 'string' ? props.item : props.item.label}</span>
+    ));
 
-  //   await render(
-  //     <CarbonRoot>
-  //       <Form>
-  //         <Dropdown
-  //           id={objectItemsDropdown}
-  //           selectedItem={selectedObjectItem}
-  //           renderSelectedItem={SelectedItemRenderComp}
-  //           items={[selectedObjectItem]}
-  //         />
-  //         <Dropdown
-  //           id={stringItemsDropdown}
-  //           selectedItem={selectedStringItem}
-  //           renderSelectedItem={SelectedItemRenderComp}
-  //           items={[selectedStringItem]}
-  //         />
-  //       </Form>
-  //     </CarbonRoot>
-  //   );
+    await render(
+      <CarbonRoot>
+        <Form>
+          <MultiSelect
+            id={objectItemsCombo}
+            selectedItems={[selectedObjectItem]}
+            renderSelectedItem={SelectedItemRenderComp}
+            items={[selectedObjectItem]}
+          />
+          <MultiSelect
+            id={stringItemsCombo}
+            selectedItems={[selectedStringItem]}
+            renderSelectedItem={SelectedItemRenderComp}
+            items={[selectedStringItem]}
+          />
+        </Form>
+      </CarbonRoot>
+    );
 
-  //   const selectedObjectItemSpan = screen.querySelector(
-  //     `div.cds--dropdown#${objectItemsDropdown} div.cds--list-box__field span`
-  //   ) as HTMLSpanElement;
-  //   expect(selectedObjectItemSpan.textContent).toEqual(label);
-  //   const selectedStringItemSpan = screen.querySelector(
-  //     `div.cds--dropdown#${stringItemsDropdown} div.cds--list-box__field span`
-  //   ) as HTMLSpanElement;
-  //   expect(selectedStringItemSpan.textContent).toEqual(label);
-  // });
+    const selectedObjectItemSpan = screen.querySelector(
+      `div.cds--multi-select#${objectItemsCombo} div.cds--list-box__field span`
+    ) as HTMLSpanElement;
+    expect(selectedObjectItemSpan.textContent).toEqual(label);
+    const selectedStringItemSpan = screen.querySelector(
+      `div.cds--multi-select#${stringItemsCombo} div.cds--list-box__field span`
+    ) as HTMLSpanElement;
+    expect(selectedStringItemSpan.textContent).toEqual(label);
+  });
 
-  // it('renders initially selected item', async () => {
-  //   const { screen, render } = await createDOM();
-  //   const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
-  //   const selectedItem = items.find(item => item === 'Banana');
+  it('renders helper text if supplied and the state allows it', async () => {
+    const { screen, render } = await createDOM();
+    const helperText = 'Optional';
+    const helperComboId = 'helper-combo';
+    const noHelperComboId = 'no-helper-combo';
 
-  //   await render(
-  //     <CarbonRoot>
-  //       <Form>
-  //         <Dropdown selectedItem={selectedItem} items={items} />
-  //         <Dropdown selectedItem={'Nonesuch'} items={items} id="invalid-selected-item" />
-  //       </Form>
-  //     </CarbonRoot>
-  //   );
+    await render(
+      <CarbonRoot>
+        <Form>
+          <MultiSelect helperText={helperText} id={helperComboId} />
+          <MultiSelect helperText={helperText} id={noHelperComboId} invalid />
+        </Form>
+      </CarbonRoot>
+    );
 
-  //   const selectedItemSpan = screen.querySelector('div.cds--dropdown div.cds--list-box__field span') as HTMLSpanElement;
-  //   expect(selectedItemSpan.textContent).toEqual(selectedItem);
-  //   const invalidSelectedItemSpan = screen.querySelector(
-  //     '#invalid-selected-item div.cds--list-box__field span'
-  //   ) as HTMLSpanElement;
-  //   expect(invalidSelectedItemSpan.textContent).toEqual('');
-  // });
+    const helperTextDiv = screen.querySelector(
+      `div.cds--multi-select#${helperComboId} ~ div.cds--form__helper-text`
+    ) as HTMLDivElement;
+    expect(helperTextDiv.textContent).toEqual(helperText);
 
-  // it('renders helper text if supplied and the state allows it', async () => {
-  //   const { screen, render } = await createDOM();
-  //   const helperText = 'Optional';
-  //   const helperDropdownId = 'helper-dropdown';
-  //   const noHelperDropdownId = 'no-helper-dropdown';
+    const noHelperTextDiv = screen.querySelector(
+      `div.cds--multi-select#${noHelperComboId} ~ div.cds--form__helper-text`
+    ) as HTMLDivElement;
+    expect(noHelperTextDiv).toBeUndefined();
+  });
 
-  //   await render(
-  //     <CarbonRoot>
-  //       <Form>
-  //         <Dropdown helperText={helperText} id={helperDropdownId} />
-  //         <Dropdown helperText={helperText} id={noHelperDropdownId} invalid />
-  //       </Form>
-  //     </CarbonRoot>
-  //   );
+  it('renders list box menu item objects as supplied', async () => {
+    const { screen, render, userEvent } = await createDOM();
+    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'].map(label => ({
+      label,
+    }));
+    const selectedItem = items.find(item => (item as { label: string }).label === 'Banana')!;
 
-  //   const helperTextDiv = screen.querySelector(
-  //     `div.cds--dropdown#${helperDropdownId} ~ div.cds--form__helper-text`
-  //   ) as HTMLDivElement;
-  //   expect(helperTextDiv.textContent).toEqual(helperText);
+    await render(
+      <CarbonRoot>
+        <Form>
+          <MultiSelect items={items} selectedItems={[selectedItem]} />
+        </Form>
+      </CarbonRoot>
+    );
 
-  //   const noHelperTextDiv = screen.querySelector(
-  //     `div.cds--dropdown#${noHelperDropdownId} ~ div.cds--form__helper-text`
-  //   ) as HTMLDivElement;
-  //   expect(noHelperTextDiv).toBeUndefined();
-  // });
+    await userEvent('div.cds--list-box__field', 'click');
+    const listBoxDiv = screen.querySelector('ul.cds--list-box__menu') as HTMLDivElement;
+    expect(listBoxDiv.childElementCount).toEqual(items.length);
+    const menuItems = Array.from(screen.querySelectorAll('ul.cds--list-box__menu li.cds--list-box__menu-item'));
+    items.forEach((item, index) => expect(menuItems[index].textContent).toEqual((item as { label: string }).label));
+    expect(menuItems[0].classList.contains('cds--list-box__menu-item--active')).toBeTruthy(); // default sort order puts selected items first
+  });
 
-  // it('renders list box menu item objects as supplied', async () => {
-  //   const { screen, render, userEvent } = await createDOM();
-  //   const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'].map(label => ({
-  //     label,
-  //   }));
-  //   const selectedItem = items.find(item => (item as { label: string }).label === 'Banana');
+  it('renders list box menu item strings as supplied', async () => {
+    const { screen, render, userEvent } = await createDOM();
+    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
+    const selectedItem = items.find(item => item === 'Banana')!;
 
-  //   await render(
-  //     <CarbonRoot>
-  //       <Form>
-  //         <Dropdown items={items} selectedItem={selectedItem} />
-  //       </Form>
-  //     </CarbonRoot>
-  //   );
+    await render(
+      <CarbonRoot>
+        <Form>
+          <MultiSelect items={items} selectedItems={[selectedItem]} />
+        </Form>
+      </CarbonRoot>
+    );
 
-  //   await userEvent('div.cds--list-box__field', 'click');
-  //   const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
-  //   expect(listBoxDiv.childElementCount).toEqual(items.length);
-  //   const menuItems = Array.from(screen.querySelectorAll('div.cds--list-box__menu div.cds--list-box__menu-item'));
-  //   items.forEach((item, index) => expect(menuItems[index].textContent).toEqual((item as { label: string }).label));
-  //   expect(menuItems[1].classList.contains('cds--list-box__menu-item--active')).toBeTruthy();
-  // });
+    await userEvent('div.cds--list-box__field', 'click');
+    const listBoxDiv = screen.querySelector('ul.cds--list-box__menu') as HTMLDivElement;
+    expect(listBoxDiv.childElementCount).toEqual(items.length);
+    const menuItems = Array.from(screen.querySelectorAll('ul.cds--list-box__menu li.cds--list-box__menu-item'));
+    items.forEach((item, index) => expect(menuItems[index].textContent).toEqual(item));
+    expect(menuItems[0].classList.contains('cds--list-box__menu-item--active')).toBeTruthy(); // default sort order puts selected items first
+  });
 
-  // it('renders list box menu item strings as supplied', async () => {
-  //   const { screen, render, userEvent } = await createDOM();
-  //   const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
-  //   const selectedItem = items.find(item => item === 'Banana');
+  it('invokes onChange$ callback when an item is selected with the mouse', async () => {
+    const { screen, render, userEvent } = await createDOM();
+    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
+    const initialItem = items.find(item => item === 'Banana');
+    type Selected = {
+      item?: Item;
+    };
+    const selected: Selected = {};
 
-  //   await render(
-  //     <CarbonRoot>
-  //       <Form>
-  //         <Dropdown items={items} selectedItem={selectedItem} />
-  //       </Form>
-  //     </CarbonRoot>
-  //   );
+    const Wrapper = component$(() => {
+      const selectedOption = useSignal<Item | undefined>(initialItem);
+      return (
+        <>
+          <Form>
+            <MultiSelect
+              items={items}
+              selectedItems={[selectedOption.value!]}
+              onChange$={async (item: Item) => {
+                selectedOption.value = item;
+                selected.item = item;
+                expect(item).toEqual('Apple');
+              }}
+            />
+          </Form>
+          <span id="result">{(selectedOption.value as string) ?? '-'}</span>
+        </>
+      );
+    });
+    await render(
+      <CarbonRoot>
+        <Wrapper />
+      </CarbonRoot>
+    );
 
-  //   await userEvent('div.cds--list-box__field', 'click');
-  //   const listBoxDiv = screen.querySelector('div.cds--list-box__menu') as HTMLDivElement;
-  //   expect(listBoxDiv.childElementCount).toEqual(items.length);
-  //   const menuItems = Array.from(screen.querySelectorAll('div.cds--list-box__menu div.cds--list-box__menu-item'));
-  //   items.forEach((item, index) => expect(menuItems[index].textContent).toEqual(item));
-  //   expect(menuItems[1].classList.contains('cds--list-box__menu-item--active')).toBeTruthy();
-  // });
+    await userEvent('div.cds--list-box__field', 'click');
+    const options = screen.querySelectorAll('li.cds--list-box__menu-item');
+    const resultSpan = screen.querySelector('#result');
+    await userEvent(options[0], 'click');
+    expect(resultSpan?.textContent).toEqual('Banana');
+  });
 
-  // it('invokes onChange callback when an item is selected with the mouse', async () => {
-  //   const { screen, render, userEvent } = await createDOM();
-  //   const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
-  //   const initialItem = items.find(item => item === 'Banana');
-  //   type Selected = {
-  //     item?: Item;
-  //   };
-  //   const selected: Selected = {};
+  it('renders items with a custom itemToElement function', async () => {
+    const { screen, render, userEvent } = await createDOM();
+    const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
 
-  //   const Wrapper = component$(() => {
-  //     const selectedOption = useSignal<Item | undefined>(initialItem);
-  //     return (
-  //       <>
-  //         <Form>
-  //           <Dropdown
-  //             items={items}
-  //             selectedItem={selectedOption.value}
-  //             onSelect$={async (item: Item) => {
-  //               selectedOption.value = item;
-  //               selected.item = item;
-  //               expect(item).toEqual('Apple');
-  //             }}
-  //           />
-  //         </Form>
-  //         <span id="result">{(selectedOption.value as string) ?? '-'}</span>
-  //       </>
-  //     );
-  //   });
-  //   await render(
-  //     <CarbonRoot>
-  //       <Wrapper />
-  //     </CarbonRoot>
-  //   );
+    const itemClass = 'item-component';
+    const ItemComponent = component$(({ item }: ItemProps) => (
+      <span class={itemClass}>{defaultItemToString(item)}</span>
+    ));
 
-  //   await userEvent('div.cds--list-box__field', 'click');
-  //   const options = screen.querySelectorAll('div.cds--list-box__menu-item');
-  //   const resultSpan = screen.querySelector('#result');
-  //   await userEvent(options[0], 'click');
-  //   expect(resultSpan?.textContent).toEqual('Apple');
-  // });
+    await render(
+      <CarbonRoot>
+        <Form>
+          <MultiSelect items={items} itemToElement={ItemComponent} />
+        </Form>
+      </CarbonRoot>
+    );
 
-  // it('renders items with a custom itemToElement function', async () => {
-  //   const { screen, render, userEvent } = await createDOM();
-  //   const items: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'];
+    await userEvent('div.cds--list-box__field', 'click');
+    const itemElements = Array.from(screen.querySelectorAll(`span.${itemClass}`)) as HTMLSpanElement[];
+    expect(itemElements.length).toEqual(items.length);
+    items.forEach((item, index) => expect(itemElements[index]?.textContent).toEqual(item));
+  });
 
-  //   const itemClass = 'item-component';
-  //   const ItemComponent = component$(({ item }: ItemProps) => (
-  //     <span class={itemClass}>{defaultItemToString(item)}</span>
-  //   ));
+  it('renders items with supplied IDs or keys', async () => {
+    const { screen, render, userEvent } = await createDOM();
+    const itemsWithIds: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'].map(
+      label => ({ label, id: label })
+    );
+    const itemsWithKeys: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'].map(
+      label => ({ label, key: label })
+    );
 
-  //   await render(
-  //     <CarbonRoot>
-  //       <Form>
-  //         <Dropdown items={items} itemToElement={ItemComponent} />
-  //       </Form>
-  //     </CarbonRoot>
-  //   );
+    await render(
+      <CarbonRoot>
+        <Form>
+          <MultiSelect items={itemsWithIds} id="combo-with-ids" />
+          <MultiSelect items={itemsWithKeys} id="combo-with-keys" />
+        </Form>
+      </CarbonRoot>
+    );
 
-  //   await userEvent('div.cds--list-box__field', 'click');
-  //   const itemElements = Array.from(screen.querySelectorAll(`span.${itemClass}`)) as HTMLSpanElement[];
-  //   expect(itemElements.length).toEqual(items.length);
-  //   items.forEach((item, index) => expect(itemElements[index]?.textContent).toEqual(item));
-  // });
-
-  // it('renders items with supplied IDs or keys', async () => {
-  //   const { screen, render, userEvent } = await createDOM();
-  //   const itemsWithIds: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'].map(
-  //     label => ({ label, id: label })
-  //   );
-  //   const itemsWithKeys: Item[] = ['Apple', 'Banana', 'Blueberry', 'Cherry', 'Durian', 'Elderberry', 'Grape'].map(
-  //     label => ({ label, key: label })
-  //   );
-
-  //   await render(
-  //     <CarbonRoot>
-  //       <Form>
-  //         <Dropdown items={itemsWithIds} id="dropdown-with-ids" />
-  //         <Dropdown items={itemsWithKeys} id="dropdown-with-keys" />
-  //       </Form>
-  //     </CarbonRoot>
-  //   );
-
-  //   await userEvent('div.cds--list-box__field', 'click');
-  //   const itemsWithIdsElements = Array.from(
-  //     screen.querySelectorAll('#dropdown-with-ids div.cds--list-box__menu-item')
-  //   ) as HTMLDivElement[];
-  //   itemsWithIds.forEach((item, index) =>
-  //     expect(itemsWithIdsElements[index].getAttribute('id')).toEqual((item as unknown as { id: string }).id)
-  //   );
-  //   const itemsWithKeysElements = Array.from(
-  //     screen.querySelectorAll('#dropdown-with-keys div.cds--list-box__menu-item')
-  //   ) as HTMLDivElement[];
-  //   itemsWithKeys.forEach((item, index) =>
-  //     expect(itemsWithKeysElements[index].getAttribute('id')).toEqual((item as unknown as { key: string }).key)
-  //   );
-  // });
+    await userEvent('div.cds--list-box__field', 'click');
+    const itemsWithIdsElements = Array.from(
+      screen.querySelectorAll('#combo-with-ids li.cds--list-box__menu-item')
+    ) as HTMLDivElement[];
+    itemsWithIds.forEach((item, index) =>
+      expect(itemsWithIdsElements[index].getAttribute('id')).toEqual((item as unknown as { id: string }).id)
+    );
+    const itemsWithKeysElements = Array.from(
+      screen.querySelectorAll('#combo-with-keys li.cds--list-box__menu-item')
+    ) as HTMLDivElement[];
+    itemsWithKeys.forEach((item, index) =>
+      expect(itemsWithKeysElements[index].getAttribute('id')).toEqual((item as unknown as { key: string }).key)
+    );
+  });
 
   // it('opens the items menu when the Down Arrow key is pressed with the combobox having the focus', async () => {
   //   const { screen, render, userEvent } = await createDOM();
