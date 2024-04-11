@@ -76,6 +76,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
     placeholder,
     onSelect$,
     readOnly,
+    renderItem: RenderItem,
     selectionFeedback = 'top-after-reopen',
     size = 'md',
     type = 'default',
@@ -220,7 +221,6 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
     'warn',
     'warnText'
   );
-  console.log('san. props', sanitizedProps);
 
   const labelId = titleText ? `${id}--label` : undefined;
 
@@ -405,7 +405,7 @@ export type MultiSelectProps = QwikIntrinsicElements['div'] & {
   onSelect$?: QRL<(item: Item) => void>;
   placeholder?: string;
   readOnly?: boolean;
-  renderSelectedItem?: Component<ItemProps>;
+  renderItem?: Component<ItemProps>;
   selectedItems?: Item[];
   selectionFeedback?: 'top' | 'fixed' | 'top-after-reopen';
   size?: 'sm' | 'md' | 'lg';

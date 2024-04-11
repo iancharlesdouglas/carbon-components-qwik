@@ -87,7 +87,7 @@ const Test = component$(() => {
               label="Fruit"
               placeholder="Select a fruit"
               selectedItem={selectedItem.value}
-              renderSelectedItem={SelectedItemRenderComp}
+              renderItem={SelectedItemRenderComp}
               items={itemOptions.value}
               helperText="Optional"
               onSelect$={$((item: Item) => {

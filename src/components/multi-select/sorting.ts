@@ -120,6 +120,7 @@ async function getPivot<T>(x: T, y: T, z: T, compare: (a: T, b: T) => Promise<nu
  * @param left Index where the range of elements to be sorted starts
  * @param right Index where the range of elements to be sorted ends
  * @returns Sorted array as promise
+ * @description Thanks to https://gist.github.com/kimamula
  */
 async function quickSort<T>(
   arr: T[],
