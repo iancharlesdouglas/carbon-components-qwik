@@ -47,7 +47,8 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
   const stateObj: ComboboxState = {
     isOpen: false,
     selectedItems: declaredSelectedItems,
-    highlightedItem: declaredSelectedItems?.[0],
+    highlightedItem: undefined,
+    highlightSelectedItem: false,
   };
   const state = useStore(stateObj);
 
@@ -111,15 +112,18 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
   });
 
   useTask$(({ track }) => {
-    track(() => declaredSelectedItems);
+    track(() => items || declaredSelectedItems);
     state.selectedItems = declaredSelectedItems;
     if (!declaredSelectedItems) {
       state.highlightedItem = undefined;
     } else if (
       items &&
-      !items.some(item => declaredSelectedItems.some(selectedItem => itemsEqual(item, selectedItem)))
+      declaredSelectedItems &&
+      !declaredSelectedItems.every(selectedItem => items.some(item => itemsEqual(item, selectedItem)))
     ) {
-      state.selectedItems = undefined;
+      state.selectedItems = declaredSelectedItems.filter(selectedItem =>
+        items.some(item => itemsEqual(item, selectedItem))
+      );
       state.highlightedItem = undefined;
     }
   });
@@ -284,6 +288,9 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
               if (!readOnly) {
                 state.isOpen = !state.isOpen;
                 sorted.changed = true;
+                if (!state.isOpen) {
+                  state.highlightedItem = undefined;
+                }
                 onMenuChange$ && onMenuChange$(state.isOpen);
               }
             })}
@@ -313,6 +320,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
                 if (selectionFeedback === 'top') {
                   sorted.initialized = false;
                 }
+                state.highlightedItem = undefined;
               }
             })}
           >
@@ -361,7 +369,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
                   itemSelected={itemSelected}
                   itemAttrs={itemAttrs}
                   useTitleInItem={useTitleInItem}
-                  key={itemAttrs?.[index].id}
+                  key={itemAttrs?.[index]?.id}
                   itemToElement={ItemToElement}
                   index={index}
                   onToggle$={$(() => {

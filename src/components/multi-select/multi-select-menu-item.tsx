@@ -46,7 +46,7 @@ export const MultiSelectMenuItem = component$(
             title={useTitleInItem || isTruncated.value ? title : undefined}
             class={`${prefix}--checkbox-label`}
             data-contained-checkbox-state={itemSelected ? 'true' : 'false'}
-            id={`${itemAttrs?.[index].id}__checkbox`}
+            id={`${itemAttrs?.[index]?.id}__checkbox`}
             ref={spanElement}
             onClick$={onToggle$}
           >

@@ -60,12 +60,14 @@ const getItemId = (item: Item) => {
  * @property highlightedItem - Currently highlighted item
  * @property selectedItem - Currently selected item (single item selection)
  * @property selectedItems - Currently selected item/s (multiple item selection)
+ * @property highlightSelectedItem - Highlight selected item or not, when listbox is opened
  */
 export type ComboboxState = {
   isOpen: boolean;
   highlightedItem: Item | undefined;
   selectedItem?: Item | undefined;
   selectedItems?: Item[] | undefined;
+  highlightSelectedItem: boolean;
 };
 
 /**

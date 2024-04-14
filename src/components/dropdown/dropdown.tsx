@@ -119,6 +119,7 @@ export const Dropdown = component$((props: DropdownProps) => {
     isOpen: false,
     selectedItem: declaredSelectedItem,
     highlightedItem: declaredSelectedItem,
+    highlightSelectedItem: true,
   };
   const state = useStore(stateObj);
   const {

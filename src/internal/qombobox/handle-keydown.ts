@@ -163,6 +163,9 @@ export const handleKeyDown = async (
     }
     case Key.Escape: {
       state.isOpen = false;
+      if (!state.highlightSelectedItem) {
+        state.highlightedItem = undefined;
+      }
       (triggerElement.value as HTMLButtonElement).focus();
       break;
     }
