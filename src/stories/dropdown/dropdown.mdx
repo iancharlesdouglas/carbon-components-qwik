@@ -64,11 +64,31 @@ const renderFn = (item: MyItem) => item.name;
 <Dropdown itemToString={renderFn}>
 ```
 
-#### Defining a Custom Renderer Component
+#### Defining a Custom Renderer Component for an Item
 To define a custom component to render an item:
 ```
+const ItemRenderComp = component$((props: ItemProps) => (
+  <span style="font-style: italic">{item.name} Item</span>
+));
+
+await render(
+  <CarbonRoot>
+    <Form>
+      <Dropdown
+        selectedItem={myItem}
+        itemToElement={ItemRenderComp}
+        items={[myItem]}
+      />
+    </Form>
+  </CarbonRoot>
+);
+```
+
+#### Defining a Custom Renderer Component for the Selected Item
+To define a custom component to render the current selection in the combobox field:
+```
 const SelectedItemRenderComp = component$((props: ItemProps) => (
-  <span>{item.name}</span>
+  <span>Selected: item.name}</span>
 ));
 
 await render(

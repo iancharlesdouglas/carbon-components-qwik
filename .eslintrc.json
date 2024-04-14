@@ -105,6 +105,7 @@
           "qombobox",
           "qwik",
           "readonly",
+          "renderer",
           "rtl",
           "selectable",
           "subgrid",

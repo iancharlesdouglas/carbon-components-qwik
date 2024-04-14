@@ -46,6 +46,12 @@ const ComplexDropdown = component$<DropdownProps>(props => {
   );
 });
 
+const ItemRenderComp = component$(({ item }: { item: Item }) => <span style="font-style: italic">{item.label}</span>);
+
+const SelectedItemRenderComp = component$(({ item }: { item: Item }) => (
+  <span style="font-style: italic">{item.label}</span>
+));
+
 const meta: Meta<DropdownProps> = {
   title: 'Controls/Dropdown',
   component: Dropdown,
@@ -150,6 +156,26 @@ export const Inline: Story = {
   args: {
     ...Default.args,
     type: 'inline',
+  },
+  argTypes: { ...Default.argTypes },
+};
+
+export const CustomItemRenderer: Story = {
+  name: 'Custom Renderer - Item',
+  args: {
+    ...Default.args,
+    itemToElement: ItemRenderComp,
+  },
+  argTypes: { ...Default.argTypes },
+};
+
+export const CustomSelectedItemRenderer: Story = {
+  name: 'Custom Renderer - Selected Item',
+  args: {
+    ...Default.args,
+    renderSelectedItem: SelectedItemRenderComp,
+    selectedItem: { label: 'Banana' },
+    itemToElement: ItemRenderComp,
   },
   argTypes: { ...Default.argTypes },
 };
