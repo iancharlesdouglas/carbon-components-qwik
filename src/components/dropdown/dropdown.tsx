@@ -77,7 +77,7 @@ export const defaultItemToString$ = $((item: Item | undefined) => {
  */
 export type ItemProps = {
   item: Item;
-  index: number;
+  index?: number;
 };
 
 /**

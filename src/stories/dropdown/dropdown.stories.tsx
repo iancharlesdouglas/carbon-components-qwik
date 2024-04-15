@@ -50,7 +50,7 @@ const ComplexDropdown = component$<DropdownStoryProps>(props => {
 });
 
 const ItemRenderComp = component$(({ item, index }: ItemProps) => (
-  <span class={index % 2 === 1 ? 'alt' : undefined} style="font-style: italic">
+  <span class={index! % 2 === 1 ? 'alt' : undefined} style="font-style: italic">
     {(item as Labelled).label}
   </span>
 ));
