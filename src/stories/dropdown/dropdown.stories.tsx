@@ -6,7 +6,7 @@ import { Grid } from '../../components/grid/grid';
 import { Column } from '../../components/grid/column';
 import { action } from '@storybook/addon-actions';
 import './dropdown.scss';
-import { Dropdown, DropdownProps, Item, ItemProps } from '../../components/dropdown/dropdown';
+import { Dropdown, DropdownProps, Item, ItemProps, Labelled } from '../../components/dropdown/dropdown';
 
 const fruits = [
   'Apple',
@@ -51,12 +51,12 @@ const ComplexDropdown = component$<DropdownStoryProps>(props => {
 
 const ItemRenderComp = component$(({ item, index }: ItemProps) => (
   <span class={index % 2 === 1 ? 'alt' : undefined} style="font-style: italic">
-    {item.label}
+    {(item as Labelled).label}
   </span>
 ));
 
 const SelectedItemRenderComp = component$(({ item }: { item: Item }) => (
-  <span style="font-style: italic">{item.label}</span>
+  <span style="font-style: italic">{(item as Labelled).label}</span>
 ));
 
 const meta: Meta<DropdownProps> = {
