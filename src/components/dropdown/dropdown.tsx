@@ -73,9 +73,11 @@ export const defaultItemToString$ = $((item: Item | undefined) => {
 /**
  * Props for a component to render an item
  * @property {Item} item - Item to render
+ * @property {number} index - Index in list
  */
 export type ItemProps = {
   item: Item;
+  index: number;
 };
 
 /**
@@ -373,7 +375,7 @@ export const Dropdown = component$((props: DropdownProps) => {
                     }
                   })}
                 >
-                  {ItemToElement && <ItemToElement item={item} />}
+                  {ItemToElement && <ItemToElement item={item} index={index} />}
                   {!ItemToElement && itemToString(item)}
                   {itemSelected && !ItemToElement && (
                     <Checkmark class={`${prefix}--list-box__menu-item__selected-icon`} size={16} />

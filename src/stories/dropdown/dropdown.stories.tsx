@@ -6,7 +6,7 @@ import { Grid } from '../../components/grid/grid';
 import { Column } from '../../components/grid/column';
 import { action } from '@storybook/addon-actions';
 import './dropdown.scss';
-import { Dropdown, DropdownProps, Item } from '../../components/dropdown/dropdown';
+import { Dropdown, DropdownProps, Item, ItemProps } from '../../components/dropdown/dropdown';
 
 const fruits = [
   'Apple',
@@ -24,20 +24,23 @@ const fruits = [
   'Jackfruit',
 ];
 
+type DropdownStoryProps = DropdownProps & { wrapperStyle?: string };
+
 /**
  * Dropdown containing complex (object) list items, some of which are disabled
  */
-const ComplexDropdown = component$<DropdownProps>(props => {
+const ComplexDropdown = component$<DropdownStoryProps>(props => {
   const items: Item[] | undefined = fruits.map(fruit => ({
     label: fruit,
     disabled: fruit === 'Jackfruit' || fruit === 'Huckleberry',
   }));
+  const { wrapperStyle = 'margin: 11rem 0' } = props;
   const propsWithItems = { ...props, items };
   return (
     <CarbonRoot>
       <Form>
         <Grid>
-          <Column lg={4} md={3} sm={2} style="margin: 11rem 0">
+          <Column lg={4} md={3} sm={2} style={wrapperStyle}>
             <Dropdown {...propsWithItems}></Dropdown>
           </Column>
         </Grid>
@@ -46,7 +49,11 @@ const ComplexDropdown = component$<DropdownProps>(props => {
   );
 });
 
-const ItemRenderComp = component$(({ item }: { item: Item }) => <span style="font-style: italic">{item.label}</span>);
+const ItemRenderComp = component$(({ item, index }: ItemProps) => (
+  <span class={index % 2 === 1 ? 'alt' : undefined} style="font-style: italic">
+    {item.label}
+  </span>
+));
 
 const SelectedItemRenderComp = component$(({ item }: { item: Item }) => (
   <span style="font-style: italic">{item.label}</span>
@@ -98,7 +105,7 @@ const meta: Meta<DropdownProps> = {
 
 export default meta;
 
-type Story = StoryObj<DropdownProps>;
+type Story = StoryObj<DropdownStoryProps>;
 
 export const Default: Story = {
   args: {
@@ -165,6 +172,7 @@ export const CustomItemRenderer: Story = {
   args: {
     ...Default.args,
     itemToElement: ItemRenderComp,
+    wrapperStyle: 'margin: 0 0 11rem 0',
   },
   argTypes: { ...Default.argTypes },
 };
@@ -176,6 +184,7 @@ export const CustomSelectedItemRenderer: Story = {
     renderSelectedItem: SelectedItemRenderComp,
     selectedItem: { label: 'Banana' },
     itemToElement: ItemRenderComp,
+    wrapperStyle: 'margin: 0 0 11rem 0',
   },
   argTypes: { ...Default.argTypes },
 };

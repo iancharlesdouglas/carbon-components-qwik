@@ -1,5 +1,6 @@
 import { Canvas, Meta } from '@storybook/blocks';
 import * as DropdownStories from './dropdown.stories.tsx';
+import { CustomItemRenderer } from "./dropdown.stories"
 
 <Meta of={DropdownStories} />
 
@@ -84,6 +85,10 @@ await render(
 );
 ```
 
+##### Example 
+
+<Canvas of={DropdownStories.CustomItemRenderer} />
+
 #### Defining a Custom Renderer Component for the Selected Item
 To define a custom component to render the current selection in the combobox field:
 ```
@@ -104,6 +109,10 @@ await render(
 );
 ```
 
+##### Example 
+
+<Canvas of={DropdownStories.CustomSelectedItemRenderer} />
+
 #### Disabling Items in the List
 Each item can be defined with a `disabled` property.  E.g. to disable the second option:
 ```
@@ -120,4 +129,3 @@ Set the `selectedItem` property to the required item.
 #### Clear current selection
 Set the `selectedItem` property to `undefined`.
 
-<Canvas of={DropdownStories.Default} />
