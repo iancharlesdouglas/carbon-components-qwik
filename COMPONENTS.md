@@ -11,6 +11,7 @@
 |Grid|0.0.1-1|Incl. Row, Column.  Grid is CSS grid|
 |Link|0.0.1-1||
 |ListBox|0.0.1-2||
+|MultiSelect|0.0.9||
 |Text|0.0.1-1||
 |TextInput|0.0.1-1||
 |Theme|0.0.1-1||
@@ -60,7 +61,6 @@
 - Loading
 - Menu
 - Modal
-- MultiSelect
 - Notification
 - NumberInput
 - OrderedList
