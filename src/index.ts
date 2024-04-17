@@ -8,6 +8,7 @@ export * from './components/grid/column';
 export * from './components/grid/grid';
 export * from './components/grid/grid-scope';
 export * from './components/grid/row';
+export * from './components/heading/heading';
 export * from './components/link/link';
 export * from './components/multi-select/multi-select';
 export * from './components/text/text';
