@@ -337,7 +337,7 @@ describe('MultiSelect', () => {
             <MultiSelect
               items={items}
               selectedItems={[selectedOption.value!]}
-              onChange$={async (item: Item) => {
+              onChange$={async (items: Item[], item: Item) => {
                 selectedOption.value = item;
                 selected.item = item;
                 expect(item).toEqual('Apple');
@@ -614,7 +614,7 @@ describe('MultiSelect', () => {
         <Form>
           <MultiSelect
             items={items}
-            onChange$={$((item: Item) => {
+            onChange$={$((items: Item[], item: Item) => {
               selected.item = item;
             })}
           />
