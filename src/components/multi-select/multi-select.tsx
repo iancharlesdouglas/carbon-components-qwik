@@ -37,7 +37,8 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
   const {
     disabled = false,
     id: stipulatedId,
-    label: titleText,
+    label: labelText,
+    title,
     items,
     selectedItems: declaredSelectedItems,
     sortItems$ = defaultSortItems$,
@@ -57,7 +58,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
     comboBox: comboBoxAttrs,
     items: itemAttrs,
     listBox: listBoxAttrs,
-  } = qombobox(state, disabled, stipulatedId, titleText, items);
+  } = qombobox(state, disabled, stipulatedId, labelText, items);
   const listBoxElement = useSignal<Element>();
   const listBoxDimensions = useStore<ListBoxDimensions>({ height: 0, itemHeight: 0, visibleRows: 0 });
   const comboboxElement = useSignal<Element>();
@@ -74,7 +75,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
     invalidText,
     itemToElement: ItemToElement,
     itemToString$ = defaultItemToString$,
-    placeholder,
+    label,
     onChange$,
     onMenuChange$,
     readOnly,
@@ -131,6 +132,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
   useTask$(({ track }) => {
     track(() => declaredSelectedItems);
     state.selectedItems = declaredSelectedItems;
+    sorted.initialized = false;
   });
 
   useTask$(({ track }) => {
@@ -236,20 +238,23 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
     'warnText'
   );
 
-  const labelId = titleText ? `${id}--label` : undefined;
+  const labelId = title ? `${id}--label` : undefined;
 
   const clearSelection$ = $(() => {
     if (disabled || readOnly) {
       return;
     }
     state.selectedItems = [];
+    if (onChange$) {
+      onChange$([]);
+    }
   });
 
   return (
     <div class={wrapperClasses} {...sanitizedProps}>
       <label class={titleClasses} id={labelId}>
-        {titleText && titleText}
-        {state.selectedItems?.length && state.selectedItems.length > 0 && (
+        {title}
+        {state.selectedItems && state.selectedItems.length > 0 && (
           <span class={`${prefix}--visually-hidden`}>
             {clearSelectionDescription} {state.selectedItems!.length}
             {clearSelectionText}
@@ -314,9 +319,10 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
             )}
             document:onClick$={$((event: MouseEvent) => {
               const element = event.target as HTMLElement;
+              const elementClass = typeof element?.className === 'string' ? element.className : '';
               if (
-                !element?.className?.endsWith('--checkbox-label') &&
-                !element?.className?.endsWith('--checkbox-wrapper') &&
+                !elementClass.endsWith('--checkbox-label') &&
+                !elementClass.endsWith('--checkbox-wrapper') &&
                 element.getAttribute('aria-controls') !== listBoxAttrs.id &&
                 !element?.classList.contains(`${prefix}--list-box__menu-item__option`) &&
                 state.isOpen
@@ -333,7 +339,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
               {state.selectedItems?.length && state.selectedItems?.length > 0 && RenderSelectedItem ? (
                 <RenderSelectedItem item={state.selectedItems[0]} />
               ) : (
-                placeholder
+                label
               )}
             </span>
             {!readOnly && <ListBoxMenuIcon isOpen={state.isOpen} />}
@@ -427,7 +433,7 @@ export type MultiSelectProps = QwikIntrinsicElements['div'] & {
   itemToElement?: Component<ItemProps>;
   itemToString$?: ItemAsString;
   label?: string;
-  onChange$?: QRL<(selectedItems: Item[], item: Item) => void>;
+  onChange$?: QRL<(selectedItems: Item[], item?: Item) => void>;
   onMenuChange$?: QRL<(open: boolean) => void>;
   placeholder?: string;
   readOnly?: boolean;
@@ -436,6 +442,7 @@ export type MultiSelectProps = QwikIntrinsicElements['div'] & {
   selectionFeedback?: 'top' | 'fixed' | 'top-after-reopen';
   size?: 'sm' | 'md' | 'lg';
   sortItems$?: SortItems;
+  title?: string;
   translateWithId$?: QRL<(id: string) => string>;
   type?: 'default' | 'inline';
   useTitleInItem?: boolean;

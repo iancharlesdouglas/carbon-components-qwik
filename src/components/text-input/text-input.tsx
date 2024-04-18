@@ -116,6 +116,7 @@ export const TextInput = component$((props: TextInputProps) => {
     className,
     { [`${prefix}--text-input--invalid`]: normalizedProps.invalid },
     { [`${prefix}--text-input--warning`]: normalizedProps.warn },
+    `${prefix}--layout--size-${renderSize}`,
     `${prefix}--text-input--${renderSize}`
   );
 

@@ -69,7 +69,7 @@ const Test = component$(() => {
           value={textValue}
           data-x="x"
           type="text"
-          renderSize="lg"
+          renderSize="sm"
           labelText="Label"
           hideLabel={false}
           helperText="Helper text"
@@ -104,7 +104,8 @@ const Test = component$(() => {
           </Column>
           <Column lg={4}>
             <MultiSelect
-              label="Fruits"
+              title="Fruits"
+              label="Select fruits"
               placeholder="Select fruits"
               selectedItems={selectedItems.value}
               items={itemOptions.value}
