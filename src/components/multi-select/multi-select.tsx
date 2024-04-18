@@ -129,6 +129,11 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
   });
 
   useTask$(({ track }) => {
+    track(() => declaredSelectedItems);
+    state.selectedItems = declaredSelectedItems;
+  });
+
+  useTask$(({ track }) => {
     track(() => items);
     if (
       state.selectedItems &&
@@ -300,7 +305,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
                 keys,
                 items,
                 state,
-                onChange$,
+                $((item: Item) => onChange$ && onChange$(state.selectedItems ?? [], item)),
                 toggleItemSelected$,
                 listBoxDimensions,
                 defaultItemToString,
@@ -346,7 +351,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
               keys,
               items,
               state,
-              onChange$,
+              $((item: Item) => onChange$ && onChange$(state.selectedItems ?? [], item)),
               toggleItemSelected$,
               listBoxDimensions,
               defaultItemToString,
@@ -385,7 +390,7 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
                       selection.push(item);
                       state.selectedItems = selection;
                     }
-                    onChange$ && onChange$(item);
+                    onChange$ && onChange$(state.selectedItems ?? [], item);
                     sorted.changed = true;
                     if (selectionFeedback === 'top') {
                       sorted.initialized = false;
@@ -422,7 +427,7 @@ export type MultiSelectProps = QwikIntrinsicElements['div'] & {
   itemToElement?: Component<ItemProps>;
   itemToString$?: ItemAsString;
   label?: string;
-  onChange$?: QRL<(item: Item) => void>;
+  onChange$?: QRL<(selectedItems: Item[], item: Item) => void>;
   onMenuChange$?: QRL<(open: boolean) => void>;
   placeholder?: string;
   readOnly?: boolean;

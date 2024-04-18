@@ -44,7 +44,10 @@ const Test = component$(() => {
   const newItems = items.filter(item => (item as Labelled).label !== 'Banana');
   const itemOptions = useSignal(items);
   const selectedItem = useSignal<Item | undefined>(items.find(item => (item as { label: string }).label === 'Guava')!);
-  const selectedItems = items.filter(item => (item as any).label === 'Blueberry' || (item as any).label === 'Cherry');
+  const selectedItems = useSignal(
+    items.filter(item => (item as any).label === 'Blueberry' || (item as any).label === 'Cherry')
+  );
+  const userSelection = useSignal(selectedItems.value);
 
   return (
     <CarbonRoot>
@@ -103,10 +106,31 @@ const Test = component$(() => {
             <MultiSelect
               label="Fruits"
               placeholder="Select fruits"
-              selectedItems={selectedItems}
+              selectedItems={selectedItems.value}
               items={itemOptions.value}
               itemToString$={$((item: Item | undefined) => `Item ${(item as any).label}`)}
+              onChange$={(selection: Item[]) => {
+                userSelection.value = selection;
+              }}
             />
+            <span>{userSelection.value.map(item => (item as Labelled).label)}</span>
+          </Column>
+          <Column>
+            <Button
+              onClick$={$(() => {
+                if (!selectedItems.value.some(item => (item as Labelled).label === 'Dragonfruit')) {
+                  selectedItems.value = [
+                    ...selectedItems.value,
+                    items.find(item => (item as Labelled).label === 'Dragonfruit')!,
+                  ];
+                }
+              })}
+              renderIcon={ErrorOutline}
+              style="margin-left: 1rem"
+              type="button"
+            >
+              Set Dragonf.
+            </Button>
           </Column>
         </Grid>
       </Form>
@@ -128,6 +152,7 @@ const Test = component$(() => {
                   itemOptions.value = newItems;
                 })}
                 renderIcon={ErrorOutline}
+                style="margin-left: 1rem"
               >
                 Change list
               </Button>
