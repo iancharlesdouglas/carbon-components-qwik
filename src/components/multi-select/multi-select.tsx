@@ -129,10 +129,10 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
     }
   });
 
-  useTask$(({ track }) => {
+  useTask$(async ({ track }) => {
     track(() => declaredSelectedItems);
     state.selectedItems = declaredSelectedItems;
-    sorted.initialized = false;
+    sorted.items = await sortItems$(items, state.selectedItems, selectionFeedback === 'fixed', sortOptions);
   });
 
   useTask$(({ track }) => {
