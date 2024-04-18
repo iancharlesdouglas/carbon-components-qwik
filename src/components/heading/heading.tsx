@@ -15,7 +15,7 @@ export type HeadingProps = QwikIntrinsicElements['h1'] & {
 export const Heading = component$((props: HeadingProps) => {
   const context = useContext(headingContext);
   const { text } = props;
-  const sanitizedProps = removeProps(props, 'children');
+  const sanitizedProps = removeProps(props, 'children', 'text');
 
   return jsx(`h${context.level}`, { children: [text], ...sanitizedProps });
 });

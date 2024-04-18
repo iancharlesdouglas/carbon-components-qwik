@@ -315,10 +315,10 @@ export const MultiSelect = component$((props: MultiSelectProps) => {
             document:onClick$={$((event: MouseEvent) => {
               const element = event.target as HTMLElement;
               if (
-                !element.className?.endsWith('--checkbox-label') &&
-                !element.className?.endsWith('--checkbox-wrapper') &&
+                !element?.className?.endsWith('--checkbox-label') &&
+                !element?.className?.endsWith('--checkbox-wrapper') &&
                 element.getAttribute('aria-controls') !== listBoxAttrs.id &&
-                !element.classList.contains(`${prefix}--list-box__menu-item__option`) &&
+                !element?.classList.contains(`${prefix}--list-box__menu-item__option`) &&
                 state.isOpen
               ) {
                 state.isOpen = false;
