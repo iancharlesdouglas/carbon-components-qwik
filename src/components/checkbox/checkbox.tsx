@@ -7,7 +7,7 @@ import { removeProps } from '../../internal/objects/remove-props';
 
 /**
  * Checkbox props
- * @property {string} class - Custom class for the element
+ * @property {string} class - Custom class for the wrapper element
  * @property {string} id - ID of the component
  * @property {string} labelText - Label text
  * @property {PropFunction} onChange - onChange event callback
