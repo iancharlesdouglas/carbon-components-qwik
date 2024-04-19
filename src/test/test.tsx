@@ -138,7 +138,7 @@ const Test = component$(() => {
       <Grid class="test-class" id="main-grid" fullWidth>
         <Column sm={4} md={8} lg={16}>
           <Grid class="subgrid-class" id="sub-grid" fullWidth>
-            <Column sm={1} md={2} lg={4}>
+            <Column sm={1} md={2} lg={4} class="test">
               <Checkbox labelText="Active" checked={false} onChange$={$(() => console.log('changed'))} />
               <Button
                 onClick$={$(() => {
