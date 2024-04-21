@@ -5,10 +5,10 @@ All notable changes to this project will be documented in this file.
 (The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).)
 
-## [0.0.16](https://github.com/iancharlesdouglas/carbon-icons-qwik/releases/tag/0.0.16) - 2024-04-19
+## [0.0.17](https://github.com/iancharlesdouglas/carbon-icons-qwik/releases/tag/0.0.17) - 2024-04-21
 |Added|Fixed|Changed|Removed|
 |-|-|-|-|
-|Heading component added|-|-|-|
+|Heading component added|-|Updated dependencies incl. carbon-icons-qwik|-|
 
 ## [0.0.10](https://github.com/iancharlesdouglas/carbon-icons-qwik/releases/tag/0.0.10) - 2024-04-16
 |Added|Fixed|Changed|Removed|
