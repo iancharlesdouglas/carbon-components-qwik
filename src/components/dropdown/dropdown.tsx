@@ -377,9 +377,9 @@ export const Dropdown = component$((props: DropdownProps) => {
                 >
                   {ItemToElement && <ItemToElement item={item} index={index} />}
                   {!ItemToElement && itemToString(item)}
-                  {itemSelected && !ItemToElement && (
+                  {/* {itemSelected && !ItemToElement && (
                     <Checkmark class={`${prefix}--list-box__menu-item__selected-icon`} size={16} />
-                  )}
+                  )} */}
                 </ListBoxMenuItem>
               );
             })}
