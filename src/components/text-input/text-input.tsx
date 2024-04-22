@@ -13,9 +13,11 @@ import { usePrefix } from '../../internal/hooks/use-prefix';
 import { useNormalizedInputProps } from '../../internal/hooks/use-normalized-input-props';
 import classNames from 'classnames';
 import { formContext } from '../../internal/contexts/form-context';
-import { IconProps, WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
+import { IconProps } from 'carbon-icons-qwik';
 import { uniqueId } from '../../internal/unique/unique-id';
 import { removeProps } from '../../internal/objects/remove-props';
+import { WarningFilled } from '../../internal/icons/warning--filled';
+import { WarningAltFilled } from '../../internal/icons/warning--alt--filled';
 
 /**
  * Text input component size

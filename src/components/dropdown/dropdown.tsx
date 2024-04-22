@@ -15,7 +15,6 @@ import { formContext } from '../../internal/contexts/form-context';
 import classNames from 'classnames';
 import { ListBox } from '../list-box/list-box';
 import { ListBoxDimensions, ListBoxMenu } from '../list-box/list-box-menu';
-import { WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
 import { ListBoxMenuIcon } from '../list-box/list-box-menu-icon';
 import { ListBoxMenuItem } from '../list-box/list-box-menu-item';
 import { ComboboxState, qombobox } from '../../internal/qombobox/qombobox';
@@ -25,6 +24,8 @@ import { removeProps } from '../../internal/objects/remove-props';
 import { itemsEqual } from '../../internal/qombobox/items-equal';
 import { itemDisabled } from '../../internal/qombobox/item-disabled';
 import { Checkmark } from '../../internal/icons/checkmark';
+import { WarningFilled } from '../../internal/icons/warning--filled';
+import { WarningAltFilled } from '../../internal/icons/warning--alt--filled';
 
 /**
  * Listbox item that has a label

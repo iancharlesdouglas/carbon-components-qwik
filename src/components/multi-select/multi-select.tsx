@@ -14,7 +14,6 @@ import { formContext } from '../../internal/contexts/form-context';
 import classNames from 'classnames';
 import { ListBox } from '../list-box/list-box';
 import { ListBoxDimensions, ListBoxMenu } from '../list-box/list-box-menu';
-import { WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
 import { ListBoxMenuIcon } from '../list-box/list-box-menu-icon';
 import { ComboboxState, qombobox } from '../../internal/qombobox/qombobox';
 import { Keys, handleKeyDown } from '../../internal/qombobox/handle-keydown';
@@ -26,6 +25,8 @@ import { CompareItems, SortItems, SortOptions, defaultCompareItems$, defaultSort
 import { ListBoxSelection } from '../list-box/list-box-selection';
 import { MultiSelectMenuItem } from './multi-select-menu-item';
 import { toggleItemSelected$ } from './toggle-item-selected';
+import { WarningFilled } from '../../internal/icons/warning--filled';
+import { WarningAltFilled } from '../../internal/icons/warning--alt--filled';
 
 /**
  * Multi-select, a select-only combobox with multiple selection via checkboxes
