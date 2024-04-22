@@ -15,7 +15,7 @@ import { formContext } from '../../internal/contexts/form-context';
 import classNames from 'classnames';
 import { ListBox } from '../list-box/list-box';
 import { ListBoxDimensions, ListBoxMenu } from '../list-box/list-box-menu';
-import { Checkmark, WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
+import { WarningAltFilled, WarningFilled } from 'carbon-icons-qwik';
 import { ListBoxMenuIcon } from '../list-box/list-box-menu-icon';
 import { ListBoxMenuItem } from '../list-box/list-box-menu-item';
 import { ComboboxState, qombobox } from '../../internal/qombobox/qombobox';
