@@ -1,8 +1,8 @@
 import { QRL, QwikIntrinsicElements, component$, $ } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import classNames from 'classnames';
-import { Close } from 'carbon-icons-qwik';
 import { Key } from '../../internal/key';
+import { Close } from '../../internal/icons/close';
 
 /**
  * ListBoxSelection props
