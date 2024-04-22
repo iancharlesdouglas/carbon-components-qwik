@@ -1,7 +1,7 @@
 import { component$ } from '@builder.io/qwik';
 import { usePrefix } from '../../internal/hooks/use-prefix';
 import classNames from 'classnames';
-import { ChevronDown } from 'carbon-icons-qwik';
+import { ChevronDown } from '../../internal/icons/chevron--down';
 
 /**
  * ListBoxMenuIcon props

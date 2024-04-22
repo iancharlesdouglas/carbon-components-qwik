@@ -24,6 +24,7 @@ import './dropdown.scss';
 import { removeProps } from '../../internal/objects/remove-props';
 import { itemsEqual } from '../../internal/qombobox/items-equal';
 import { itemDisabled } from '../../internal/qombobox/item-disabled';
+import { Checkmark } from '../../internal/icons/checkmark';
 
 /**
  * Listbox item that has a label
@@ -377,9 +378,9 @@ export const Dropdown = component$((props: DropdownProps) => {
                 >
                   {ItemToElement && <ItemToElement item={item} index={index} />}
                   {!ItemToElement && itemToString(item)}
-                  {/* {itemSelected && !ItemToElement && (
+                  {itemSelected && !ItemToElement && (
                     <Checkmark class={`${prefix}--list-box__menu-item__selected-icon`} size={16} />
-                  )} */}
+                  )}
                 </ListBoxMenuItem>
               );
             })}
