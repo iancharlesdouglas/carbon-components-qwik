@@ -9,6 +9,11 @@
 
 This library is an ongoing project to implement the React components of the Carbon Design System (v11) in Qwik.
 
+## Demo
+The demo site has a Lighthouse score of 100 for Performance, Accessibility and Best Practices
+
+[Demo site](https://carbon-components-qwik-show.netlify.app/)
+
 ## Components
 See [components](COMPONENTS.md) for the list of implemented (and unimplemented) components.
 
