@@ -13,11 +13,11 @@ This library is an ongoing project to implement the React components of the Carb
 
 [Demo site](https://carbon-components-qwik-show.netlify.app/)
 
-The demo site has a Lighthouse score of 100 for Performance, Accessibility and Best Practices, even for mobile.
+The demo site has a Lighthouse score of 100 for Performance, Accessibility and Best Practices, including for mobile.
 
 ## Storybook
 
-[Storybook](https://carbon-components-qwik-storybook.netlify.app)
+[Storybook](https://carbon-components-qwik-storybook.netlify.app) link
 
 ## List of Components
 See [components](COMPONENTS.md) for the list of implemented (and unimplemented) components.
