@@ -3,6 +3,7 @@
 /lib
 /lib-types
 /server
+storybook-static
 
 # Development
 node_modules

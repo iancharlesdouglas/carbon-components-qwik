@@ -1,37 +1,32 @@
 import { Canvas, Meta } from '@storybook/blocks';
-import * as DropdownStories from './dropdown.stories.tsx';
-import { CustomItemRenderer } from "./dropdown.stories"
+import * as MultiSelectStories from './multi-select.stories.tsx';
+import { CustomItemRenderer } from "./multi-select.stories"
 
-<Meta of={DropdownStories} />
+<Meta of={MultiSelectStories} />
 
-# Dropdown
+# MultiSelect
 
-Shows a list of options from which the user may select a single option.  A popup listbox appears when the user clicks or uses the keyboard to open it.
+Shows a list of options from which the user may select multiple options.  A popup listbox appears when the user clicks or uses the keyboard to open it.
 
-The currently selected item is shown in the combobox field when the listbox is closed.
+A count of currently selected items is shown in the combobox field when the listbox is closed.
 
-## Variants
-There are several variants of the dropdown component:
-- `Dropdown` - this component
-- [`MultiSelect`](/docs/controls-multiselect--docs) - dropdown with ability to select multiple items using checkboxes
-
-## `Dropdown` Features
-- Single option selection 
+## `MultiSelect` Features
+- Multiple option selection (for single option selection see [`Dropdown`](/docs/controls-dropdown--docs))
 - Listbox may be navigated using a pointing device or the keyboard -- including arrow, PageUp/PageDown and Home/End keys
 - User can type ahead to select a listbox item (typing e.g. `ba` for Banana) per WAI specifications
 - Listbox items may be disabled for user selection
 - Listbox popup may be positioned at `bottom` or `top` of field (`direction` property)
-- Placeholder can be rendered if no option is selected
+- Placeholder (here called `label`) can be rendered if no option is selected
 - Warning and error states with appropriate icons, borders, and state messages
-- Label and helper text 
-- Label may be placed above field or to its left (`type`  property: `inline`)
+- Label (here called `title`) and helper text 
+- Label (`title`) may be placed above field or to its left (`type`  property: `inline`)
 - Different sizes of elements (`sm`, `md` and `lg`)
 - Full [WAI Combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/) accessibility compliance for select-only combobox.
 
 ## How To
 
-### Define a `Dropdown` Component
-A `Dropdown` component must be enclosed within the following components:
+### Define a `MultiSelect` Component
+A `MultiSelect` component must be enclosed within the following components:
 - `Form`
 - `CarbonRoot`
 
@@ -39,7 +34,7 @@ For example:
 ```
 <CarbonRoot>
   <Form>
-    <Dropdown items={['Apple', 'Orange']}>
+    <MultiSelect items={['Apple', 'Orange']}>
   </Form>
 </CarbonRoot>
 ```
@@ -75,7 +70,7 @@ const ItemRenderComp = component$((props: ItemProps) => (
 await render(
   <CarbonRoot>
     <Form>
-      <Dropdown
+      <MultiSelect
         selectedItem={myItem}
         itemToElement={ItemRenderComp}
         items={[myItem]}
@@ -87,9 +82,9 @@ await render(
 
 ##### Example 
 
-<Canvas of={DropdownStories.CustomItemRenderer} />
+<Canvas of={MultiSelectStories.CustomItemRenderer} />
 
-#### Defining a Custom Renderer Component for the Selected Item
+{/* #### Defining a Custom Renderer Component for the Selected Item
 To define a custom component to render the current selection in the combobox field:
 ```
 const SelectedItemRenderComp = component$((props: ItemProps) => (
@@ -107,11 +102,11 @@ await render(
     </Form>
   </CarbonRoot>
 );
-```
-
+``` */}
+{/* 
 ##### Example 
 
-<Canvas of={DropdownStories.CustomSelectedItemRenderer} />
+<Canvas of={DropdownStories.CustomSelectedItemRenderer} /> */}
 
 #### Disabling Items in the List
 Each item can be defined with a `disabled` property.  E.g. to disable the second option:
