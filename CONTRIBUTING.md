@@ -27,7 +27,7 @@ pnpm i
 In your IDE make the following settings:
 - install the **ESLint extension** and set **format on save** to true
 - tab stops should be 2 characters (as configured in Pretter/ESLint setup)
-- print width should be 160 characters (as configured in Prettier/ESLint setup).
+- print width should be 120 characters (as configured in Prettier/ESLint setup).
 
 ### Building
 Run `pnpm build`.
