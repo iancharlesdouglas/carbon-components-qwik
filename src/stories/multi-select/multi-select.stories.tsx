@@ -68,7 +68,7 @@ const meta: Meta<MultiSelectProps> = {
     direction: 'bottom',
     disabled: false,
     hideLabel: false,
-    label: 'Select a fruit',
+    label: 'Select fruit(s)',
     readOnly: false,
     size: 'md',
     title: 'Fruit',
@@ -118,7 +118,7 @@ export const Default: Story = {
 export const Warning: Story = {
   args: {
     warn: true,
-    warnText: "You haven't selected a fruit",
+    warnText: "You haven't selected fruit",
     ...Default.args,
   },
   argTypes: { ...Default.argTypes },
